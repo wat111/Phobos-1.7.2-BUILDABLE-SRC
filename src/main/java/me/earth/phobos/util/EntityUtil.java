@@ -92,6 +92,7 @@ import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityShulkerBullet;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
@@ -853,7 +854,7 @@ implements Util {
         if (!stack.isEmpty() && stack.getItem().onEntitySwing(entity, stack)) {
             return;
         }
-        if (!entity.isSwingInProgress || entity.swingProgressInt >= 3 || entity.swingProgressInt < 0) {
+        if (!entity.isSwingInProgress || entity.swingProgressInt >= getArmSwingAnimationEnd(entity) / 2 || entity.swingProgressInt < 0) {
             entity.swingProgressInt = -1;
             entity.isSwingInProgress = true;
             entity.swingingHand = hand;
@@ -862,6 +863,18 @@ implements Util {
 
     public static boolean isAboveBlock(Entity entity, BlockPos blockPos) {
         return entity.posY >= (double)blockPos.getY();
+    }
+
+    public static int getArmSwingAnimationEnd(EntityLivingBase entity)
+    {
+        if (entity.isPotionActive(MobEffects.HASTE))
+        {
+            return 6 - (1 + entity.getActivePotionEffect(MobEffects.HASTE).getAmplifier());
+        }
+        else
+        {
+            return entity.isPotionActive(MobEffects.MINING_FATIGUE) ? 6 + (1 + entity.getActivePotionEffect(MobEffects.MINING_FATIGUE).getAmplifier()) * 2 : 6;
+        }
     }
 }
 
