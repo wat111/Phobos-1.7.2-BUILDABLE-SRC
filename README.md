@@ -52,3 +52,5 @@ Thank you [Phobos Developers](https://discord.gg/bR6qxjT) for Phobos 1.7.2.
 
 
 Thank you [Ciruu](https://github.com/ciruu1) for helping to fix the client and checking it with me. 
+
+Thank you DRAINGANG/BLADDEE LOVEr reborn for providing Phobos 1.7.2 jar. 
