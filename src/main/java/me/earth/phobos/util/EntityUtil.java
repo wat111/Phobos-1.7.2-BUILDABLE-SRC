@@ -64,10 +64,6 @@ import me.earth.phobos.features.modules.combat.Killaura;
 import me.earth.phobos.features.modules.player.Blink;
 import me.earth.phobos.features.modules.player.FakePlayer;
 import me.earth.phobos.features.modules.player.Freecam;
-import me.earth.phobos.mixin.mixins.accessors.IEntityLivingBase;
-import me.earth.phobos.util.BlockUtil;
-import me.earth.phobos.util.MathUtil;
-import me.earth.phobos.util.Util;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockDeadBush;
@@ -857,7 +853,7 @@ implements Util {
         if (!stack.isEmpty() && stack.getItem().onEntitySwing(entity, stack)) {
             return;
         }
-        if (!entity.isSwingInProgress || entity.swingProgressInt >= ((IEntityLivingBase)entity).getArmSwingAnimationEnd() / 2 || entity.swingProgressInt < 0) {
+        if (!entity.isSwingInProgress || entity.swingProgressInt >= 3 || entity.swingProgressInt < 0) {
             entity.swingProgressInt = -1;
             entity.isSwingInProgress = true;
             entity.swingingHand = hand;

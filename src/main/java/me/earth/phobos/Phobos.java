@@ -97,7 +97,7 @@ public class Phobos {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         customMainScreen = new GuiCustomMainScreen();
-        Display.setTitle((String)"3arthh4ck - v.1.7.2");
+        Display.setTitle("3arthh4ck - v.1.7.2");
         Phobos.load();
     }
 

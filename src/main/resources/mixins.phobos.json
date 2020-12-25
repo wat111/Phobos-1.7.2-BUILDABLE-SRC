@@ -42,7 +42,6 @@
     "MixinVisGraph",
     "MixinWorld",
     "accessors.IC00Handshake",
-    "accessors.IEntityLivingBase",
     "accessors.IServerAddress"
   ]
 }
