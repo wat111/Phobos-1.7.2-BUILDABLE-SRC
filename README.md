@@ -20,6 +20,10 @@ This source has been checked by two people, myself and a friend. My friend did n
 - PingBypass
 - Companion
 
+## Opening the ClickGUI:
+
+**There is no default bind, you can do .bind clickgui key to bind it and it will work.** 
+
 So what I've heard so far? Apparently this one got leaked by plivid but who cares lel. Enjoy this share. xd
 
 ## Running in a Dev Environment:
