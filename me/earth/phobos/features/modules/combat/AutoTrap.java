@@ -112,8 +112,8 @@ extends Module {
             return;
         }
         this.toAir.clear();
-        this.startPos = EntityUtil.getRoundedBlockPos((Entity)AutoTrap.mc.field_71439_g);
-        this.lastHotbarSlot = AutoTrap.mc.field_71439_g.field_71071_by.field_70461_c;
+        this.startPos = EntityUtil.getRoundedBlockPos((Entity)AutoTrap.mc.player);
+        this.lastHotbarSlot = AutoTrap.mc.player.inventory.currentItem;
         this.retries.clear();
     }
 
@@ -149,7 +149,7 @@ extends Module {
     @Override
     public String getDisplayInfo() {
         if (this.info.getValue().booleanValue() && this.target != null) {
-            return this.target.func_70005_c_();
+            return this.target.getName();
         }
         return null;
     }
@@ -169,7 +169,7 @@ extends Module {
         if (this.render.getValue().booleanValue()) {
             for (Vec3d vec : this.currentPlaceList) {
                 BlockPos pos = new BlockPos(vec);
-                if (!(AutoTrap.mc.field_71441_e.func_180495_p(pos).func_177230_c() instanceof BlockAir)) continue;
+                if (!(AutoTrap.mc.world.getBlockState(pos).getBlock() instanceof BlockAir)) continue;
                 RenderUtil.drawBoxESP(pos, this.colorSync.getValue() != false ? Colors.INSTANCE.getCurrentColor() : new Color(this.red.getValue(), this.green.getValue(), this.blue.getValue(), this.alpha.getValue()), this.customOutline.getValue(), new Color(this.cRed.getValue(), this.cGreen.getValue(), this.cBlue.getValue(), this.cAlpha.getValue()), this.lineWidth.getValue().floatValue(), this.outline.getValue(), this.box.getValue(), this.boxAlpha.getValue(), false);
             }
         }
@@ -192,7 +192,7 @@ extends Module {
         }
         if (this.packet.getValue().booleanValue() && this.airPacket.getValue().booleanValue()) {
             for (Map.Entry<BlockPos, IBlockState> entry : this.toAir.entrySet()) {
-                AutoTrap.mc.field_71441_e.func_175656_a(entry.getKey(), entry.getValue());
+                AutoTrap.mc.world.setBlockState(entry.getKey(), entry.getValue());
             }
             this.toAir.clear();
         }
@@ -208,14 +208,14 @@ extends Module {
     }
 
     private void doStaticTrap() {
-        List<Vec3d> placeTargets = EntityUtil.targets(this.target.func_174791_d(), this.antiScaffold.getValue(), this.antiStep.getValue(), this.legs.getValue(), this.platform.getValue(), this.antiDrop.getValue(), this.raytrace.getValue());
+        List<Vec3d> placeTargets = EntityUtil.targets(this.target.getPositionVector(), this.antiScaffold.getValue(), this.antiStep.getValue(), this.legs.getValue(), this.platform.getValue(), this.antiDrop.getValue(), this.raytrace.getValue());
         this.placeList(placeTargets);
         this.currentPlaceList = placeTargets;
     }
 
     private void placeList(List<Vec3d> list) {
-        list.sort((vec3d, vec3d2) -> Double.compare(AutoTrap.mc.field_71439_g.func_70092_e(vec3d2.field_72450_a, vec3d2.field_72448_b, vec3d2.field_72449_c), AutoTrap.mc.field_71439_g.func_70092_e(vec3d.field_72450_a, vec3d.field_72448_b, vec3d.field_72449_c)));
-        list.sort(Comparator.comparingDouble(vec3d -> vec3d.field_72448_b));
+        list.sort((vec3d, vec3d2) -> Double.compare(AutoTrap.mc.player.getDistanceSq(vec3d2.x, vec3d2.y, vec3d2.z), AutoTrap.mc.player.getDistanceSq(vec3d.x, vec3d.y, vec3d.z)));
+        list.sort(Comparator.comparingDouble(vec3d -> vec3d.y));
         for (Vec3d vec3d3 : list) {
             BlockPos position = new BlockPos(vec3d3);
             int placeability = BlockUtil.isPositionPlaceable(position, this.raytrace.getValue());
@@ -225,7 +225,7 @@ extends Module {
                 this.retryTimer.reset();
                 continue;
             }
-            if (placeability != 3 || this.antiSelf.getValue().booleanValue() && MathUtil.areVec3dsAligned(AutoTrap.mc.field_71439_g.func_174791_d(), vec3d3)) continue;
+            if (placeability != 3 || this.antiSelf.getValue().booleanValue() && MathUtil.areVec3dsAligned(AutoTrap.mc.player.getPositionVector(), vec3d3)) continue;
             this.placeBlock(position);
         }
     }
@@ -238,7 +238,7 @@ extends Module {
         if (this.isOff()) {
             return true;
         }
-        if (this.disable.getValue().booleanValue() && !this.startPos.equals((Object)EntityUtil.getRoundedBlockPos((Entity)AutoTrap.mc.field_71439_g))) {
+        if (this.disable.getValue().booleanValue() && !this.startPos.equals((Object)EntityUtil.getRoundedBlockPos((Entity)AutoTrap.mc.player))) {
             this.disable();
             return true;
         }
@@ -255,37 +255,37 @@ extends Module {
             }
             return true;
         }
-        if (AutoTrap.mc.field_71439_g.field_71071_by.field_70461_c != this.lastHotbarSlot && AutoTrap.mc.field_71439_g.field_71071_by.field_70461_c != obbySlot) {
-            this.lastHotbarSlot = AutoTrap.mc.field_71439_g.field_71071_by.field_70461_c;
+        if (AutoTrap.mc.player.inventory.currentItem != this.lastHotbarSlot && AutoTrap.mc.player.inventory.currentItem != obbySlot) {
+            this.lastHotbarSlot = AutoTrap.mc.player.inventory.currentItem;
         }
         this.switchItem(true);
         this.isSneaking = EntityUtil.stopSneaking(this.isSneaking);
         this.target = this.getTarget(this.targetRange.getValue(), this.targetMode.getValue() == TargetMode.UNTRAPPED);
-        return this.target == null || Phobos.moduleManager.isModuleEnabled("Freecam") && this.freecam.getValue() == false || !this.timer.passedMs(this.delay.getValue().intValue()) || this.switchMode.getValue() == InventoryUtil.Switch.NONE && AutoTrap.mc.field_71439_g.field_71071_by.field_70461_c != InventoryUtil.findHotbarBlock(BlockObsidian.class);
+        return this.target == null || Phobos.moduleManager.isModuleEnabled("Freecam") && this.freecam.getValue() == false || !this.timer.passedMs(this.delay.getValue().intValue()) || this.switchMode.getValue() == InventoryUtil.Switch.NONE && AutoTrap.mc.player.inventory.currentItem != InventoryUtil.findHotbarBlock(BlockObsidian.class);
     }
 
     private EntityPlayer getTarget(double range, boolean trapped) {
         EntityPlayer target = null;
         double distance = Math.pow(range, 2.0) + 1.0;
-        for (EntityPlayer player : AutoTrap.mc.field_71441_e.field_73010_i) {
-            if (EntityUtil.isntValid((Entity)player, range) || this.pattern.getValue() == Pattern.STATIC && trapped && EntityUtil.isTrapped(player, this.antiScaffold.getValue(), this.antiStep.getValue(), this.legs.getValue(), this.platform.getValue(), this.antiDrop.getValue()) || this.pattern.getValue() != Pattern.STATIC && trapped && EntityUtil.isTrappedExtended(this.extend.getValue(), player, this.antiScaffold.getValue(), this.antiStep.getValue(), this.legs.getValue(), this.platform.getValue(), this.antiDrop.getValue(), this.raytrace.getValue(), this.noScaffoldExtend.getValue()) || EntityUtil.getRoundedBlockPos((Entity)AutoTrap.mc.field_71439_g).equals((Object)EntityUtil.getRoundedBlockPos((Entity)player)) && this.antiSelf.getValue().booleanValue() || Phobos.speedManager.getPlayerSpeed(player) > this.speed.getValue()) continue;
+        for (EntityPlayer player : AutoTrap.mc.world.playerEntities) {
+            if (EntityUtil.isntValid((Entity)player, range) || this.pattern.getValue() == Pattern.STATIC && trapped && EntityUtil.isTrapped(player, this.antiScaffold.getValue(), this.antiStep.getValue(), this.legs.getValue(), this.platform.getValue(), this.antiDrop.getValue()) || this.pattern.getValue() != Pattern.STATIC && trapped && EntityUtil.isTrappedExtended(this.extend.getValue(), player, this.antiScaffold.getValue(), this.antiStep.getValue(), this.legs.getValue(), this.platform.getValue(), this.antiDrop.getValue(), this.raytrace.getValue(), this.noScaffoldExtend.getValue()) || EntityUtil.getRoundedBlockPos((Entity)AutoTrap.mc.player).equals((Object)EntityUtil.getRoundedBlockPos((Entity)player)) && this.antiSelf.getValue().booleanValue() || Phobos.speedManager.getPlayerSpeed(player) > this.speed.getValue()) continue;
             if (target == null) {
                 target = player;
-                distance = AutoTrap.mc.field_71439_g.func_70068_e((Entity)player);
+                distance = AutoTrap.mc.player.getDistanceSq((Entity)player);
                 continue;
             }
-            if (!(AutoTrap.mc.field_71439_g.func_70068_e((Entity)player) < distance)) continue;
+            if (!(AutoTrap.mc.player.getDistanceSq((Entity)player) < distance)) continue;
             target = player;
-            distance = AutoTrap.mc.field_71439_g.func_70068_e((Entity)player);
+            distance = AutoTrap.mc.player.getDistanceSq((Entity)player);
         }
         return target;
     }
 
     private void placeBlock(BlockPos pos) {
-        if (this.placements < this.blocksPerPlace.getValue() && AutoTrap.mc.field_71439_g.func_174818_b(pos) <= MathUtil.square(this.range.getValue()) && this.switchItem(false)) {
+        if (this.placements < this.blocksPerPlace.getValue() && AutoTrap.mc.player.getDistanceSq(pos) <= MathUtil.square(this.range.getValue()) && this.switchItem(false)) {
             isPlacing = true;
             if (this.airPacket.getValue().booleanValue() && this.packet.getValue().booleanValue()) {
-                this.toAir.put(pos, AutoTrap.mc.field_71441_e.func_180495_p(pos));
+                this.toAir.put(pos, AutoTrap.mc.world.getBlockState(pos));
             }
             this.isSneaking = this.smartRotate ? BlockUtil.placeBlockSmartRotate(pos, EnumHand.MAIN_HAND, true, this.airPacket.getValue() == false && this.packet.getValue() != false, this.isSneaking) : BlockUtil.placeBlock(pos, EnumHand.MAIN_HAND, this.rotate.getValue(), this.airPacket.getValue() == false && this.packet.getValue() != false, this.isSneaking);
             this.didPlace = true;

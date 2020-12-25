@@ -73,11 +73,11 @@ extends Module {
             synchronized (list) {
                 this.spots.forEach(spot -> {
                     if (spot.getEntity() != null) {
-                        AxisAlignedBB bb = RenderUtil.interpolateAxis(spot.getEntity().func_174813_aQ());
+                        AxisAlignedBB bb = RenderUtil.interpolateAxis(spot.getEntity().getEntityBoundingBox());
                         RenderUtil.drawBlockOutline(bb, this.colorSync.getValue() != false ? Colors.INSTANCE.getCurrentColor() : new Color(this.red.getValue(), this.green.getValue(), this.blue.getValue(), this.alpha.getValue()), 1.0f);
-                        double x = this.interpolate(spot.getEntity().field_70142_S, spot.getEntity().field_70165_t, event.getPartialTicks()) - LogoutSpots.mc.func_175598_ae().field_78725_b;
-                        double y = this.interpolate(spot.getEntity().field_70137_T, spot.getEntity().field_70163_u, event.getPartialTicks()) - LogoutSpots.mc.func_175598_ae().field_78726_c;
-                        double z = this.interpolate(spot.getEntity().field_70136_U, spot.getEntity().field_70161_v, event.getPartialTicks()) - LogoutSpots.mc.func_175598_ae().field_78723_d;
+                        double x = this.interpolate(spot.getEntity().lastTickPosX, spot.getEntity().posX, event.getPartialTicks()) - LogoutSpots.mc.getRenderManager().renderPosX;
+                        double y = this.interpolate(spot.getEntity().lastTickPosY, spot.getEntity().posY, event.getPartialTicks()) - LogoutSpots.mc.getRenderManager().renderPosY;
+                        double z = this.interpolate(spot.getEntity().lastTickPosZ, spot.getEntity().posZ, event.getPartialTicks()) - LogoutSpots.mc.getRenderManager().renderPosZ;
                         this.renderNameTag(spot.getName(), x, y, z, event.getPartialTicks(), spot.getX(), spot.getY(), spot.getZ());
                     }
                 });
@@ -88,7 +88,7 @@ extends Module {
     @Override
     public void onUpdate() {
         if (!LogoutSpots.fullNullCheck()) {
-            this.spots.removeIf(spot -> LogoutSpots.mc.field_71439_g.func_70068_e((Entity)spot.getEntity()) >= MathUtil.square(this.range.getValue().floatValue()));
+            this.spots.removeIf(spot -> LogoutSpots.mc.player.getDistanceSq((Entity)spot.getEntity()) >= MathUtil.square(this.range.getValue().floatValue()));
         }
     }
 
@@ -96,9 +96,9 @@ extends Module {
     public void onConnection(ConnectionEvent event) {
         if (event.getStage() == 0) {
             UUID uuid = event.getUuid();
-            EntityPlayer entity = LogoutSpots.mc.field_71441_e.func_152378_a(uuid);
+            EntityPlayer entity = LogoutSpots.mc.world.getPlayerEntityByUUID(uuid);
             if (entity != null && this.message.getValue().booleanValue()) {
-                Command.sendMessage("\u00a7a" + entity.func_70005_c_() + " just logged in" + (this.coords.getValue() != false ? " at (" + (int)entity.field_70165_t + ", " + (int)entity.field_70163_u + ", " + (int)entity.field_70161_v + ")!" : "!"), this.notification.getValue());
+                Command.sendMessage("\u00a7a" + entity.getName() + " just logged in" + (this.coords.getValue() != false ? " at (" + (int)entity.posX + ", " + (int)entity.posY + ", " + (int)entity.posZ + ")!" : "!"), this.notification.getValue());
             }
             this.spots.removeIf(pos -> pos.getName().equalsIgnoreCase(event.getName()));
         } else if (event.getStage() == 1) {
@@ -106,7 +106,7 @@ extends Module {
             UUID uuid = event.getUuid();
             String name = event.getName();
             if (this.message.getValue().booleanValue()) {
-                Command.sendMessage("\u00a7c" + event.getName() + " just logged out" + (this.coords.getValue() != false ? " at (" + (int)entity.field_70165_t + ", " + (int)entity.field_70163_u + ", " + (int)entity.field_70161_v + ")!" : "!"), this.notification.getValue());
+                Command.sendMessage("\u00a7c" + event.getName() + " just logged out" + (this.coords.getValue() != false ? " at (" + (int)entity.posX + ", " + (int)entity.posY + ", " + (int)entity.posZ + ")!" : "!"), this.notification.getValue());
             }
             if (name != null && entity != null && uuid != null) {
                 this.spots.add(new LogoutPos(name, uuid, entity));
@@ -116,16 +116,16 @@ extends Module {
 
     private void renderNameTag(String name, double x, double yi, double z, float delta, double xPos, double yPos, double zPos) {
         double y = yi + 0.7;
-        Entity camera = mc.func_175606_aa();
+        Entity camera = mc.getRenderViewEntity();
         assert (camera != null);
-        double originalPositionX = camera.field_70165_t;
-        double originalPositionY = camera.field_70163_u;
-        double originalPositionZ = camera.field_70161_v;
-        camera.field_70165_t = this.interpolate(camera.field_70169_q, camera.field_70165_t, delta);
-        camera.field_70163_u = this.interpolate(camera.field_70167_r, camera.field_70163_u, delta);
-        camera.field_70161_v = this.interpolate(camera.field_70166_s, camera.field_70161_v, delta);
+        double originalPositionX = camera.posX;
+        double originalPositionY = camera.posY;
+        double originalPositionZ = camera.posZ;
+        camera.posX = this.interpolate(camera.prevPosX, camera.posX, delta);
+        camera.posY = this.interpolate(camera.prevPosY, camera.posY, delta);
+        camera.posZ = this.interpolate(camera.prevPosZ, camera.posZ, delta);
         String displayTag = name + " XYZ: " + (int)xPos + ", " + (int)yPos + ", " + (int)zPos;
-        double distance = camera.func_70011_f(x + LogoutSpots.mc.func_175598_ae().field_78730_l, y + LogoutSpots.mc.func_175598_ae().field_78731_m, z + LogoutSpots.mc.func_175598_ae().field_78728_n);
+        double distance = camera.getDistance(x + LogoutSpots.mc.getRenderManager().viewerPosX, y + LogoutSpots.mc.getRenderManager().viewerPosY, z + LogoutSpots.mc.getRenderManager().viewerPosZ);
         int width = this.renderer.getStringWidth(displayTag) / 2;
         double scale = (0.0018 + (double)this.scaling.getValue().floatValue() * (distance * (double)this.factor.getValue().floatValue())) / 1000.0;
         if (distance <= 8.0 && this.smartScale.getValue().booleanValue()) {
@@ -134,31 +134,31 @@ extends Module {
         if (!this.scaleing.getValue().booleanValue()) {
             scale = (double)this.scaling.getValue().floatValue() / 100.0;
         }
-        GlStateManager.func_179094_E();
-        RenderHelper.func_74519_b();
-        GlStateManager.func_179088_q();
-        GlStateManager.func_179136_a((float)1.0f, (float)-1500000.0f);
-        GlStateManager.func_179140_f();
-        GlStateManager.func_179109_b((float)((float)x), (float)((float)y + 1.4f), (float)((float)z));
-        GlStateManager.func_179114_b((float)(-LogoutSpots.mc.func_175598_ae().field_78735_i), (float)0.0f, (float)1.0f, (float)0.0f);
-        GlStateManager.func_179114_b((float)LogoutSpots.mc.func_175598_ae().field_78732_j, (float)(LogoutSpots.mc.field_71474_y.field_74320_O == 2 ? -1.0f : 1.0f), (float)0.0f, (float)0.0f);
-        GlStateManager.func_179139_a((double)(-scale), (double)(-scale), (double)scale);
-        GlStateManager.func_179097_i();
-        GlStateManager.func_179147_l();
-        GlStateManager.func_179147_l();
+        GlStateManager.pushMatrix();
+        RenderHelper.enableStandardItemLighting();
+        GlStateManager.enablePolygonOffset();
+        GlStateManager.doPolygonOffset((float)1.0f, (float)-1500000.0f);
+        GlStateManager.disableLighting();
+        GlStateManager.translate((float)((float)x), (float)((float)y + 1.4f), (float)((float)z));
+        GlStateManager.rotate((float)(-LogoutSpots.mc.getRenderManager().playerViewY), (float)0.0f, (float)1.0f, (float)0.0f);
+        GlStateManager.rotate((float)LogoutSpots.mc.getRenderManager().playerViewX, (float)(LogoutSpots.mc.gameSettings.thirdPersonView == 2 ? -1.0f : 1.0f), (float)0.0f, (float)0.0f);
+        GlStateManager.scale((double)(-scale), (double)(-scale), (double)scale);
+        GlStateManager.disableDepth();
+        GlStateManager.enableBlend();
+        GlStateManager.enableBlend();
         if (this.rect.getValue().booleanValue()) {
             RenderUtil.drawRect(-width - 2, -(this.renderer.getFontHeight() + 1), (float)width + 2.0f, 1.5f, 0x55000000);
         }
-        GlStateManager.func_179084_k();
+        GlStateManager.disableBlend();
         this.renderer.drawStringWithShadow(displayTag, -width, -(this.renderer.getFontHeight() - 1), this.colorSync.getValue() != false ? Colors.INSTANCE.getCurrentColorHex() : ColorUtil.toRGBA(new Color(this.red.getValue(), this.green.getValue(), this.blue.getValue(), this.alpha.getValue())));
-        camera.field_70165_t = originalPositionX;
-        camera.field_70163_u = originalPositionY;
-        camera.field_70161_v = originalPositionZ;
-        GlStateManager.func_179126_j();
-        GlStateManager.func_179084_k();
-        GlStateManager.func_179113_r();
-        GlStateManager.func_179136_a((float)1.0f, (float)1500000.0f);
-        GlStateManager.func_179121_F();
+        camera.posX = originalPositionX;
+        camera.posY = originalPositionY;
+        camera.posZ = originalPositionZ;
+        GlStateManager.enableDepth();
+        GlStateManager.disableBlend();
+        GlStateManager.disablePolygonOffset();
+        GlStateManager.doPolygonOffset((float)1.0f, (float)1500000.0f);
+        GlStateManager.popMatrix();
     }
 
     private double interpolate(double previous, double current, float delta) {
@@ -177,9 +177,9 @@ extends Module {
             this.name = name;
             this.uuid = uuid;
             this.entity = entity;
-            this.x = entity.field_70165_t;
-            this.y = entity.field_70163_u;
-            this.z = entity.field_70161_v;
+            this.x = entity.posX;
+            this.y = entity.posY;
+            this.z = entity.posZ;
         }
 
         public String getName() {

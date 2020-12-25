@@ -29,16 +29,16 @@ extends Module {
 
     @Override
     public void onUpdate() {
-        Blocks.field_150432_aD.field_149765_K = this.speed.getValue().floatValue();
-        Blocks.field_150403_cj.field_149765_K = this.speed.getValue().floatValue();
-        Blocks.field_185778_de.field_149765_K = this.speed.getValue().floatValue();
+        Blocks.ICE.slipperiness = this.speed.getValue().floatValue();
+        Blocks.PACKED_ICE.slipperiness = this.speed.getValue().floatValue();
+        Blocks.FROSTED_ICE.slipperiness = this.speed.getValue().floatValue();
     }
 
     @Override
     public void onDisable() {
-        Blocks.field_150432_aD.field_149765_K = 0.98f;
-        Blocks.field_150403_cj.field_149765_K = 0.98f;
-        Blocks.field_185778_de.field_149765_K = 0.98f;
+        Blocks.ICE.slipperiness = 0.98f;
+        Blocks.PACKED_ICE.slipperiness = 0.98f;
+        Blocks.FROSTED_ICE.slipperiness = 0.98f;
     }
 }
 

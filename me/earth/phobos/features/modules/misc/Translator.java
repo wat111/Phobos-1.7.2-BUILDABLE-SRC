@@ -43,7 +43,7 @@ extends Module {
     public void onSendPacket(PacketEvent.Send event) {
         if (event.getPacket() instanceof CPacketChatMessage) {
             event.setCanceled(true);
-            this.translate = new Translate(((CPacketChatMessage)event.getPacket()).func_149439_c(), this.sourceLanguage.getValue(), this.targetLanguage.getValue());
+            this.translate = new Translate(((CPacketChatMessage)event.getPacket()).getMessage(), this.sourceLanguage.getValue(), this.targetLanguage.getValue());
             this.translate.start();
         }
     }
@@ -192,7 +192,7 @@ extends Module {
         public void run() {
             try {
                 this.finalMessage = this.request("https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20200403T133250Z.c0062863622d7503.ca7fca44b9d2259ba3dadd61ddf7c15a2c9f3876&text=" + this.message.replace(" ", "%20") + "&lang=" + this.sourceLang.getCode() + "-" + this.lang.getCode()).get("text").getAsString();
-                Util.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketChatMessage(this.finalMessage));
+                Util.mc.player.connection.sendPacket((Packet)new CPacketChatMessage(this.finalMessage));
             }
             catch (IOException e) {
                 e.printStackTrace();

@@ -31,7 +31,7 @@ extends Module {
 
     public static String getPlayerName(NetworkPlayerInfo networkPlayerInfoIn) {
         String name;
-        String string = name = networkPlayerInfoIn.func_178854_k() != null ? networkPlayerInfoIn.func_178854_k().func_150254_d() : ScorePlayerTeam.func_96667_a((Team)networkPlayerInfoIn.func_178850_i(), (String)networkPlayerInfoIn.func_178845_a().getName());
+        String string = name = networkPlayerInfoIn.getDisplayName() != null ? networkPlayerInfoIn.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName((Team)networkPlayerInfoIn.getPlayerTeam(), (String)networkPlayerInfoIn.getGameProfile().getName());
         if (Phobos.friendManager.isFriend(name)) {
             return "\u00a7b" + name;
         }

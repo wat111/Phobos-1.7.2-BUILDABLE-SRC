@@ -19,10 +19,10 @@ extends Module {
     @Override
     public void onRender3D(Render3DEvent event) {
         if (!BigESP.fullNullCheck()) {
-            for (EntityPlayer player : BigESP.mc.field_71441_e.field_73010_i) {
-                double x = this.interpolate(player.field_70142_S, player.field_70165_t, event.getPartialTicks()) - BigESP.mc.func_175598_ae().field_78725_b;
-                double y = this.interpolate(player.field_70137_T, player.field_70163_u, event.getPartialTicks()) - BigESP.mc.func_175598_ae().field_78726_c;
-                double z = this.interpolate(player.field_70136_U, player.field_70161_v, event.getPartialTicks()) - BigESP.mc.func_175598_ae().field_78723_d;
+            for (EntityPlayer player : BigESP.mc.world.playerEntities) {
+                double x = this.interpolate(player.lastTickPosX, player.posX, event.getPartialTicks()) - BigESP.mc.getRenderManager().renderPosX;
+                double y = this.interpolate(player.lastTickPosY, player.posY, event.getPartialTicks()) - BigESP.mc.getRenderManager().renderPosY;
+                double z = this.interpolate(player.lastTickPosZ, player.posZ, event.getPartialTicks()) - BigESP.mc.getRenderManager().renderPosZ;
                 this.renderBigESP(player, x, y, z, event.getPartialTicks());
             }
         }

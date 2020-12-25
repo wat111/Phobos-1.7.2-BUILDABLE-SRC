@@ -59,21 +59,21 @@ extends Module {
 
     @SubscribeEvent
     public void onPacketSend(PacketEvent.Send event) {
-        if (this.receive && PingSpoof.mc.field_71439_g != null && !mc.func_71356_B() && PingSpoof.mc.field_71439_g.func_70089_S() && event.getStage() == 0 && event.getPacket() instanceof CPacketKeepAlive) {
+        if (this.receive && PingSpoof.mc.player != null && !mc.isSingleplayer() && PingSpoof.mc.player.isEntityAlive() && event.getStage() == 0 && event.getPacket() instanceof CPacketKeepAlive) {
             this.packets.add((Packet<?>)event.getPacket());
             event.setCanceled(true);
         }
     }
 
     public void clearQueue() {
-        if (PingSpoof.mc.field_71439_g != null && !mc.func_71356_B() && PingSpoof.mc.field_71439_g.func_70089_S() && (!this.seconds.getValue().booleanValue() && this.timer.passedMs(this.delay.getValue().intValue()) || this.seconds.getValue().booleanValue() && this.timer.passedS(this.secondDelay.getValue().intValue()))) {
+        if (PingSpoof.mc.player != null && !mc.isSingleplayer() && PingSpoof.mc.player.isEntityAlive() && (!this.seconds.getValue().booleanValue() && this.timer.passedMs(this.delay.getValue().intValue()) || this.seconds.getValue().booleanValue() && this.timer.passedS(this.secondDelay.getValue().intValue()))) {
             double limit = MathUtil.getIncremental(Math.random() * 10.0, 1.0);
             this.receive = false;
             int i = 0;
             while ((double)i < limit) {
                 Packet<?> packet = this.packets.poll();
                 if (packet != null) {
-                    PingSpoof.mc.field_71439_g.field_71174_a.func_147297_a(packet);
+                    PingSpoof.mc.player.connection.sendPacket(packet);
                 }
                 ++i;
             }

@@ -64,7 +64,7 @@ extends Module {
     }
 
     public void updateLastConnectedServer() {
-        ServerData data = mc.func_147104_D();
+        ServerData data = mc.getCurrentServerData();
         if (data != null) {
             serverData = data;
         }
@@ -79,21 +79,21 @@ extends Module {
         private final Timer timer;
 
         public GuiDisconnectedHook(GuiDisconnected disconnected) {
-            super(disconnected.field_146307_h, disconnected.field_146306_a, disconnected.field_146304_f);
+            super(disconnected.parentScreen, disconnected.reason, disconnected.message);
             this.timer = new Timer();
             this.timer.reset();
         }
 
-        public void func_73876_c() {
+        public void updateScreen() {
             if (this.timer.passedS(((Integer)AutoReconnect.this.delay.getValue()).intValue())) {
-                this.field_146297_k.func_147108_a((GuiScreen)new GuiConnecting(this.field_146307_h, this.field_146297_k, serverData == null ? this.field_146297_k.field_71422_O : serverData));
+                this.mc.displayGuiScreen((GuiScreen)new GuiConnecting(this.parentScreen, this.mc, serverData == null ? this.mc.currentServerData : serverData));
             }
         }
 
-        public void func_73863_a(int mouseX, int mouseY, float partialTicks) {
-            super.func_73863_a(mouseX, mouseY, partialTicks);
+        public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+            super.drawScreen(mouseX, mouseY, partialTicks);
             String s = "Reconnecting in " + MathUtil.round((double)((long)((Integer)AutoReconnect.this.delay.getValue() * 1000) - this.timer.getPassedTimeMs()) / 1000.0, 1);
-            AutoReconnect.this.renderer.drawString(s, this.field_146294_l / 2 - AutoReconnect.this.renderer.getStringWidth(s) / 2, this.field_146295_m - 16, 0xFFFFFF, true);
+            AutoReconnect.this.renderer.drawString(s, this.width / 2 - AutoReconnect.this.renderer.getStringWidth(s) / 2, this.height - 16, 0xFFFFFF, true);
         }
     }
 }

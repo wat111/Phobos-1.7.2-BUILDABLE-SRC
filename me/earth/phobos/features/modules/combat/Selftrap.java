@@ -87,14 +87,14 @@ extends Module {
         if (Selftrap.fullNullCheck()) {
             this.disable();
         }
-        this.lastHotbarSlot = Selftrap.mc.field_71439_g.field_71071_by.field_70461_c;
+        this.lastHotbarSlot = Selftrap.mc.player.inventory.currentItem;
         if (!this.accessedViaBind) {
             this.currentMode = this.mode.getValue();
         }
         Offhand module = Phobos.moduleManager.getModuleByClass(Offhand.class);
         this.offhandMode = module.mode;
         this.offhandMode2 = module.currentMode;
-        if (this.offhand.getValue().booleanValue() && (EntityUtil.isSafe((Entity)Selftrap.mc.field_71439_g) || !this.onlySafe.getValue().booleanValue())) {
+        if (this.offhand.getValue().booleanValue() && (EntityUtil.isSafe((Entity)Selftrap.mc.player) || !this.onlySafe.getValue().booleanValue())) {
             if (module.type.getValue() == Offhand.Type.OLD) {
                 if (this.currentMode == Mode.WEBS) {
                     module.setMode(Offhand.Mode2.WEBS);
@@ -161,7 +161,7 @@ extends Module {
             return;
         }
         if (this.placeHighWeb) {
-            BlockPos pos = new BlockPos(Selftrap.mc.field_71439_g.field_70165_t, Selftrap.mc.field_71439_g.field_70163_u + 1.0, Selftrap.mc.field_71439_g.field_70161_v);
+            BlockPos pos = new BlockPos(Selftrap.mc.player.posX, Selftrap.mc.player.posY + 1.0, Selftrap.mc.player.posZ);
             this.placeBlock(pos);
             this.placeHighWeb = false;
         }
@@ -187,7 +187,7 @@ extends Module {
     }
 
     private boolean isPlayerInRange() {
-        for (EntityPlayer player : Selftrap.mc.field_71441_e.field_73010_i) {
+        for (EntityPlayer player : Selftrap.mc.world.playerEntities) {
             if (EntityUtil.isntValid((Entity)player, this.smartRange.getValue())) continue;
             return true;
         }
@@ -198,13 +198,13 @@ extends Module {
         ArrayList<BlockPos> positions = new ArrayList<BlockPos>();
         block0 : switch (this.currentMode) {
             case WEBS: {
-                positions.add(new BlockPos(Selftrap.mc.field_71439_g.field_70165_t, Selftrap.mc.field_71439_g.field_70163_u, Selftrap.mc.field_71439_g.field_70161_v));
+                positions.add(new BlockPos(Selftrap.mc.player.posX, Selftrap.mc.player.posY, Selftrap.mc.player.posZ));
                 if (!this.highWeb.getValue().booleanValue()) break;
-                positions.add(new BlockPos(Selftrap.mc.field_71439_g.field_70165_t, Selftrap.mc.field_71439_g.field_70163_u + 1.0, Selftrap.mc.field_71439_g.field_70161_v));
+                positions.add(new BlockPos(Selftrap.mc.player.posX, Selftrap.mc.player.posY + 1.0, Selftrap.mc.player.posZ));
                 break;
             }
             case OBSIDIAN: {
-                positions.add(new BlockPos(Selftrap.mc.field_71439_g.field_70165_t, Selftrap.mc.field_71439_g.field_70163_u + 2.0, Selftrap.mc.field_71439_g.field_70161_v));
+                positions.add(new BlockPos(Selftrap.mc.player.posX, Selftrap.mc.player.posY + 2.0, Selftrap.mc.player.posZ));
                 int placeability = BlockUtil.isPositionPlaceable((BlockPos)positions.get(0), false);
                 switch (placeability) {
                     case 0: {
@@ -219,14 +219,14 @@ extends Module {
                         }
                     }
                     case 2: {
-                        positions.add(new BlockPos(Selftrap.mc.field_71439_g.field_70165_t + 1.0, Selftrap.mc.field_71439_g.field_70163_u + 1.0, Selftrap.mc.field_71439_g.field_70161_v));
-                        positions.add(new BlockPos(Selftrap.mc.field_71439_g.field_70165_t + 1.0, Selftrap.mc.field_71439_g.field_70163_u + 2.0, Selftrap.mc.field_71439_g.field_70161_v));
+                        positions.add(new BlockPos(Selftrap.mc.player.posX + 1.0, Selftrap.mc.player.posY + 1.0, Selftrap.mc.player.posZ));
+                        positions.add(new BlockPos(Selftrap.mc.player.posX + 1.0, Selftrap.mc.player.posY + 2.0, Selftrap.mc.player.posZ));
                         break block0;
                     }
                 }
             }
         }
-        positions.sort(Comparator.comparingDouble(Vec3i::func_177956_o));
+        positions.sort(Comparator.comparingDouble(Vec3i::getY));
         return positions;
     }
 
@@ -245,8 +245,8 @@ extends Module {
             this.disable();
             return true;
         }
-        if (Selftrap.mc.field_71439_g.field_71071_by.field_70461_c != this.lastHotbarSlot && Selftrap.mc.field_71439_g.field_71071_by.field_70461_c != InventoryUtil.findHotbarBlock(this.currentMode == Mode.WEBS ? BlockWeb.class : BlockObsidian.class)) {
-            this.lastHotbarSlot = Selftrap.mc.field_71439_g.field_71071_by.field_70461_c;
+        if (Selftrap.mc.player.inventory.currentItem != this.lastHotbarSlot && Selftrap.mc.player.inventory.currentItem != InventoryUtil.findHotbarBlock(this.currentMode == Mode.WEBS ? BlockWeb.class : BlockObsidian.class)) {
+            this.lastHotbarSlot = Selftrap.mc.player.inventory.currentItem;
         }
         this.switchItem(true);
         if (!this.freecam.getValue().booleanValue() && Phobos.moduleManager.isModuleEnabled(Freecam.class)) {
@@ -261,21 +261,21 @@ extends Module {
         int targetSlot = -1;
         switch (this.currentMode) {
             case WEBS: {
-                this.hasOffhand = InventoryUtil.isBlock(Selftrap.mc.field_71439_g.func_184592_cb().func_77973_b(), BlockWeb.class);
+                this.hasOffhand = InventoryUtil.isBlock(Selftrap.mc.player.getHeldItemOffhand().getItem(), BlockWeb.class);
                 targetSlot = InventoryUtil.findHotbarBlock(BlockWeb.class);
                 break;
             }
             case OBSIDIAN: {
-                this.hasOffhand = InventoryUtil.isBlock(Selftrap.mc.field_71439_g.func_184592_cb().func_77973_b(), BlockObsidian.class);
+                this.hasOffhand = InventoryUtil.isBlock(Selftrap.mc.player.getHeldItemOffhand().getItem(), BlockObsidian.class);
                 targetSlot = InventoryUtil.findHotbarBlock(BlockObsidian.class);
                 break;
             }
         }
-        if (this.onlySafe.getValue().booleanValue() && !EntityUtil.isSafe((Entity)Selftrap.mc.field_71439_g)) {
+        if (this.onlySafe.getValue().booleanValue() && !EntityUtil.isSafe((Entity)Selftrap.mc.player)) {
             this.disable();
             return true;
         }
-        if (!this.hasOffhand && targetSlot == -1 && (!this.offhand.getValue().booleanValue() || !EntityUtil.isSafe((Entity)Selftrap.mc.field_71439_g) && this.onlySafe.getValue().booleanValue())) {
+        if (!this.hasOffhand && targetSlot == -1 && (!this.offhand.getValue().booleanValue() || !EntityUtil.isSafe((Entity)Selftrap.mc.player) && this.onlySafe.getValue().booleanValue())) {
             return true;
         }
         if (this.offhand.getValue().booleanValue() && !this.hasOffhand) {

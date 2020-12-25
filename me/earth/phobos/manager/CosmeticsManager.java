@@ -31,11 +31,11 @@ implements Util {
     }
 
     public List<ModelBase> getRenderModels(EntityPlayer player) {
-        return this.cosmeticsUserMap.get(player.func_110124_au().toString());
+        return this.cosmeticsUserMap.get(player.getUniqueID().toString());
     }
 
     public boolean hasCosmetics(EntityPlayer player) {
-        return this.cosmeticsUserMap.containsKey(player.func_110124_au().toString());
+        return this.cosmeticsUserMap.containsKey(player.getUniqueID().toString());
     }
 }
 

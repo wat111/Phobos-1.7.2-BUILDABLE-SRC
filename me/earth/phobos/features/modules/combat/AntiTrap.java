@@ -69,7 +69,7 @@ extends Module {
             this.disable();
             return;
         }
-        this.lastHotbarSlot = AntiTrap.mc.field_71439_g.field_71071_by.field_70461_c;
+        this.lastHotbarSlot = AntiTrap.mc.player.inventory.currentItem;
     }
 
     @Override
@@ -88,19 +88,19 @@ extends Module {
     }
 
     public void doAntiTrap() {
-        boolean bl = this.offhand = AntiTrap.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_185158_cP;
+        boolean bl = this.offhand = AntiTrap.mc.player.getHeldItemOffhand().getItem() == Items.END_CRYSTAL;
         if (!this.offhand && InventoryUtil.findHotbarBlock(ItemEndCrystal.class) == -1) {
             this.disable();
             return;
         }
-        this.lastHotbarSlot = AntiTrap.mc.field_71439_g.field_71071_by.field_70461_c;
+        this.lastHotbarSlot = AntiTrap.mc.player.inventory.currentItem;
         ArrayList<Vec3d> targets = new ArrayList<Vec3d>();
-        Collections.addAll(targets, BlockUtil.convertVec3ds(AntiTrap.mc.field_71439_g.func_174791_d(), this.surroundTargets));
+        Collections.addAll(targets, BlockUtil.convertVec3ds(AntiTrap.mc.player.getPositionVector(), this.surroundTargets));
         EntityPlayer closestPlayer = EntityUtil.getClosestEnemy(6.0);
         if (closestPlayer != null) {
-            targets.sort((vec3d, vec3d2) -> Double.compare(closestPlayer.func_70092_e(vec3d2.field_72450_a, vec3d2.field_72448_b, vec3d2.field_72449_c), closestPlayer.func_70092_e(vec3d.field_72450_a, vec3d.field_72448_b, vec3d.field_72449_c)));
+            targets.sort((vec3d, vec3d2) -> Double.compare(closestPlayer.getDistanceSq(vec3d2.x, vec3d2.y, vec3d2.z), closestPlayer.getDistanceSq(vec3d.x, vec3d.y, vec3d.z)));
             if (this.sortY.getValue().booleanValue()) {
-                targets.sort(Comparator.comparingDouble(vec3d -> vec3d.field_72448_b));
+                targets.sort(Comparator.comparingDouble(vec3d -> vec3d.y));
             }
         }
         for (Vec3d vec3d3 : targets) {
@@ -114,14 +114,14 @@ extends Module {
 
     private void placeCrystal(BlockPos pos) {
         boolean mainhand;
-        boolean bl = mainhand = AntiTrap.mc.field_71439_g.func_184614_ca().func_77973_b() == Items.field_185158_cP;
+        boolean bl = mainhand = AntiTrap.mc.player.getHeldItemMainhand().getItem() == Items.END_CRYSTAL;
         if (!(mainhand || this.offhand || this.switchItem(false))) {
             this.disable();
             return;
         }
-        RayTraceResult result = AntiTrap.mc.field_71441_e.func_72933_a(new Vec3d(AntiTrap.mc.field_71439_g.field_70165_t, AntiTrap.mc.field_71439_g.field_70163_u + (double)AntiTrap.mc.field_71439_g.func_70047_e(), AntiTrap.mc.field_71439_g.field_70161_v), new Vec3d((double)pos.func_177958_n() + 0.5, (double)pos.func_177956_o() - 0.5, (double)pos.func_177952_p() + 0.5));
-        EnumFacing facing = result == null || result.field_178784_b == null ? EnumFacing.UP : result.field_178784_b;
-        float[] angle = MathUtil.calcAngle(AntiTrap.mc.field_71439_g.func_174824_e(mc.func_184121_ak()), new Vec3d((double)((float)pos.func_177958_n() + 0.5f), (double)((float)pos.func_177956_o() - 0.5f), (double)((float)pos.func_177952_p() + 0.5f)));
+        RayTraceResult result = AntiTrap.mc.world.rayTraceBlocks(new Vec3d(AntiTrap.mc.player.posX, AntiTrap.mc.player.posY + (double)AntiTrap.mc.player.getEyeHeight(), AntiTrap.mc.player.posZ), new Vec3d((double)pos.getX() + 0.5, (double)pos.getY() - 0.5, (double)pos.getZ() + 0.5));
+        EnumFacing facing = result == null || result.sideHit == null ? EnumFacing.UP : result.sideHit;
+        float[] angle = MathUtil.calcAngle(AntiTrap.mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d((double)((float)pos.getX() + 0.5f), (double)((float)pos.getY() - 0.5f), (double)((float)pos.getZ() + 0.5f)));
         switch (this.rotate.getValue()) {
             case NONE: {
                 break;
@@ -131,13 +131,13 @@ extends Module {
                 break;
             }
             case PACKET: {
-                AntiTrap.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.Rotation(angle[0], (float)MathHelper.func_180184_b((int)((int)angle[1]), (int)360), AntiTrap.mc.field_71439_g.field_70122_E));
+                AntiTrap.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Rotation(angle[0], (float)MathHelper.normalizeAngle((int)((int)angle[1]), (int)360), AntiTrap.mc.player.onGround));
                 break;
             }
         }
         placedPos.add(pos);
-        AntiTrap.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayerTryUseItemOnBlock(pos, facing, this.offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0.0f, 0.0f, 0.0f));
-        AntiTrap.mc.field_71439_g.func_184609_a(EnumHand.MAIN_HAND);
+        AntiTrap.mc.player.connection.sendPacket((Packet)new CPacketPlayerTryUseItemOnBlock(pos, facing, this.offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0.0f, 0.0f, 0.0f));
+        AntiTrap.mc.player.swingArm(EnumHand.MAIN_HAND);
         this.timer.reset();
     }
 
@@ -145,7 +145,7 @@ extends Module {
         if (this.offhand) {
             return true;
         }
-        boolean[] value = InventoryUtil.switchItemToItem(back, this.lastHotbarSlot, this.switchedItem, this.switchMode.getValue(), Items.field_185158_cP);
+        boolean[] value = InventoryUtil.switchItemToItem(back, this.lastHotbarSlot, this.switchedItem, this.switchMode.getValue(), Items.END_CRYSTAL);
         this.switchedItem = value[0];
         return value[1];
     }

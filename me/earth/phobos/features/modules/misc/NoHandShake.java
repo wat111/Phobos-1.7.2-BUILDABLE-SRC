@@ -27,11 +27,11 @@ extends Module {
     @SubscribeEvent
     public void onPacketSend(PacketEvent.Send event) {
         CPacketCustomPayload packet;
-        if (event.getPacket() instanceof FMLProxyPacket && !mc.func_71356_B()) {
+        if (event.getPacket() instanceof FMLProxyPacket && !mc.isSingleplayer()) {
             event.setCanceled(true);
         }
-        if (event.getPacket() instanceof CPacketCustomPayload && (packet = (CPacketCustomPayload)event.getPacket()).func_149559_c().equals("MC|Brand")) {
-            packet.field_149561_c = new PacketBuffer(Unpooled.buffer()).func_180714_a("vanilla");
+        if (event.getPacket() instanceof CPacketCustomPayload && (packet = (CPacketCustomPayload)event.getPacket()).getChannelName().equals("MC|Brand")) {
+            packet.data = new PacketBuffer(Unpooled.buffer()).writeString("vanilla");
         }
     }
 }

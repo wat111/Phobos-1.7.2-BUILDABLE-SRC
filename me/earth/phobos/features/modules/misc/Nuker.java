@@ -66,7 +66,7 @@ extends Module {
     @SubscribeEvent
     public void onClickBlock(BlockEvent event) {
         Block block;
-        if (event.getStage() == 3 && (this.mode.getValue() == Mode.SELECTION || this.mode.getValue() == Mode.NUKE) && (block = Nuker.mc.field_71441_e.func_180495_p(event.pos).func_177230_c()) != null && block != this.selected) {
+        if (event.getStage() == 3 && (this.mode.getValue() == Mode.SELECTION || this.mode.getValue() == Mode.NUKE) && (block = Nuker.mc.world.getBlockState(event.pos).getBlock()) != null && block != this.selected) {
             this.selected = block;
             event.setCanceled(true);
         }
@@ -91,24 +91,24 @@ extends Module {
                 if (pos != null) {
                     if (this.mode.getValue() == Mode.SELECTION || this.mode.getValue() == Mode.ALL) {
                         if (this.rotate.getValue().booleanValue()) {
-                            float[] angle = MathUtil.calcAngle(Nuker.mc.field_71439_g.func_174824_e(mc.func_184121_ak()), new Vec3d((double)((float)pos.func_177958_n() + 0.5f), (double)((float)pos.func_177956_o() + 0.5f), (double)((float)pos.func_177952_p() + 0.5f)));
+                            float[] angle = MathUtil.calcAngle(Nuker.mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d((double)((float)pos.getX() + 0.5f), (double)((float)pos.getY() + 0.5f), (double)((float)pos.getZ() + 0.5f)));
                             Phobos.rotationManager.setPlayerRotations(angle[0], angle[1]);
                         }
                         if (this.canBreak(pos)) {
-                            Nuker.mc.field_71442_b.func_180512_c(pos, Nuker.mc.field_71439_g.func_174811_aO());
-                            Nuker.mc.field_71439_g.func_184609_a(EnumHand.MAIN_HAND);
+                            Nuker.mc.playerController.onPlayerDamageBlock(pos, Nuker.mc.player.getHorizontalFacing());
+                            Nuker.mc.player.swingArm(EnumHand.MAIN_HAND);
                         }
                     } else {
                         for (int i = 0; i < this.blockPerTick.getValue(); ++i) {
                             pos = this.getClosestBlockSelection();
                             if (pos == null) continue;
                             if (this.rotate.getValue().booleanValue()) {
-                                float[] angle = MathUtil.calcAngle(Nuker.mc.field_71439_g.func_174824_e(mc.func_184121_ak()), new Vec3d((double)((float)pos.func_177958_n() + 0.5f), (double)((float)pos.func_177956_o() + 0.5f), (double)((float)pos.func_177952_p() + 0.5f)));
+                                float[] angle = MathUtil.calcAngle(Nuker.mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d((double)((float)pos.getX() + 0.5f), (double)((float)pos.getY() + 0.5f), (double)((float)pos.getZ() + 0.5f)));
                                 Phobos.rotationManager.setPlayerRotations(angle[0], angle[1]);
                             }
                             if (!this.timer.passedMs(this.delay.getValue().intValue())) continue;
-                            Nuker.mc.field_71442_b.func_180512_c(pos, Nuker.mc.field_71439_g.func_174811_aO());
-                            Nuker.mc.field_71439_g.func_184609_a(EnumHand.MAIN_HAND);
+                            Nuker.mc.playerController.onPlayerDamageBlock(pos, Nuker.mc.player.getHorizontalFacing());
+                            Nuker.mc.player.swingArm(EnumHand.MAIN_HAND);
                             this.timer.reset();
                         }
                     }
@@ -119,7 +119,7 @@ extends Module {
             }
             if (this.hopperNuker.getValue().booleanValue()) {
                 ArrayList<Block> blocklist = new ArrayList<Block>();
-                blocklist.add((Block)Blocks.field_150438_bZ);
+                blocklist.add((Block)Blocks.HOPPER);
                 this.breakBlocks(blocklist);
             }
         }
@@ -129,40 +129,40 @@ extends Module {
         BlockPos pos = this.getNearestBlock(blocks);
         if (pos != null) {
             if (!this.isMining) {
-                this.oldSlot = Nuker.mc.field_71439_g.field_71071_by.field_70461_c;
+                this.oldSlot = Nuker.mc.player.inventory.currentItem;
                 this.isMining = true;
             }
             if (this.rotate.getValue().booleanValue()) {
-                float[] angle = MathUtil.calcAngle(Nuker.mc.field_71439_g.func_174824_e(mc.func_184121_ak()), new Vec3d((double)((float)pos.func_177958_n() + 0.5f), (double)((float)pos.func_177956_o() + 0.5f), (double)((float)pos.func_177952_p() + 0.5f)));
+                float[] angle = MathUtil.calcAngle(Nuker.mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d((double)((float)pos.getX() + 0.5f), (double)((float)pos.getY() + 0.5f), (double)((float)pos.getZ() + 0.5f)));
                 Phobos.rotationManager.setPlayerRotations(angle[0], angle[1]);
             }
             if (this.canBreak(pos)) {
                 if (this.autoSwitch.getValue().booleanValue()) {
                     int newSlot = -1;
                     for (int i = 0; i < 9; ++i) {
-                        ItemStack stack = Nuker.mc.field_71439_g.field_71071_by.func_70301_a(i);
-                        if (stack == ItemStack.field_190927_a || !(stack.func_77973_b() instanceof ItemPickaxe)) continue;
+                        ItemStack stack = Nuker.mc.player.inventory.getStackInSlot(i);
+                        if (stack == ItemStack.EMPTY || !(stack.getItem() instanceof ItemPickaxe)) continue;
                         newSlot = i;
                         break;
                     }
                     if (newSlot != -1) {
-                        Nuker.mc.field_71439_g.field_71071_by.field_70461_c = newSlot;
+                        Nuker.mc.player.inventory.currentItem = newSlot;
                     }
                 }
-                Nuker.mc.field_71442_b.func_180512_c(pos, Nuker.mc.field_71439_g.func_174811_aO());
-                Nuker.mc.field_71439_g.func_184609_a(EnumHand.MAIN_HAND);
+                Nuker.mc.playerController.onPlayerDamageBlock(pos, Nuker.mc.player.getHorizontalFacing());
+                Nuker.mc.player.swingArm(EnumHand.MAIN_HAND);
             }
         } else if (this.autoSwitch.getValue().booleanValue() && this.oldSlot != -1) {
-            Nuker.mc.field_71439_g.field_71071_by.field_70461_c = this.oldSlot;
+            Nuker.mc.player.inventory.currentItem = this.oldSlot;
             this.oldSlot = -1;
             this.isMining = false;
         }
     }
 
     private boolean canBreak(BlockPos pos) {
-        IBlockState blockState = Nuker.mc.field_71441_e.func_180495_p(pos);
-        Block block = blockState.func_177230_c();
-        return block.func_176195_g(blockState, (World)Nuker.mc.field_71441_e, pos) != -1.0f;
+        IBlockState blockState = Nuker.mc.world.getBlockState(pos);
+        Block block = blockState.getBlock();
+        return block.getBlockHardness(blockState, (World)Nuker.mc.world, pos) != -1.0f;
     }
 
     private BlockPos getNearestBlock(List<Block> blocks) {
@@ -171,9 +171,9 @@ extends Module {
         for (double x = maxDist; x >= -maxDist; x -= 1.0) {
             for (double y = maxDist; y >= -maxDist; y -= 1.0) {
                 for (double z = maxDist; z >= -maxDist; z -= 1.0) {
-                    BlockPos pos = new BlockPos(Nuker.mc.field_71439_g.field_70165_t + x, Nuker.mc.field_71439_g.field_70163_u + y, Nuker.mc.field_71439_g.field_70161_v + z);
-                    double dist = Nuker.mc.field_71439_g.func_70092_e((double)pos.func_177958_n(), (double)pos.func_177956_o(), (double)pos.func_177952_p());
-                    if (!(dist <= maxDist) || !blocks.contains((Object)Nuker.mc.field_71441_e.func_180495_p(pos).func_177230_c()) || !this.canBreak(pos)) continue;
+                    BlockPos pos = new BlockPos(Nuker.mc.player.posX + x, Nuker.mc.player.posY + y, Nuker.mc.player.posZ + z);
+                    double dist = Nuker.mc.player.getDistanceSq((double)pos.getX(), (double)pos.getY(), (double)pos.getZ());
+                    if (!(dist <= maxDist) || !blocks.contains((Object)Nuker.mc.world.getBlockState(pos).getBlock()) || !this.canBreak(pos)) continue;
                     maxDist = dist;
                     ret = pos;
                 }
@@ -188,9 +188,9 @@ extends Module {
         for (float x = maxDist; x >= -maxDist; x -= 1.0f) {
             for (float y = maxDist; y >= -maxDist; y -= 1.0f) {
                 for (float z = maxDist; z >= -maxDist; z -= 1.0f) {
-                    BlockPos pos = new BlockPos(Nuker.mc.field_71439_g.field_70165_t + (double)x, Nuker.mc.field_71439_g.field_70163_u + (double)y, Nuker.mc.field_71439_g.field_70161_v + (double)z);
-                    double dist = Nuker.mc.field_71439_g.func_70011_f((double)pos.func_177958_n(), (double)pos.func_177956_o(), (double)pos.func_177952_p());
-                    if (!(dist <= (double)maxDist) || Nuker.mc.field_71441_e.func_180495_p(pos).func_177230_c() == Blocks.field_150350_a || Nuker.mc.field_71441_e.func_180495_p(pos).func_177230_c() instanceof BlockLiquid || !this.canBreak(pos) || !((double)pos.func_177956_o() >= Nuker.mc.field_71439_g.field_70163_u)) continue;
+                    BlockPos pos = new BlockPos(Nuker.mc.player.posX + (double)x, Nuker.mc.player.posY + (double)y, Nuker.mc.player.posZ + (double)z);
+                    double dist = Nuker.mc.player.getDistance((double)pos.getX(), (double)pos.getY(), (double)pos.getZ());
+                    if (!(dist <= (double)maxDist) || Nuker.mc.world.getBlockState(pos).getBlock() == Blocks.AIR || Nuker.mc.world.getBlockState(pos).getBlock() instanceof BlockLiquid || !this.canBreak(pos) || !((double)pos.getY() >= Nuker.mc.player.posY)) continue;
                     maxDist = (float)dist;
                     ret = pos;
                 }
@@ -205,9 +205,9 @@ extends Module {
         for (float x = maxDist; x >= -maxDist; x -= 1.0f) {
             for (float y = maxDist; y >= -maxDist; y -= 1.0f) {
                 for (float z = maxDist; z >= -maxDist; z -= 1.0f) {
-                    BlockPos pos = new BlockPos(Nuker.mc.field_71439_g.field_70165_t + (double)x, Nuker.mc.field_71439_g.field_70163_u + (double)y, Nuker.mc.field_71439_g.field_70161_v + (double)z);
-                    double dist = Nuker.mc.field_71439_g.func_70011_f((double)pos.func_177958_n(), (double)pos.func_177956_o(), (double)pos.func_177952_p());
-                    if (!(dist <= (double)maxDist) || Nuker.mc.field_71441_e.func_180495_p(pos).func_177230_c() == Blocks.field_150350_a || Nuker.mc.field_71441_e.func_180495_p(pos).func_177230_c() instanceof BlockLiquid || Nuker.mc.field_71441_e.func_180495_p(pos).func_177230_c() != this.selected || !this.canBreak(pos) || !((double)pos.func_177956_o() >= Nuker.mc.field_71439_g.field_70163_u)) continue;
+                    BlockPos pos = new BlockPos(Nuker.mc.player.posX + (double)x, Nuker.mc.player.posY + (double)y, Nuker.mc.player.posZ + (double)z);
+                    double dist = Nuker.mc.player.getDistance((double)pos.getX(), (double)pos.getY(), (double)pos.getZ());
+                    if (!(dist <= (double)maxDist) || Nuker.mc.world.getBlockState(pos).getBlock() == Blocks.AIR || Nuker.mc.world.getBlockState(pos).getBlock() instanceof BlockLiquid || Nuker.mc.world.getBlockState(pos).getBlock() != this.selected || !this.canBreak(pos) || !((double)pos.getY() >= Nuker.mc.player.posY)) continue;
                     maxDist = (float)dist;
                     ret = pos;
                 }

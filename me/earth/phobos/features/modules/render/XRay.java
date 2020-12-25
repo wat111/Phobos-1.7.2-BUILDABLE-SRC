@@ -39,12 +39,12 @@ extends Module {
 
     @Override
     public void onEnable() {
-        XRay.mc.field_71438_f.func_72712_a();
+        XRay.mc.renderGlobal.loadRenderers();
     }
 
     @Override
     public void onDisable() {
-        XRay.mc.field_71438_f.func_72712_a();
+        XRay.mc.renderGlobal.loadRenderers();
     }
 
     @SubscribeEvent
@@ -57,7 +57,7 @@ extends Module {
                 this.register(new Setting<Object>(this.newBlock.getPlannedValue(), Boolean.valueOf(true), v -> this.showBlocks.getValue()));
                 Command.sendMessage("<Xray> Added new Block: " + this.newBlock.getPlannedValue());
                 if (this.isOn()) {
-                    XRay.mc.field_71438_f.func_72712_a();
+                    XRay.mc.renderGlobal.loadRenderers();
                 }
                 event.setCanceled(true);
             } else {
@@ -68,7 +68,7 @@ extends Module {
                 if (setting.getValue() instanceof Boolean && !((Boolean)setting.getPlannedValue()).booleanValue()) {
                     this.unregister(setting);
                     if (this.isOn()) {
-                        XRay.mc.field_71438_f.func_72712_a();
+                        XRay.mc.renderGlobal.loadRenderers();
                     }
                     event.setCanceled(true);
                 }
@@ -77,7 +77,7 @@ extends Module {
     }
 
     public boolean shouldRender(Block block) {
-        return this.shouldRender(block.func_149732_F());
+        return this.shouldRender(block.getLocalizedName());
     }
 
     public boolean shouldRender(String name) {

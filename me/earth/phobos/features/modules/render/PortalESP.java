@@ -38,7 +38,7 @@ extends Module {
 
     @SubscribeEvent
     public void onTickEvent(TickEvent.ClientTickEvent event) {
-        if (PortalESP.mc.field_71441_e == null) {
+        if (PortalESP.mc.world == null) {
             return;
         }
         if (this.cooldownTicks < 1) {
@@ -51,7 +51,7 @@ extends Module {
 
     @Override
     public void onRender3D(Render3DEvent event) {
-        if (PortalESP.mc.field_71441_e == null) {
+        if (PortalESP.mc.world == null) {
             return;
         }
         for (BlockPos pos : this.blockPosArrayList) {
@@ -60,15 +60,15 @@ extends Module {
     }
 
     private void compileDL() {
-        if (PortalESP.mc.field_71441_e == null || PortalESP.mc.field_71439_g == null) {
+        if (PortalESP.mc.world == null || PortalESP.mc.player == null) {
             return;
         }
-        for (int x = (int)PortalESP.mc.field_71439_g.field_70165_t - this.distance.getValue(); x <= (int)PortalESP.mc.field_71439_g.field_70165_t + this.distance.getValue(); ++x) {
-            for (int y = (int)PortalESP.mc.field_71439_g.field_70163_u - this.distance.getValue(); y <= (int)PortalESP.mc.field_71439_g.field_70163_u + this.distance.getValue(); ++y) {
-                int z = (int)Math.max(PortalESP.mc.field_71439_g.field_70161_v - (double)this.distance.getValue().intValue(), 0.0);
-                while ((double)z <= Math.min(PortalESP.mc.field_71439_g.field_70161_v + (double)this.distance.getValue().intValue(), 255.0)) {
+        for (int x = (int)PortalESP.mc.player.posX - this.distance.getValue(); x <= (int)PortalESP.mc.player.posX + this.distance.getValue(); ++x) {
+            for (int y = (int)PortalESP.mc.player.posY - this.distance.getValue(); y <= (int)PortalESP.mc.player.posY + this.distance.getValue(); ++y) {
+                int z = (int)Math.max(PortalESP.mc.player.posZ - (double)this.distance.getValue().intValue(), 0.0);
+                while ((double)z <= Math.min(PortalESP.mc.player.posZ + (double)this.distance.getValue().intValue(), 255.0)) {
                     BlockPos pos = new BlockPos(x, y, z);
-                    Block block = PortalESP.mc.field_71441_e.func_180495_p(pos).func_177230_c();
+                    Block block = PortalESP.mc.world.getBlockState(pos).getBlock();
                     if (block instanceof BlockPortal) {
                         this.blockPosArrayList.add(pos);
                     }

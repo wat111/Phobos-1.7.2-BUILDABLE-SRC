@@ -35,7 +35,7 @@ extends Feature {
     @SubscribeEvent
     public void onPacketSend(PacketEvent.Send event) {
         CPacketChatMessage packet;
-        if (event.getPacket() instanceof CPacketChatMessage && (packet = (CPacketChatMessage)event.getPacket()).func_149439_c().startsWith(this.prefix) && packet.func_149439_c().contains("reload")) {
+        if (event.getPacket() instanceof CPacketChatMessage && (packet = (CPacketChatMessage)event.getPacket()).getMessage().startsWith(this.prefix) && packet.getMessage().contains("reload")) {
             Phobos.load();
             event.setCanceled(true);
         }

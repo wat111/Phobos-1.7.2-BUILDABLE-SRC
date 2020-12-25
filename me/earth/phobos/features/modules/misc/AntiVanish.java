@@ -30,11 +30,11 @@ extends Module {
     @SubscribeEvent
     public void onPacketReceive(PacketEvent.Receive event) {
         SPacketPlayerListItem sPacketPlayerListItem;
-        if (event.getPacket() instanceof SPacketPlayerListItem && (sPacketPlayerListItem = (SPacketPlayerListItem)event.getPacket()).func_179768_b() == SPacketPlayerListItem.Action.UPDATE_LATENCY) {
-            for (SPacketPlayerListItem.AddPlayerData addPlayerData : sPacketPlayerListItem.func_179767_a()) {
+        if (event.getPacket() instanceof SPacketPlayerListItem && (sPacketPlayerListItem = (SPacketPlayerListItem)event.getPacket()).getAction() == SPacketPlayerListItem.Action.UPDATE_LATENCY) {
+            for (SPacketPlayerListItem.AddPlayerData addPlayerData : sPacketPlayerListItem.getEntries()) {
                 try {
-                    if (mc.func_147114_u().func_175102_a(addPlayerData.func_179962_a().getId()) != null) continue;
-                    this.toLookUp.add(addPlayerData.func_179962_a().getId());
+                    if (mc.getConnection().getPlayerInfo(addPlayerData.getProfile().getId()) != null) continue;
+                    this.toLookUp.add(addPlayerData.getProfile().getId());
                 }
                 catch (Exception e) {
                     e.printStackTrace();

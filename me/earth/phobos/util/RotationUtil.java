@@ -30,13 +30,13 @@ import net.minecraft.util.math.Vec3i;
 public class RotationUtil
 implements Util {
     public static Vec3d getEyesPos() {
-        return new Vec3d(RotationUtil.mc.field_71439_g.field_70165_t, RotationUtil.mc.field_71439_g.field_70163_u + (double)RotationUtil.mc.field_71439_g.func_70047_e(), RotationUtil.mc.field_71439_g.field_70161_v);
+        return new Vec3d(RotationUtil.mc.player.posX, RotationUtil.mc.player.posY + (double)RotationUtil.mc.player.getEyeHeight(), RotationUtil.mc.player.posZ);
     }
 
     public static double[] calculateLookAt(double px, double py, double pz, EntityPlayer me) {
-        double dirx = me.field_70165_t - px;
-        double diry = me.field_70163_u - py;
-        double dirz = me.field_70161_v - pz;
+        double dirx = me.posX - px;
+        double diry = me.posY - py;
+        double dirz = me.posZ - pz;
         double len = Math.sqrt(dirx * dirx + diry * diry + dirz * dirz);
         double pitch = Math.asin(diry /= len);
         double yaw = Math.atan2(dirz /= len, dirx /= len);
@@ -47,22 +47,22 @@ implements Util {
 
     public static float[] getLegitRotations(Vec3d vec) {
         Vec3d eyesPos = RotationUtil.getEyesPos();
-        double diffX = vec.field_72450_a - eyesPos.field_72450_a;
-        double diffY = vec.field_72448_b - eyesPos.field_72448_b;
-        double diffZ = vec.field_72449_c - eyesPos.field_72449_c;
+        double diffX = vec.x - eyesPos.x;
+        double diffY = vec.y - eyesPos.y;
+        double diffZ = vec.z - eyesPos.z;
         double diffXZ = Math.sqrt(diffX * diffX + diffZ * diffZ);
         float yaw = (float)Math.toDegrees(Math.atan2(diffZ, diffX)) - 90.0f;
         float pitch = (float)(-Math.toDegrees(Math.atan2(diffY, diffXZ)));
-        return new float[]{RotationUtil.mc.field_71439_g.field_70177_z + MathHelper.func_76142_g((float)(yaw - RotationUtil.mc.field_71439_g.field_70177_z)), RotationUtil.mc.field_71439_g.field_70125_A + MathHelper.func_76142_g((float)(pitch - RotationUtil.mc.field_71439_g.field_70125_A))};
+        return new float[]{RotationUtil.mc.player.rotationYaw + MathHelper.wrapDegrees((float)(yaw - RotationUtil.mc.player.rotationYaw)), RotationUtil.mc.player.rotationPitch + MathHelper.wrapDegrees((float)(pitch - RotationUtil.mc.player.rotationPitch))};
     }
 
     public static float[] simpleFacing(EnumFacing facing) {
         switch (facing) {
             case DOWN: {
-                return new float[]{RotationUtil.mc.field_71439_g.field_70177_z, 90.0f};
+                return new float[]{RotationUtil.mc.player.rotationYaw, 90.0f};
             }
             case UP: {
-                return new float[]{RotationUtil.mc.field_71439_g.field_70177_z, -90.0f};
+                return new float[]{RotationUtil.mc.player.rotationYaw, -90.0f};
             }
             case NORTH: {
                 return new float[]{180.0f, 0.0f};
@@ -78,26 +78,26 @@ implements Util {
     }
 
     public static void faceYawAndPitch(float yaw, float pitch) {
-        RotationUtil.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.Rotation(yaw, pitch, RotationUtil.mc.field_71439_g.field_70122_E));
+        RotationUtil.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Rotation(yaw, pitch, RotationUtil.mc.player.onGround));
     }
 
     public static void faceVector(Vec3d vec, boolean normalizeAngle) {
         float[] rotations = RotationUtil.getLegitRotations(vec);
-        RotationUtil.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.Rotation(rotations[0], normalizeAngle ? (float)MathHelper.func_180184_b((int)((int)rotations[1]), (int)360) : rotations[1], RotationUtil.mc.field_71439_g.field_70122_E));
+        RotationUtil.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Rotation(rotations[0], normalizeAngle ? (float)MathHelper.normalizeAngle((int)((int)rotations[1]), (int)360) : rotations[1], RotationUtil.mc.player.onGround));
     }
 
     public static void faceEntity(Entity entity) {
-        float[] angle = MathUtil.calcAngle(RotationUtil.mc.field_71439_g.func_174824_e(mc.func_184121_ak()), entity.func_174824_e(mc.func_184121_ak()));
+        float[] angle = MathUtil.calcAngle(RotationUtil.mc.player.getPositionEyes(mc.getRenderPartialTicks()), entity.getPositionEyes(mc.getRenderPartialTicks()));
         RotationUtil.faceYawAndPitch(angle[0], angle[1]);
     }
 
     public static float[] getAngle(Entity entity) {
-        return MathUtil.calcAngle(RotationUtil.mc.field_71439_g.func_174824_e(mc.func_184121_ak()), entity.func_174824_e(mc.func_184121_ak()));
+        return MathUtil.calcAngle(RotationUtil.mc.player.getPositionEyes(mc.getRenderPartialTicks()), entity.getPositionEyes(mc.getRenderPartialTicks()));
     }
 
     public static float transformYaw() {
-        float yaw = RotationUtil.mc.field_71439_g.field_70177_z % 360.0f;
-        if (RotationUtil.mc.field_71439_g.field_70177_z > 0.0f) {
+        float yaw = RotationUtil.mc.player.rotationYaw % 360.0f;
+        if (RotationUtil.mc.player.rotationYaw > 0.0f) {
             if (yaw > 180.0f) {
                 yaw = -180.0f + (yaw - 180.0f);
             }
@@ -111,17 +111,17 @@ implements Util {
     }
 
     public static boolean isInFov(BlockPos pos) {
-        return pos != null && (RotationUtil.mc.field_71439_g.func_174818_b(pos) < 4.0 || RotationUtil.yawDist(pos) < (double)(RotationUtil.getHalvedfov() + 2.0f));
+        return pos != null && (RotationUtil.mc.player.getDistanceSq(pos) < 4.0 || RotationUtil.yawDist(pos) < (double)(RotationUtil.getHalvedfov() + 2.0f));
     }
 
     public static boolean isInFov(Entity entity) {
-        return entity != null && (RotationUtil.mc.field_71439_g.func_70068_e(entity) < 4.0 || RotationUtil.yawDist(entity) < (double)(RotationUtil.getHalvedfov() + 2.0f));
+        return entity != null && (RotationUtil.mc.player.getDistanceSq(entity) < 4.0 || RotationUtil.yawDist(entity) < (double)(RotationUtil.getHalvedfov() + 2.0f));
     }
 
     public static double yawDist(BlockPos pos) {
         if (pos != null) {
-            Vec3d difference = new Vec3d((Vec3i)pos).func_178788_d(RotationUtil.mc.field_71439_g.func_174824_e(mc.func_184121_ak()));
-            double d = Math.abs((double)RotationUtil.mc.field_71439_g.field_70177_z - (Math.toDegrees(Math.atan2(difference.field_72449_c, difference.field_72450_a)) - 90.0)) % 360.0;
+            Vec3d difference = new Vec3d((Vec3i)pos).subtract(RotationUtil.mc.player.getPositionEyes(mc.getRenderPartialTicks()));
+            double d = Math.abs((double)RotationUtil.mc.player.rotationYaw - (Math.toDegrees(Math.atan2(difference.z, difference.x)) - 90.0)) % 360.0;
             return d > 180.0 ? 360.0 - d : d;
         }
         return 0.0;
@@ -129,27 +129,27 @@ implements Util {
 
     public static double yawDist(Entity e) {
         if (e != null) {
-            Vec3d difference = e.func_174791_d().func_72441_c(0.0, (double)(e.func_70047_e() / 2.0f), 0.0).func_178788_d(RotationUtil.mc.field_71439_g.func_174824_e(mc.func_184121_ak()));
-            double d = Math.abs((double)RotationUtil.mc.field_71439_g.field_70177_z - (Math.toDegrees(Math.atan2(difference.field_72449_c, difference.field_72450_a)) - 90.0)) % 360.0;
+            Vec3d difference = e.getPositionVector().addVector(0.0, (double)(e.getEyeHeight() / 2.0f), 0.0).subtract(RotationUtil.mc.player.getPositionEyes(mc.getRenderPartialTicks()));
+            double d = Math.abs((double)RotationUtil.mc.player.rotationYaw - (Math.toDegrees(Math.atan2(difference.z, difference.x)) - 90.0)) % 360.0;
             return d > 180.0 ? 360.0 - d : d;
         }
         return 0.0;
     }
 
     public static boolean isInFov(Vec3d vec3d, Vec3d other) {
-        if (RotationUtil.mc.field_71439_g.field_70125_A > 30.0f ? other.field_72448_b > RotationUtil.mc.field_71439_g.field_70163_u : RotationUtil.mc.field_71439_g.field_70125_A < -30.0f && other.field_72448_b < RotationUtil.mc.field_71439_g.field_70163_u) {
+        if (RotationUtil.mc.player.rotationPitch > 30.0f ? other.y > RotationUtil.mc.player.posY : RotationUtil.mc.player.rotationPitch < -30.0f && other.y < RotationUtil.mc.player.posY) {
             return true;
         }
         float angle = MathUtil.calcAngleNoY(vec3d, other)[0] - RotationUtil.transformYaw();
         if (angle < -270.0f) {
             return true;
         }
-        float fov = (ClickGui.getInstance().customFov.getValue() != false ? ClickGui.getInstance().fov.getValue().floatValue() : RotationUtil.mc.field_71474_y.field_74334_X) / 2.0f;
+        float fov = (ClickGui.getInstance().customFov.getValue() != false ? ClickGui.getInstance().fov.getValue().floatValue() : RotationUtil.mc.gameSettings.fovSetting) / 2.0f;
         return angle < fov + 10.0f && angle > -fov - 10.0f;
     }
 
     public static float getFov() {
-        return ClickGui.getInstance().customFov.getValue() != false ? ClickGui.getInstance().fov.getValue().floatValue() : RotationUtil.mc.field_71474_y.field_74334_X;
+        return ClickGui.getInstance().customFov.getValue() != false ? ClickGui.getInstance().fov.getValue().floatValue() : RotationUtil.mc.gameSettings.fovSetting;
     }
 
     public static float getHalvedfov() {
@@ -157,7 +157,7 @@ implements Util {
     }
 
     public static int getDirection4D() {
-        return MathHelper.func_76128_c((double)((double)(RotationUtil.mc.field_71439_g.field_70177_z * 4.0f / 360.0f) + 0.5)) & 3;
+        return MathHelper.floor((double)((double)(RotationUtil.mc.player.rotationYaw * 4.0f / 360.0f) + 0.5)) & 3;
     }
 
     public static String getDirection4D(boolean northRed) {

@@ -22,20 +22,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinServerPinger {
     @Inject(method={"ping"}, at={@At(value="HEAD")}, cancellable=true)
     public void pingHook(ServerData server, CallbackInfo info) throws UnknownHostException {
-        if (server.field_78845_b.equalsIgnoreCase(ServerModule.getInstance().ip.getValue())) {
+        if (server.serverIP.equalsIgnoreCase(ServerModule.getInstance().ip.getValue())) {
             info.cancel();
-        } else if (NoDDoS.getInstance().shouldntPing(server.field_78845_b)) {
-            Phobos.LOGGER.info("NoDDoS preventing Ping to: " + server.field_78845_b);
+        } else if (NoDDoS.getInstance().shouldntPing(server.serverIP)) {
+            Phobos.LOGGER.info("NoDDoS preventing Ping to: " + server.serverIP);
             info.cancel();
         }
     }
 
     @Inject(method={"tryCompatibilityPing"}, at={@At(value="HEAD")}, cancellable=true)
     public void tryCompatibilityPingHook(ServerData server, CallbackInfo info) {
-        if (server.field_78845_b.equalsIgnoreCase(ServerModule.getInstance().ip.getValue())) {
+        if (server.serverIP.equalsIgnoreCase(ServerModule.getInstance().ip.getValue())) {
             info.cancel();
-        } else if (NoDDoS.getInstance().shouldntPing(server.field_78845_b)) {
-            Phobos.LOGGER.info("NoDDoS preventing Compatibility Ping to: " + server.field_78845_b);
+        } else if (NoDDoS.getInstance().shouldntPing(server.serverIP)) {
+            Phobos.LOGGER.info("NoDDoS preventing Compatibility Ping to: " + server.serverIP);
             info.cancel();
         }
     }

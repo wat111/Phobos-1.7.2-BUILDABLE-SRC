@@ -89,12 +89,12 @@ extends Module {
 
     @Override
     public void onUpdate() {
-        if (this.shiftClicker.getValue().booleanValue() && XCarry.mc.field_71462_r instanceof GuiInventory) {
+        if (this.shiftClicker.getValue().booleanValue() && XCarry.mc.currentScreen instanceof GuiInventory) {
             Slot slot;
             boolean ourBind;
             boolean bl = ourBind = this.keyBind.getValue().getKey() != -1 && Keyboard.isKeyDown((int)this.keyBind.getValue().getKey()) && !Keyboard.isKeyDown((int)42);
-            if ((Keyboard.isKeyDown((int)42) && this.withShift.getValue().booleanValue() || ourBind) && Mouse.isButtonDown((int)0) && (slot = ((GuiInventory)XCarry.mc.field_71462_r).getSlotUnderMouse()) != null && InventoryUtil.getEmptyXCarry() != -1) {
-                int slotNumber = slot.field_75222_d;
+            if ((Keyboard.isKeyDown((int)42) && this.withShift.getValue().booleanValue() || ourBind) && Mouse.isButtonDown((int)0) && (slot = ((GuiInventory)XCarry.mc.currentScreen).getSlotUnderMouse()) != null && InventoryUtil.getEmptyXCarry() != -1) {
+                int slotNumber = slot.slotNumber;
                 if (slotNumber > 4 && ourBind) {
                     this.taskList.add(new InventoryUtil.Task(slotNumber));
                     this.taskList.add(new InventoryUtil.Task(InventoryUtil.getEmptyXCarry()));
@@ -127,19 +127,19 @@ extends Module {
                 this.autoDuelOn = false;
             }
             if (this.autoDuelOn) {
-                if (!this.obbySlotDone && !XCarry.mc.field_71439_g.field_71071_by.func_70301_a((int)(this.obbySlot.getValue().intValue() - 1)).field_190928_g) {
+                if (!this.obbySlotDone && !XCarry.mc.player.inventory.getStackInSlot((int)(this.obbySlot.getValue().intValue() - 1)).isEmpty) {
                     this.addTasks(36 + this.obbySlot.getValue() - 1);
                 }
                 this.obbySlotDone = true;
-                if (!this.slot1done && !((Slot)XCarry.mc.field_71439_g.field_71069_bz.field_75151_b.get((int)this.slot1.getValue().intValue())).func_75211_c().field_190928_g) {
+                if (!this.slot1done && !((Slot)XCarry.mc.player.inventoryContainer.inventorySlots.get((int)this.slot1.getValue().intValue())).getStack().isEmpty) {
                     this.addTasks(this.slot1.getValue());
                 }
                 this.slot1done = true;
-                if (!this.slot2done && !((Slot)XCarry.mc.field_71439_g.field_71069_bz.field_75151_b.get((int)this.slot2.getValue().intValue())).func_75211_c().field_190928_g) {
+                if (!this.slot2done && !((Slot)XCarry.mc.player.inventoryContainer.inventorySlots.get((int)this.slot2.getValue().intValue())).getStack().isEmpty) {
                     this.addTasks(this.slot2.getValue());
                 }
                 this.slot2done = true;
-                if (!this.slot3done && !((Slot)XCarry.mc.field_71439_g.field_71069_bz.field_75151_b.get((int)this.slot3.getValue().intValue())).func_75211_c().field_190928_g) {
+                if (!this.slot3done && !((Slot)XCarry.mc.player.inventoryContainer.inventorySlots.get((int)this.slot3.getValue().intValue())).getStack().isEmpty) {
                     this.addTasks(this.slot3.getValue());
                 }
                 this.slot3done = true;
@@ -182,7 +182,7 @@ extends Module {
                 this.closeGui();
                 this.close();
             } else {
-                XCarry.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketCloseWindow(XCarry.mc.field_71439_g.field_71069_bz.field_75152_c));
+                XCarry.mc.player.connection.sendPacket((Packet)new CPacketCloseWindow(XCarry.mc.player.inventoryContainer.windowId));
             }
         }
     }
@@ -196,7 +196,7 @@ extends Module {
     public void onCloseGuiScreen(PacketEvent.Send event) {
         if (this.simpleMode.getValue().booleanValue() && event.getPacket() instanceof CPacketCloseWindow) {
             CPacketCloseWindow packet = (CPacketCloseWindow)event.getPacket();
-            if (packet.field_149556_a == XCarry.mc.field_71439_g.field_71069_bz.field_75152_c) {
+            if (packet.windowId == XCarry.mc.player.inventoryContainer.windowId) {
                 event.setCanceled(true);
             }
         }
@@ -232,7 +232,7 @@ extends Module {
 
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent event) {
-        if (Keyboard.getEventKeyState() && !(XCarry.mc.field_71462_r instanceof PhobosGui) && this.autoStore.getValue().getKey() == Keyboard.getEventKey()) {
+        if (Keyboard.getEventKeyState() && !(XCarry.mc.currentScreen instanceof PhobosGui) && this.autoStore.getValue().getKey() == Keyboard.getEventKey()) {
             this.autoDuelOn = !this.autoDuelOn;
             Command.sendMessage("<XCarry> \u00a7aAutostoring...");
         }
@@ -247,9 +247,9 @@ extends Module {
     private void closeGui() {
         if (this.guiNeedsClose.compareAndSet(true, false) && !XCarry.fullNullCheck()) {
             this.guiCloseGuard = true;
-            XCarry.mc.field_71439_g.func_71053_j();
+            XCarry.mc.player.closeScreen();
             if (this.openedGui != null) {
-                this.openedGui.func_146281_b();
+                this.openedGui.onGuiClosed();
                 this.openedGui = null;
             }
             this.guiCloseGuard = false;
@@ -271,21 +271,21 @@ extends Module {
     private class GuiInventoryWrapper
     extends GuiInventory {
         GuiInventoryWrapper() {
-            super((EntityPlayer)Util.mc.field_71439_g);
+            super((EntityPlayer)Util.mc.player);
         }
 
-        protected void func_73869_a(char typedChar, int keyCode) throws IOException {
-            if (XCarry.this.isEnabled() && (keyCode == 1 || this.field_146297_k.field_71474_y.field_151445_Q.isActiveAndMatches(keyCode))) {
+        protected void keyTyped(char typedChar, int keyCode) throws IOException {
+            if (XCarry.this.isEnabled() && (keyCode == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(keyCode))) {
                 XCarry.this.guiNeedsClose.set(true);
-                this.field_146297_k.func_147108_a(null);
+                this.mc.displayGuiScreen(null);
             } else {
-                super.func_73869_a(typedChar, keyCode);
+                super.keyTyped(typedChar, keyCode);
             }
         }
 
-        public void func_146281_b() {
+        public void onGuiClosed() {
             if (XCarry.this.guiCloseGuard || !XCarry.this.isEnabled()) {
-                super.func_146281_b();
+                super.onGuiClosed();
             }
         }
     }

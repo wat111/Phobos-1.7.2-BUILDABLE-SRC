@@ -31,10 +31,10 @@ extends Feature {
 
     public void updatePlayer() {
         PotionList list = new PotionList();
-        for (PotionEffect effect : PotionManager.mc.field_71439_g.func_70651_bq()) {
+        for (PotionEffect effect : PotionManager.mc.player.getActivePotionEffects()) {
             list.addEffect(effect);
         }
-        this.potions.put((EntityPlayer)PotionManager.mc.field_71439_g, list);
+        this.potions.put((EntityPlayer)PotionManager.mc.player, list);
     }
 
     public void update() {
@@ -43,10 +43,10 @@ extends Feature {
             ArrayList<EntityPlayer> removeList = new ArrayList<EntityPlayer>();
             for (Map.Entry<EntityPlayer, PotionList> potionEntry : this.potions.entrySet()) {
                 boolean notFound = true;
-                for (EntityPlayer player : PotionManager.mc.field_71441_e.field_73010_i) {
+                for (EntityPlayer player : PotionManager.mc.world.playerEntities) {
                     if (this.potions.get((Object)player) == null) {
                         PotionList list = new PotionList();
-                        for (PotionEffect effect : player.func_70651_bq()) {
+                        for (PotionEffect effect : player.getActivePotionEffects()) {
                             list.addEffect(effect);
                         }
                         this.potions.put(player, list);
@@ -65,7 +65,7 @@ extends Feature {
     }
 
     public List<PotionEffect> getOwnPotions() {
-        return this.getPlayerPotions((EntityPlayer)PotionManager.mc.field_71439_g);
+        return this.getPlayerPotions((EntityPlayer)PotionManager.mc.player);
     }
 
     public List<PotionEffect> getPlayerPotions(EntityPlayer player) {
@@ -85,8 +85,8 @@ extends Feature {
     public PotionEffect[] getImportantPotions(EntityPlayer player) {
         PotionEffect[] array = new PotionEffect[3];
         for (PotionEffect effect : this.getPlayerPotions(player)) {
-            Potion potion = effect.func_188419_a();
-            switch (I18n.func_135052_a((String)potion.func_76393_a(), (Object[])new Object[0]).toLowerCase()) {
+            Potion potion = effect.getPotion();
+            switch (I18n.format((String)potion.getName(), (Object[])new Object[0]).toLowerCase()) {
                 case "strength": {
                     array[0] = effect;
                     break;
@@ -105,13 +105,13 @@ extends Feature {
     }
 
     public String getPotionString(PotionEffect effect) {
-        Potion potion = effect.func_188419_a();
-        return I18n.func_135052_a((String)potion.func_76393_a(), (Object[])new Object[0]) + " " + (HUD.getInstance().potions1.getValue() == false && effect.func_76458_c() == 0 ? "" : effect.func_76458_c() + 1 + " ") + "\u00a7f" + Potion.func_188410_a((PotionEffect)effect, (float)1.0f);
+        Potion potion = effect.getPotion();
+        return I18n.format((String)potion.getName(), (Object[])new Object[0]) + " " + (HUD.getInstance().potions1.getValue() == false && effect.getAmplifier() == 0 ? "" : effect.getAmplifier() + 1 + " ") + "\u00a7f" + Potion.getPotionDurationString((PotionEffect)effect, (float)1.0f);
     }
 
     public String getColoredPotionString(PotionEffect effect) {
-        Potion potion = effect.func_188419_a();
-        switch (I18n.func_135052_a((String)potion.func_76393_a(), (Object[])new Object[0])) {
+        Potion potion = effect.getPotion();
+        switch (I18n.format((String)potion.getName(), (Object[])new Object[0])) {
             case "Jump Boost": 
             case "Speed": {
                 return "\u00a7b" + this.getPotionString(effect);
@@ -148,7 +148,7 @@ extends Feature {
         PotionEffect strength = array[0];
         PotionEffect weakness = array[1];
         PotionEffect speed = array[2];
-        return "" + (strength != null ? "\u00a7c S" + (strength.func_76458_c() + 1) + " " + Potion.func_188410_a((PotionEffect)strength, (float)1.0f) : "") + (weakness != null ? "\u00a78 W " + Potion.func_188410_a((PotionEffect)weakness, (float)1.0f) : "") + (speed != null ? "\u00a7b S" + (speed.func_76458_c() + 1) + " " + Potion.func_188410_a((PotionEffect)weakness, (float)1.0f) : "");
+        return "" + (strength != null ? "\u00a7c S" + (strength.getAmplifier() + 1) + " " + Potion.getPotionDurationString((PotionEffect)strength, (float)1.0f) : "") + (weakness != null ? "\u00a78 W " + Potion.getPotionDurationString((PotionEffect)weakness, (float)1.0f) : "") + (speed != null ? "\u00a7b S" + (speed.getAmplifier() + 1) + " " + Potion.getPotionDurationString((PotionEffect)weakness, (float)1.0f) : "");
     }
 
     public String getTextRadarPotion(EntityPlayer player) {
@@ -156,7 +156,7 @@ extends Feature {
         PotionEffect strength = array[0];
         PotionEffect weakness = array[1];
         PotionEffect speed = array[2];
-        return "" + (strength != null ? "\u00a7c S" + (strength.func_76458_c() + 1) + " " : "") + (weakness != null ? "\u00a78 W " : "") + (speed != null ? "\u00a7b S" + (speed.func_76458_c() + 1) + " " : "");
+        return "" + (strength != null ? "\u00a7c S" + (strength.getAmplifier() + 1) + " " : "") + (weakness != null ? "\u00a78 W " : "") + (speed != null ? "\u00a7b S" + (speed.getAmplifier() + 1) + " " : "");
     }
 
     public static class PotionList {

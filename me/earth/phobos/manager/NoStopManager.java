@@ -28,7 +28,7 @@ extends Feature {
             return;
         }
         if (this.running && this.pos != null) {
-            BlockPos currentPos = NoStopManager.mc.field_71439_g.func_180425_c();
+            BlockPos currentPos = NoStopManager.mc.player.getPosition();
             if (currentPos.equals((Object)this.pos)) {
                 BlockUtil.debugPos("<Baritone> Arrived at Position: ", this.pos);
                 this.running = false;
@@ -56,7 +56,7 @@ extends Feature {
     }
 
     public void sendMessage() {
-        NoStopManager.mc.field_71439_g.func_71165_d(this.prefix + "goto " + this.pos.func_177958_n() + " " + this.pos.func_177956_o() + " " + this.pos.func_177952_p());
+        NoStopManager.mc.player.sendChatMessage(this.prefix + "goto " + this.pos.getX() + " " + this.pos.getY() + " " + this.pos.getZ());
     }
 
     public void start(int x, int y, int z) {
@@ -67,8 +67,8 @@ extends Feature {
 
     public void stop() {
         if (this.running) {
-            if (NoStopManager.mc.field_71439_g != null) {
-                NoStopManager.mc.field_71439_g.func_71165_d(this.prefix + "stop");
+            if (NoStopManager.mc.player != null) {
+                NoStopManager.mc.player.sendChatMessage(this.prefix + "stop");
             }
             this.running = false;
         }

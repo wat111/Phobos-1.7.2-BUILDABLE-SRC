@@ -109,13 +109,13 @@ extends Module {
                 }
                 case EVERYONE: {
                     String target = null;
-                    if (mc.func_147114_u() != null && mc.func_147114_u().func_175106_d() != null) {
-                        for (NetworkPlayerInfo info : mc.func_147114_u().func_175106_d()) {
-                            if (info == null || info.func_178854_k() == null) continue;
+                    if (mc.getConnection() != null && mc.getConnection().getPlayerInfoMap() != null) {
+                        for (NetworkPlayerInfo info : mc.getConnection().getPlayerInfoMap()) {
+                            if (info == null || info.getDisplayName() == null) continue;
                             try {
-                                String str = info.func_178854_k().func_150254_d();
-                                String name = StringUtils.func_76338_a((String)str);
-                                if (name.equals(Spammer.mc.field_71439_g.func_70005_c_()) || this.sendPlayers.contains(name)) continue;
+                                String str = info.getDisplayName().getFormattedText();
+                                String name = StringUtils.stripControlCodes((String)str);
+                                if (name.equals(Spammer.mc.player.getName()) || this.sendPlayers.contains(name)) continue;
                                 target = name;
                                 this.sendPlayers.add(name);
                                 break;
@@ -133,7 +133,7 @@ extends Module {
                     return;
                 }
             }
-            Spammer.mc.field_71439_g.func_71165_d(msg);
+            Spammer.mc.player.sendChatMessage(msg);
         } else if (spamMessages.size() > 0) {
             String messageOut;
             if (this.random.getValue().booleanValue()) {
@@ -148,7 +148,7 @@ extends Module {
             if (this.greentext.getValue().booleanValue()) {
                 messageOut = "> " + messageOut;
             }
-            Spammer.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketChatMessage(messageOut.replaceAll("\u00a7", "")));
+            Spammer.mc.player.connection.sendPacket((Packet)new CPacketChatMessage(messageOut.replaceAll("\u00a7", "")));
         }
         this.timer.reset();
     }

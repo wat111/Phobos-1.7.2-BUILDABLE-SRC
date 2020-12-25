@@ -33,7 +33,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class Godmode
 extends Module {
-    public Minecraft mc = Minecraft.func_71410_x();
+    public Minecraft mc = Minecraft.getMinecraft();
     public Entity entity;
     private final Setting<Boolean> remount = this.register(new Setting<Boolean>("Remount", false));
 
@@ -44,13 +44,13 @@ extends Module {
     @Override
     public void onEnable() {
         super.onEnable();
-        if (this.mc.field_71441_e != null && this.mc.field_71439_g.func_184187_bx() != null) {
-            this.entity = this.mc.field_71439_g.func_184187_bx();
-            this.mc.field_71438_f.func_72712_a();
+        if (this.mc.world != null && this.mc.player.getRidingEntity() != null) {
+            this.entity = this.mc.player.getRidingEntity();
+            this.mc.renderGlobal.loadRenderers();
             this.hideEntity();
-            this.mc.field_71439_g.func_70107_b((double)Minecraft.func_71410_x().field_71439_g.func_180425_c().func_177958_n(), (double)(Minecraft.func_71410_x().field_71439_g.func_180425_c().func_177956_o() - 1), (double)Minecraft.func_71410_x().field_71439_g.func_180425_c().func_177952_p());
+            this.mc.player.setPosition((double)Minecraft.getMinecraft().player.getPosition().getX(), (double)(Minecraft.getMinecraft().player.getPosition().getY() - 1), (double)Minecraft.getMinecraft().player.getPosition().getZ());
         }
-        if (this.mc.field_71441_e != null && this.remount.getValue().booleanValue()) {
+        if (this.mc.world != null && this.remount.getValue().booleanValue()) {
             this.remount.setValue(false);
         }
     }
@@ -61,9 +61,9 @@ extends Module {
         if (this.remount.getValue().booleanValue()) {
             this.remount.setValue(false);
         }
-        this.mc.field_71439_g.func_184210_p();
-        this.mc.func_147114_u().func_147297_a((Packet)new CPacketEntityAction((Entity)this.mc.field_71439_g, CPacketEntityAction.Action.START_SNEAKING));
-        this.mc.func_147114_u().func_147297_a((Packet)new CPacketEntityAction((Entity)this.mc.field_71439_g, CPacketEntityAction.Action.STOP_SNEAKING));
+        this.mc.player.dismountRidingEntity();
+        this.mc.getConnection().sendPacket((Packet)new CPacketEntityAction((Entity)this.mc.player, CPacketEntityAction.Action.START_SNEAKING));
+        this.mc.getConnection().sendPacket((Packet)new CPacketEntityAction((Entity)this.mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
     }
 
     @SubscribeEvent
@@ -74,16 +74,16 @@ extends Module {
     }
 
     private void hideEntity() {
-        if (this.mc.field_71439_g.func_184187_bx() != null) {
-            this.mc.field_71439_g.func_184210_p();
-            this.mc.field_71441_e.func_72900_e(this.entity);
+        if (this.mc.player.getRidingEntity() != null) {
+            this.mc.player.dismountRidingEntity();
+            this.mc.world.removeEntity(this.entity);
         }
     }
 
     private void showEntity(Entity entity2) {
-        entity2.field_70128_L = false;
-        this.mc.field_71441_e.field_72996_f.add(entity2);
-        this.mc.field_71439_g.func_184205_a(entity2, true);
+        entity2.isDead = false;
+        this.mc.world.loadedEntityList.add(entity2);
+        this.mc.player.startRiding(entity2, true);
     }
 
     @SubscribeEvent
@@ -92,10 +92,10 @@ extends Module {
             if (this.remount.getValue().booleanValue() && Objects.requireNonNull(Phobos.moduleManager.getModuleByClass(Godmode.class)).isEnabled()) {
                 this.showEntity(this.entity);
             }
-            this.entity.func_70080_a(Minecraft.func_71410_x().field_71439_g.field_70165_t, Minecraft.func_71410_x().field_71439_g.field_70163_u, Minecraft.func_71410_x().field_71439_g.field_70161_v, Minecraft.func_71410_x().field_71439_g.field_70177_z, Minecraft.func_71410_x().field_71439_g.field_70125_A);
-            this.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.Rotation(this.mc.field_71439_g.field_70177_z, this.mc.field_71439_g.field_70125_A, true));
-            this.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketInput(this.mc.field_71439_g.field_71158_b.field_192832_b, this.mc.field_71439_g.field_71158_b.field_78902_a, false, false));
-            this.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketVehicleMove(this.entity));
+            this.entity.setPositionAndRotation(Minecraft.getMinecraft().player.posX, Minecraft.getMinecraft().player.posY, Minecraft.getMinecraft().player.posZ, Minecraft.getMinecraft().player.rotationYaw, Minecraft.getMinecraft().player.rotationPitch);
+            this.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Rotation(this.mc.player.rotationYaw, this.mc.player.rotationPitch, true));
+            this.mc.player.connection.sendPacket((Packet)new CPacketInput(this.mc.player.movementInput.moveForward, this.mc.player.movementInput.moveStrafe, false, false));
+            this.mc.player.connection.sendPacket((Packet)new CPacketVehicleMove(this.entity));
         }
     }
 }

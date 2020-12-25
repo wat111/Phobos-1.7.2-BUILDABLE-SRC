@@ -19,36 +19,36 @@ extends Feature {
     private boolean onground;
 
     public void updatePosition() {
-        this.x = PositionManager.mc.field_71439_g.field_70165_t;
-        this.y = PositionManager.mc.field_71439_g.field_70163_u;
-        this.z = PositionManager.mc.field_71439_g.field_70161_v;
-        this.onground = PositionManager.mc.field_71439_g.field_70122_E;
+        this.x = PositionManager.mc.player.posX;
+        this.y = PositionManager.mc.player.posY;
+        this.z = PositionManager.mc.player.posZ;
+        this.onground = PositionManager.mc.player.onGround;
     }
 
     public void restorePosition() {
-        PositionManager.mc.field_71439_g.field_70165_t = this.x;
-        PositionManager.mc.field_71439_g.field_70163_u = this.y;
-        PositionManager.mc.field_71439_g.field_70161_v = this.z;
-        PositionManager.mc.field_71439_g.field_70122_E = this.onground;
+        PositionManager.mc.player.posX = this.x;
+        PositionManager.mc.player.posY = this.y;
+        PositionManager.mc.player.posZ = this.z;
+        PositionManager.mc.player.onGround = this.onground;
     }
 
     public void setPlayerPosition(double x, double y, double z) {
-        PositionManager.mc.field_71439_g.field_70165_t = x;
-        PositionManager.mc.field_71439_g.field_70163_u = y;
-        PositionManager.mc.field_71439_g.field_70161_v = z;
+        PositionManager.mc.player.posX = x;
+        PositionManager.mc.player.posY = y;
+        PositionManager.mc.player.posZ = z;
     }
 
     public void setPlayerPosition(double x, double y, double z, boolean onground) {
-        PositionManager.mc.field_71439_g.field_70165_t = x;
-        PositionManager.mc.field_71439_g.field_70163_u = y;
-        PositionManager.mc.field_71439_g.field_70161_v = z;
-        PositionManager.mc.field_71439_g.field_70122_E = onground;
+        PositionManager.mc.player.posX = x;
+        PositionManager.mc.player.posY = y;
+        PositionManager.mc.player.posZ = z;
+        PositionManager.mc.player.onGround = onground;
     }
 
     public void setPositionPacket(double x, double y, double z, boolean onGround, boolean setPos, boolean noLagBack) {
-        PositionManager.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.Position(x, y, z, onGround));
+        PositionManager.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Position(x, y, z, onGround));
         if (setPos) {
-            PositionManager.mc.field_71439_g.func_70107_b(x, y, z);
+            PositionManager.mc.player.setPosition(x, y, z);
             if (noLagBack) {
                 this.updatePosition();
             }

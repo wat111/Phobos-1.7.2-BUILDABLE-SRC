@@ -74,21 +74,21 @@ extends GuiScreen {
         }
     }
 
-    public void func_73863_a(int mouseX, int mouseY, float partialTicks) {
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.checkMouseWheel();
-        this.func_146276_q_();
+        this.drawDefaultBackground();
         this.components.forEach(components -> components.drawScreen(mouseX, mouseY, partialTicks));
     }
 
-    public void func_73864_a(int mouseX, int mouseY, int clickedButton) {
+    public void mouseClicked(int mouseX, int mouseY, int clickedButton) {
         this.components.forEach(components -> components.mouseClicked(mouseX, mouseY, clickedButton));
     }
 
-    public void func_146286_b(int mouseX, int mouseY, int releaseButton) {
+    public void mouseReleased(int mouseX, int mouseY, int releaseButton) {
         this.components.forEach(components -> components.mouseReleased(mouseX, mouseY, releaseButton));
     }
 
-    public boolean func_73868_f() {
+    public boolean doesGuiPauseGame() {
         return false;
     }
 
@@ -117,8 +117,8 @@ extends GuiScreen {
         return null;
     }
 
-    public void func_73869_a(char typedChar, int keyCode) throws IOException {
-        super.func_73869_a(typedChar, keyCode);
+    public void keyTyped(char typedChar, int keyCode) throws IOException {
+        super.keyTyped(typedChar, keyCode);
         this.components.forEach(component -> component.onKeyTyped(typedChar, keyCode));
     }
 

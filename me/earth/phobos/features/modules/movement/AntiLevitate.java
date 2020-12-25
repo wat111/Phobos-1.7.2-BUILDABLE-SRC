@@ -18,8 +18,8 @@ extends Module {
 
     @Override
     public void onUpdate() {
-        if (AntiLevitate.mc.field_71439_g.func_70644_a(Objects.requireNonNull(Potion.func_180142_b((String)"levitation")))) {
-            AntiLevitate.mc.field_71439_g.func_184596_c(Potion.func_180142_b((String)"levitation"));
+        if (AntiLevitate.mc.player.isPotionActive(Objects.requireNonNull(Potion.getPotionFromResourceLocation((String)"levitation")))) {
+            AntiLevitate.mc.player.removeActivePotionEffect(Potion.getPotionFromResourceLocation((String)"levitation"));
         }
     }
 }

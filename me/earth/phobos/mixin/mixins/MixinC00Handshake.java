@@ -20,9 +20,9 @@ public abstract class MixinC00Handshake {
     public PacketBuffer writePacketDataHook(PacketBuffer packetBuffer, String string) {
         if (ServerModule.getInstance().noFML.getValue().booleanValue()) {
             String ipNoFML = string.substring(0, string.length() - "\u0000FML\u0000".length());
-            return packetBuffer.func_180714_a(ipNoFML);
+            return packetBuffer.writeString(ipNoFML);
         }
-        return packetBuffer.func_180714_a(string);
+        return packetBuffer.writeString(string);
     }
 }
 

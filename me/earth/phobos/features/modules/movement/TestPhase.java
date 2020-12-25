@@ -90,30 +90,30 @@ extends Module {
         if (event.getStage() == 1) {
             return;
         }
-        TestPhase.mc.field_71439_g.func_70016_h(0.0, 0.0, 0.0);
+        TestPhase.mc.player.setVelocity(0.0, 0.0, 0.0);
         double speed = 0.0;
         boolean checkCollisionBoxes = this.checkHitBoxes();
-        speed = TestPhase.mc.field_71439_g.field_71158_b.field_78901_c && (checkCollisionBoxes || !EntityUtil.isMoving()) ? (this.flight.getValue().booleanValue() && !checkCollisionBoxes ? (this.flightMode.getValue() == 0 ? (this.resetCounter(10) ? -0.032 : 0.062) : (this.resetCounter(20) ? -0.032 : 0.062)) : 0.062) : (TestPhase.mc.field_71439_g.field_71158_b.field_78899_d ? -0.062 : (!checkCollisionBoxes ? (this.resetCounter(4) ? (this.flight.getValue().booleanValue() ? -0.04 : 0.0) : 0.0) : 0.0));
+        speed = TestPhase.mc.player.movementInput.jump && (checkCollisionBoxes || !EntityUtil.isMoving()) ? (this.flight.getValue().booleanValue() && !checkCollisionBoxes ? (this.flightMode.getValue() == 0 ? (this.resetCounter(10) ? -0.032 : 0.062) : (this.resetCounter(20) ? -0.032 : 0.062)) : 0.062) : (TestPhase.mc.player.movementInput.sneak ? -0.062 : (!checkCollisionBoxes ? (this.resetCounter(4) ? (this.flight.getValue().booleanValue() ? -0.04 : 0.0) : 0.0) : 0.0));
         if (this.doAntiFactor.getValue().booleanValue() && checkCollisionBoxes && EntityUtil.isMoving() && speed != 0.0) {
             speed /= this.antiFactor.getValue().doubleValue();
         }
         double[] strafing = this.getMotion(this.strafeFactor.getValue() != false && checkCollisionBoxes ? 0.031 : 0.26);
         for (int i = 1; i < this.loops.getValue() + 1; ++i) {
-            TestPhase.mc.field_71439_g.field_70159_w = strafing[0] * (double)i * this.extraFactor.getValue();
-            TestPhase.mc.field_71439_g.field_70181_x = speed * (double)i;
-            TestPhase.mc.field_71439_g.field_70179_y = strafing[1] * (double)i * this.extraFactor.getValue();
-            this.sendPackets(TestPhase.mc.field_71439_g.field_70159_w, TestPhase.mc.field_71439_g.field_70181_x, TestPhase.mc.field_71439_g.field_70179_y, this.sendTeleport.getValue());
+            TestPhase.mc.player.motionX = strafing[0] * (double)i * this.extraFactor.getValue();
+            TestPhase.mc.player.motionY = speed * (double)i;
+            TestPhase.mc.player.motionZ = strafing[1] * (double)i * this.extraFactor.getValue();
+            this.sendPackets(TestPhase.mc.player.motionX, TestPhase.mc.player.motionY, TestPhase.mc.player.motionZ, this.sendTeleport.getValue());
         }
     }
 
     @SubscribeEvent
     public void onMove(MoveEvent event) {
         if (this.setMove.getValue().booleanValue() && this.flightCounter != 0) {
-            event.setX(TestPhase.mc.field_71439_g.field_70159_w);
-            event.setY(TestPhase.mc.field_71439_g.field_70181_x);
-            event.setZ(TestPhase.mc.field_71439_g.field_70179_y);
+            event.setX(TestPhase.mc.player.motionX);
+            event.setY(TestPhase.mc.player.motionY);
+            event.setZ(TestPhase.mc.player.motionZ);
             if (this.nocliperino.getValue().booleanValue() && this.checkHitBoxes()) {
-                TestPhase.mc.field_71439_g.field_70145_X = true;
+                TestPhase.mc.player.noClip = true;
             }
         }
     }
@@ -138,21 +138,21 @@ extends Module {
         if (event.getPacket() instanceof SPacketPlayerPosLook && !TestPhase.fullNullCheck()) {
             BlockPos pos;
             SPacketPlayerPosLook packet = (SPacketPlayerPosLook)event.getPacket();
-            if (TestPhase.mc.field_71439_g.func_70089_S() && TestPhase.mc.field_71441_e.func_175668_a(pos = new BlockPos(TestPhase.mc.field_71439_g.field_70165_t, TestPhase.mc.field_71439_g.field_70163_u, TestPhase.mc.field_71439_g.field_70161_v), false) && !(TestPhase.mc.field_71462_r instanceof GuiDownloadTerrain) && this.clearIDs.getValue().booleanValue()) {
-                this.teleportmap.remove(packet.func_186965_f());
+            if (TestPhase.mc.player.isEntityAlive() && TestPhase.mc.world.isBlockLoaded(pos = new BlockPos(TestPhase.mc.player.posX, TestPhase.mc.player.posY, TestPhase.mc.player.posZ), false) && !(TestPhase.mc.currentScreen instanceof GuiDownloadTerrain) && this.clearIDs.getValue().booleanValue()) {
+                this.teleportmap.remove(packet.getTeleportId());
             }
             if (this.setYaw.getValue().booleanValue()) {
-                packet.field_148936_d = TestPhase.mc.field_71439_g.field_70177_z;
-                packet.field_148937_e = TestPhase.mc.field_71439_g.field_70125_A;
+                packet.yaw = TestPhase.mc.player.rotationYaw;
+                packet.pitch = TestPhase.mc.player.rotationPitch;
             }
             if (this.setID.getValue().booleanValue()) {
-                this.teleportID = packet.func_186965_f();
+                this.teleportID = packet.getTeleportId();
             }
         }
     }
 
     private boolean checkHitBoxes() {
-        return !TestPhase.mc.field_71441_e.func_184144_a((Entity)TestPhase.mc.field_71439_g, TestPhase.mc.field_71439_g.func_174813_aQ().func_72321_a(-0.0625, -0.0625, -0.0625)).isEmpty();
+        return !TestPhase.mc.world.getCollisionBoxes((Entity)TestPhase.mc.player, TestPhase.mc.player.getEntityBoundingBox().expand(-0.0625, -0.0625, -0.0625)).isEmpty();
     }
 
     private boolean resetCounter(int counter) {
@@ -164,9 +164,9 @@ extends Module {
     }
 
     private double[] getMotion(double speed) {
-        float moveForward = TestPhase.mc.field_71439_g.field_71158_b.field_192832_b;
-        float moveStrafe = TestPhase.mc.field_71439_g.field_71158_b.field_78902_a;
-        float rotationYaw = TestPhase.mc.field_71439_g.field_70126_B + (TestPhase.mc.field_71439_g.field_70177_z - TestPhase.mc.field_71439_g.field_70126_B) * mc.func_184121_ak();
+        float moveForward = TestPhase.mc.player.movementInput.moveForward;
+        float moveStrafe = TestPhase.mc.player.movementInput.moveStrafe;
+        float rotationYaw = TestPhase.mc.player.prevRotationYaw + (TestPhase.mc.player.rotationYaw - TestPhase.mc.player.prevRotationYaw) * mc.getRenderPartialTicks();
         if (moveForward != 0.0f) {
             if (moveStrafe > 0.0f) {
                 rotationYaw += (float)(moveForward > 0.0f ? -45 : 45);
@@ -187,32 +187,32 @@ extends Module {
 
     private void sendPackets(double x, double y, double z, boolean teleport) {
         Vec3d vec = new Vec3d(x, y, z);
-        Vec3d position = TestPhase.mc.field_71439_g.func_174791_d().func_178787_e(vec);
+        Vec3d position = TestPhase.mc.player.getPositionVector().add(vec);
         Vec3d outOfBoundsVec = this.outOfBoundsVec(vec, position);
-        this.packetSender((CPacketPlayer)new CPacketPlayer.Position(position.field_72450_a, position.field_72448_b, position.field_72449_c, TestPhase.mc.field_71439_g.field_70122_E));
+        this.packetSender((CPacketPlayer)new CPacketPlayer.Position(position.x, position.y, position.z, TestPhase.mc.player.onGround));
         if (this.invalidPacket.getValue().booleanValue()) {
-            this.packetSender((CPacketPlayer)new CPacketPlayer.Position(outOfBoundsVec.field_72450_a, outOfBoundsVec.field_72448_b, outOfBoundsVec.field_72449_c, TestPhase.mc.field_71439_g.field_70122_E));
+            this.packetSender((CPacketPlayer)new CPacketPlayer.Position(outOfBoundsVec.x, outOfBoundsVec.y, outOfBoundsVec.z, TestPhase.mc.player.onGround));
         }
         if (this.setPos.getValue().booleanValue()) {
-            TestPhase.mc.field_71439_g.func_70107_b(position.field_72450_a, position.field_72448_b, position.field_72449_c);
+            TestPhase.mc.player.setPosition(position.x, position.y, position.z);
         }
         this.teleportPacket(position, teleport);
     }
 
     private void teleportPacket(Vec3d pos, boolean shouldTeleport) {
         if (shouldTeleport) {
-            TestPhase.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketConfirmTeleport(++this.teleportID));
+            TestPhase.mc.player.connection.sendPacket((Packet)new CPacketConfirmTeleport(++this.teleportID));
             this.teleportmap.put(this.teleportID, new IDtime(pos, new Timer()));
         }
     }
 
     private Vec3d outOfBoundsVec(Vec3d offset, Vec3d position) {
-        return position.func_72441_c(0.0, 1337.0, 0.0);
+        return position.addVector(0.0, 1337.0, 0.0);
     }
 
     private void packetSender(CPacketPlayer packet) {
         this.packets.add(packet);
-        TestPhase.mc.field_71439_g.field_71174_a.func_147297_a((Packet)packet);
+        TestPhase.mc.player.connection.sendPacket((Packet)packet);
     }
 
     private void clean() {

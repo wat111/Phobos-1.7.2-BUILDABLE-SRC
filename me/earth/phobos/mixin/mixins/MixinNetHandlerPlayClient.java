@@ -31,7 +31,7 @@ public class MixinNetHandlerPlayClient {
     private void handleEntityMetadataHook(SPacketEntityMetadata packetIn, CallbackInfo info) {
         EntityPlayer player;
         Entity entity;
-        if (Util.mc.field_71441_e != null && (entity = Util.mc.field_71441_e.func_73045_a(packetIn.func_149375_d())) instanceof EntityPlayer && (player = (EntityPlayer)entity).func_110143_aJ() <= 0.0f) {
+        if (Util.mc.world != null && (entity = Util.mc.world.getEntityByID(packetIn.getEntityId())) instanceof EntityPlayer && (player = (EntityPlayer)entity).getHealth() <= 0.0f) {
             MinecraftForge.EVENT_BUS.post((Event)new DeathEvent(player));
             if (Phobos.totemPopManager != null) {
                 Phobos.totemPopManager.onDeath(player);

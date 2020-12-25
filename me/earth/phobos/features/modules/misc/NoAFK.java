@@ -27,17 +27,17 @@ extends Module {
 
     @Override
     public void onUpdate() {
-        if (NoAFK.mc.field_71442_b.func_181040_m()) {
+        if (NoAFK.mc.playerController.getIsHittingBlock()) {
             return;
         }
-        if (NoAFK.mc.field_71439_g.field_70173_aa % 40 == 0 && this.swing.getValue().booleanValue()) {
-            NoAFK.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketAnimation(EnumHand.MAIN_HAND));
+        if (NoAFK.mc.player.ticksExisted % 40 == 0 && this.swing.getValue().booleanValue()) {
+            NoAFK.mc.player.connection.sendPacket((Packet)new CPacketAnimation(EnumHand.MAIN_HAND));
         }
-        if (NoAFK.mc.field_71439_g.field_70173_aa % 15 == 0 && this.turn.getValue().booleanValue()) {
-            NoAFK.mc.field_71439_g.field_70177_z = this.random.nextInt(360) - 180;
+        if (NoAFK.mc.player.ticksExisted % 15 == 0 && this.turn.getValue().booleanValue()) {
+            NoAFK.mc.player.rotationYaw = this.random.nextInt(360) - 180;
         }
-        if (!this.swing.getValue().booleanValue() && !this.turn.getValue().booleanValue() && NoAFK.mc.field_71439_g.field_70173_aa % 80 == 0) {
-            NoAFK.mc.field_71439_g.func_70664_aZ();
+        if (!this.swing.getValue().booleanValue() && !this.turn.getValue().booleanValue() && NoAFK.mc.player.ticksExisted % 80 == 0) {
+            NoAFK.mc.player.jump();
         }
     }
 }

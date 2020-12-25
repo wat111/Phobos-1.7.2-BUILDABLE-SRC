@@ -29,11 +29,11 @@ extends Module {
     public void onDisplayDeathScreen(GuiOpenEvent event) {
         if (event.getGui() instanceof GuiGameOver) {
             if (this.deathCoords.getValue().booleanValue() && event.getGui() instanceof GuiGameOver) {
-                Command.sendMessage(String.format("You died at x %d y %d z %d", (int)AutoRespawn.mc.field_71439_g.field_70165_t, (int)AutoRespawn.mc.field_71439_g.field_70163_u, (int)AutoRespawn.mc.field_71439_g.field_70161_v));
+                Command.sendMessage(String.format("You died at x %d y %d z %d", (int)AutoRespawn.mc.player.posX, (int)AutoRespawn.mc.player.posY, (int)AutoRespawn.mc.player.posZ));
             }
-            if (this.respawn.getValue() != false && AutoRespawn.mc.field_71439_g.func_110143_aJ() <= 0.0f || this.antiDeathScreen.getValue().booleanValue() && AutoRespawn.mc.field_71439_g.func_110143_aJ() > 0.0f) {
+            if (this.respawn.getValue() != false && AutoRespawn.mc.player.getHealth() <= 0.0f || this.antiDeathScreen.getValue().booleanValue() && AutoRespawn.mc.player.getHealth() > 0.0f) {
                 event.setCanceled(true);
-                AutoRespawn.mc.field_71439_g.func_71004_bE();
+                AutoRespawn.mc.player.respawnPlayer();
             }
         }
     }

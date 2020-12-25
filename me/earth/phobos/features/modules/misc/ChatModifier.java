@@ -62,17 +62,17 @@ extends Module {
     @Override
     public void onUpdate() {
         if (this.shrug.getValue().booleanValue()) {
-            ChatModifier.mc.field_71439_g.func_71165_d(TextUtil.shrug);
+            ChatModifier.mc.player.sendChatMessage(TextUtil.shrug);
             this.shrug.setValue(false);
         }
         if (this.autoQMain.getValue().booleanValue()) {
-            if (!this.shouldSendMessage((EntityPlayer)ChatModifier.mc.field_71439_g)) {
+            if (!this.shouldSendMessage((EntityPlayer)ChatModifier.mc.player)) {
                 return;
             }
             if (this.qNotification.getValue().booleanValue()) {
                 Command.sendMessage("<AutoQueueMain> Sending message: /queue main");
             }
-            ChatModifier.mc.field_71439_g.func_71165_d("/queue main");
+            ChatModifier.mc.player.sendChatMessage("/queue main");
             this.timer.reset();
         }
     }
@@ -81,7 +81,7 @@ extends Module {
     public void onPacketSend(PacketEvent.Send event) {
         if (event.getStage() == 0 && event.getPacket() instanceof CPacketChatMessage) {
             CPacketChatMessage packet = (CPacketChatMessage)event.getPacket();
-            String s = packet.func_149439_c();
+            String s = packet.getMessage();
             if (s.startsWith("/")) {
                 return;
             }
@@ -98,7 +98,7 @@ extends Module {
             if (s.length() >= 256) {
                 s = s.substring(0, 256);
             }
-            packet.field_149440_a = s;
+            packet.message = s;
         }
     }
 
@@ -112,12 +112,12 @@ extends Module {
     @SubscribeEvent
     public void onPacketReceive(PacketEvent.Receive event) {
         if (event.getStage() == 0 && this.timeStamps.getValue() != TextUtil.Color.NONE && event.getPacket() instanceof SPacketChat) {
-            if (!((SPacketChat)event.getPacket()).func_148916_d()) {
+            if (!((SPacketChat)event.getPacket()).isSystem()) {
                 return;
             }
-            String originalMessage = ((SPacketChat)event.getPacket()).field_148919_a.func_150254_d();
+            String originalMessage = ((SPacketChat)event.getPacket()).chatComponent.getFormattedText();
             String message = this.getTimeString() + originalMessage;
-            ((SPacketChat)event.getPacket()).field_148919_a = new TextComponentString(message);
+            ((SPacketChat)event.getPacket()).chatComponent = new TextComponentString(message);
         }
     }
 
@@ -127,13 +127,13 @@ extends Module {
     }
 
     private boolean shouldSendMessage(EntityPlayer player) {
-        if (player.field_71093_bK != 1) {
+        if (player.dimension != 1) {
             return false;
         }
         if (!this.timer.passedS(this.qDelay.getValue().intValue())) {
             return false;
         }
-        return player.func_180425_c().equals((Object)new Vec3i(0, 240, 0));
+        return player.getPosition().equals((Object)new Vec3i(0, 240, 0));
     }
 
     public static enum Suffix {

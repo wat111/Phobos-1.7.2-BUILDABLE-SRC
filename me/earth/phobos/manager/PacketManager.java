@@ -18,7 +18,7 @@ extends Feature {
     public void sendPacketNoEvent(Packet<?> packet) {
         if (packet != null && !PacketManager.nullCheck()) {
             this.noEventPackets.add(packet);
-            PacketManager.mc.field_71439_g.field_71174_a.func_147297_a(packet);
+            PacketManager.mc.player.connection.sendPacket(packet);
         }
     }
 

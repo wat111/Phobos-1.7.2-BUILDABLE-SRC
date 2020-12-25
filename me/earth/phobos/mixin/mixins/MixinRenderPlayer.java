@@ -36,7 +36,7 @@ public class MixinRenderPlayer {
 
     @Inject(method={"renderRightArm"}, at={@At(value="FIELD", target="Lnet/minecraft/client/model/ModelPlayer;swingProgress:F", opcode=181)}, cancellable=true)
     public void renderRightArmBegin(AbstractClientPlayer clientPlayer, CallbackInfo ci) {
-        if (clientPlayer == Minecraft.func_71410_x().field_71439_g && HandColor.INSTANCE.isEnabled()) {
+        if (clientPlayer == Minecraft.getMinecraft().player && HandColor.INSTANCE.isEnabled()) {
             GL11.glPushAttrib((int)1048575);
             GL11.glDisable((int)3008);
             GL11.glDisable((int)3553);
@@ -46,7 +46,7 @@ public class MixinRenderPlayer {
             GL11.glLineWidth((float)1.5f);
             GL11.glEnable((int)2960);
             GL11.glEnable((int)10754);
-            OpenGlHelper.func_77475_a((int)OpenGlHelper.field_77476_b, (float)240.0f, (float)240.0f);
+            OpenGlHelper.setLightmapTextureCoords((int)OpenGlHelper.lightmapTexUnit, (float)240.0f, (float)240.0f);
             if (HandColor.INSTANCE.rainbow.getValue().booleanValue()) {
                 Color rainbowColor = HandColor.INSTANCE.colorSync.getValue() != false ? Colors.INSTANCE.getCurrentColor() : new Color(RenderUtil.getRainbow(HandColor.INSTANCE.speed.getValue() * 100, 0, (float)HandColor.INSTANCE.saturation.getValue().intValue() / 100.0f, (float)HandColor.INSTANCE.brightness.getValue().intValue() / 100.0f));
                 GL11.glColor4f((float)((float)rainbowColor.getRed() / 255.0f), (float)((float)rainbowColor.getGreen() / 255.0f), (float)((float)rainbowColor.getBlue() / 255.0f), (float)((float)HandColor.INSTANCE.alpha.getValue().intValue() / 255.0f));
@@ -59,7 +59,7 @@ public class MixinRenderPlayer {
 
     @Inject(method={"renderRightArm"}, at={@At(value="RETURN")}, cancellable=true)
     public void renderRightArmReturn(AbstractClientPlayer clientPlayer, CallbackInfo ci) {
-        if (clientPlayer == Minecraft.func_71410_x().field_71439_g && HandColor.INSTANCE.isEnabled()) {
+        if (clientPlayer == Minecraft.getMinecraft().player && HandColor.INSTANCE.isEnabled()) {
             GL11.glEnable((int)3042);
             GL11.glEnable((int)2896);
             GL11.glEnable((int)3553);
@@ -70,7 +70,7 @@ public class MixinRenderPlayer {
 
     @Inject(method={"renderLeftArm"}, at={@At(value="FIELD", target="Lnet/minecraft/client/model/ModelPlayer;swingProgress:F", opcode=181)}, cancellable=true)
     public void renderLeftArmBegin(AbstractClientPlayer clientPlayer, CallbackInfo ci) {
-        if (clientPlayer == Minecraft.func_71410_x().field_71439_g && HandColor.INSTANCE.isEnabled()) {
+        if (clientPlayer == Minecraft.getMinecraft().player && HandColor.INSTANCE.isEnabled()) {
             GL11.glPushAttrib((int)1048575);
             GL11.glDisable((int)3008);
             GL11.glDisable((int)3553);
@@ -80,7 +80,7 @@ public class MixinRenderPlayer {
             GL11.glLineWidth((float)1.5f);
             GL11.glEnable((int)2960);
             GL11.glEnable((int)10754);
-            OpenGlHelper.func_77475_a((int)OpenGlHelper.field_77476_b, (float)240.0f, (float)240.0f);
+            OpenGlHelper.setLightmapTextureCoords((int)OpenGlHelper.lightmapTexUnit, (float)240.0f, (float)240.0f);
             if (HandColor.INSTANCE.rainbow.getValue().booleanValue()) {
                 Color rainbowColor = HandColor.INSTANCE.colorSync.getValue() != false ? Colors.INSTANCE.getCurrentColor() : new Color(RenderUtil.getRainbow(HandColor.INSTANCE.speed.getValue() * 100, 0, (float)HandColor.INSTANCE.saturation.getValue().intValue() / 100.0f, (float)HandColor.INSTANCE.brightness.getValue().intValue() / 100.0f));
                 GL11.glColor4f((float)((float)rainbowColor.getRed() / 255.0f), (float)((float)rainbowColor.getGreen() / 255.0f), (float)((float)rainbowColor.getBlue() / 255.0f), (float)((float)HandColor.INSTANCE.alpha.getValue().intValue() / 255.0f));
@@ -93,7 +93,7 @@ public class MixinRenderPlayer {
 
     @Inject(method={"renderLeftArm"}, at={@At(value="RETURN")}, cancellable=true)
     public void renderLeftArmReturn(AbstractClientPlayer clientPlayer, CallbackInfo ci) {
-        if (clientPlayer == Minecraft.func_71410_x().field_71439_g && HandColor.INSTANCE.isEnabled()) {
+        if (clientPlayer == Minecraft.getMinecraft().player && HandColor.INSTANCE.isEnabled()) {
             GL11.glEnable((int)3042);
             GL11.glEnable((int)2896);
             GL11.glEnable((int)3553);

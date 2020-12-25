@@ -81,7 +81,7 @@ extends Feature {
 
     @SubscribeEvent
     public void onUpdate(LivingEvent.LivingUpdateEvent event) {
-        if (!EventManager.fullNullCheck() && event.getEntity().func_130014_f_().field_72995_K && event.getEntityLiving().equals((Object)EventManager.mc.field_71439_g)) {
+        if (!EventManager.fullNullCheck() && event.getEntity().getEntityWorld().isRemote && event.getEntityLiving().equals((Object)EventManager.mc.player)) {
             Phobos.potionManager.update();
             Phobos.totemPopManager.onUpdate();
             Phobos.inventoryManager.update();
@@ -172,29 +172,29 @@ extends Feature {
         Phobos.serverManager.onPacketReceived();
         if (event.getPacket() instanceof SPacketEntityStatus) {
             SPacketEntityStatus packet = (SPacketEntityStatus)event.getPacket();
-            if (packet.func_149160_c() == 35 && packet.func_149161_a((World)EventManager.mc.field_71441_e) instanceof EntityPlayer) {
-                EntityPlayer player = (EntityPlayer)packet.func_149161_a((World)EventManager.mc.field_71441_e);
+            if (packet.getOpCode() == 35 && packet.getEntity((World)EventManager.mc.world) instanceof EntityPlayer) {
+                EntityPlayer player = (EntityPlayer)packet.getEntity((World)EventManager.mc.world);
                 MinecraftForge.EVENT_BUS.post((Event)new TotemPopEvent(player));
                 Phobos.totemPopManager.onTotemPop(player);
                 Phobos.potionManager.onTotemPop(player);
             }
         } else if (event.getPacket() instanceof SPacketPlayerListItem && !EventManager.fullNullCheck() && this.logoutTimer.passedS(1.0)) {
             SPacketPlayerListItem packet = (SPacketPlayerListItem)event.getPacket();
-            if (!SPacketPlayerListItem.Action.ADD_PLAYER.equals((Object)packet.func_179768_b()) && !SPacketPlayerListItem.Action.REMOVE_PLAYER.equals((Object)packet.func_179768_b())) {
+            if (!SPacketPlayerListItem.Action.ADD_PLAYER.equals((Object)packet.getAction()) && !SPacketPlayerListItem.Action.REMOVE_PLAYER.equals((Object)packet.getAction())) {
                 return;
             }
-            packet.func_179767_a().stream().filter(Objects::nonNull).filter(data -> !Strings.isNullOrEmpty((String)data.func_179962_a().getName()) || data.func_179962_a().getId() != null).forEach(data -> {
-                UUID id = data.func_179962_a().getId();
-                switch (packet.func_179768_b()) {
+            packet.getEntries().stream().filter(Objects::nonNull).filter(data -> !Strings.isNullOrEmpty((String)data.getProfile().getName()) || data.getProfile().getId() != null).forEach(data -> {
+                UUID id = data.getProfile().getId();
+                switch (packet.getAction()) {
                     case ADD_PLAYER: {
-                        String name = data.func_179962_a().getName();
+                        String name = data.getProfile().getName();
                         MinecraftForge.EVENT_BUS.post((Event)new ConnectionEvent(0, id, name));
                         break;
                     }
                     case REMOVE_PLAYER: {
-                        EntityPlayer entity = EventManager.mc.field_71441_e.func_152378_a(id);
+                        EntityPlayer entity = EventManager.mc.world.getPlayerEntityByUUID(id);
                         if (entity != null) {
-                            String logoutName = entity.func_70005_c_();
+                            String logoutName = entity.getName();
                             MinecraftForge.EVENT_BUS.post((Event)new ConnectionEvent(1, entity, id, logoutName));
                             break;
                         }
@@ -212,29 +212,29 @@ extends Feature {
         if (event.isCanceled()) {
             return;
         }
-        EventManager.mc.field_71424_I.func_76320_a("phobos");
-        GlStateManager.func_179090_x();
-        GlStateManager.func_179147_l();
-        GlStateManager.func_179118_c();
-        GlStateManager.func_179120_a((int)770, (int)771, (int)1, (int)0);
-        GlStateManager.func_179103_j((int)7425);
-        GlStateManager.func_179097_i();
-        GlStateManager.func_187441_d((float)1.0f);
+        EventManager.mc.mcProfiler.startSection("phobos");
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)1, (int)0);
+        GlStateManager.shadeModel((int)7425);
+        GlStateManager.disableDepth();
+        GlStateManager.glLineWidth((float)1.0f);
         Render3DEvent render3dEvent = new Render3DEvent(event.getPartialTicks());
         Phobos.moduleManager.onRender3D(render3dEvent);
-        GlStateManager.func_187441_d((float)1.0f);
-        GlStateManager.func_179103_j((int)7424);
-        GlStateManager.func_179084_k();
-        GlStateManager.func_179141_d();
-        GlStateManager.func_179098_w();
-        GlStateManager.func_179126_j();
-        GlStateManager.func_179089_o();
-        GlStateManager.func_179089_o();
-        GlStateManager.func_179132_a((boolean)true);
-        GlStateManager.func_179098_w();
-        GlStateManager.func_179147_l();
-        GlStateManager.func_179126_j();
-        EventManager.mc.field_71424_I.func_76319_b();
+        GlStateManager.glLineWidth((float)1.0f);
+        GlStateManager.shadeModel((int)7424);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
+        GlStateManager.enableDepth();
+        GlStateManager.enableCull();
+        GlStateManager.enableCull();
+        GlStateManager.depthMask((boolean)true);
+        GlStateManager.enableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.enableDepth();
+        EventManager.mc.mcProfiler.endSection();
     }
 
     @SubscribeEvent
@@ -250,7 +250,7 @@ extends Feature {
             ScaledResolution resolution = new ScaledResolution(mc);
             Render2DEvent render2DEvent = new Render2DEvent(event.getPartialTicks(), resolution);
             Phobos.moduleManager.onRender2D(render2DEvent);
-            GlStateManager.func_179131_c((float)1.0f, (float)1.0f, (float)1.0f, (float)1.0f);
+            GlStateManager.color((float)1.0f, (float)1.0f, (float)1.0f, (float)1.0f);
         }
     }
 
@@ -259,7 +259,7 @@ extends Feature {
         if (event.getMessage().startsWith(Command.getCommandPrefix())) {
             event.setCanceled(true);
             try {
-                EventManager.mc.field_71456_v.func_146158_b().func_146239_a(event.getMessage());
+                EventManager.mc.ingameGUI.getChatGUI().addToSentMessages(event.getMessage());
                 if (event.getMessage().length() > 1) {
                     Phobos.commandManager.executeCommand(event.getMessage().substring(Command.getCommandPrefix().length() - 1));
                 } else {

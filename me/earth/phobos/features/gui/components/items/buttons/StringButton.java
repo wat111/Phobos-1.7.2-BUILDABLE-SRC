@@ -61,7 +61,7 @@ extends Button {
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         if (this.isHovering(mouseX, mouseY)) {
-            mc.func_147118_V().func_147682_a((ISound)PositionedSoundRecord.func_184371_a((SoundEvent)SoundEvents.field_187909_gi, (float)1.0f));
+            mc.getSoundHandler().playSound((ISound)PositionedSoundRecord.getMasterRecord((SoundEvent)SoundEvents.UI_BUTTON_CLICK, (float)1.0f));
         }
     }
 
@@ -82,7 +82,7 @@ extends Button {
                 catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else if (ChatAllowedCharacters.func_71566_a((char)typedChar)) {
+            } else if (ChatAllowedCharacters.isAllowedCharacter((char)typedChar)) {
                 this.setString(this.currentString.getString() + typedChar);
             }
         }

@@ -93,15 +93,15 @@ extends Module {
     public void onPacket(PacketEvent.Send event) {
         if (this.shouldRotate.get() && event.getPacket() instanceof CPacketPlayer) {
             CPacketPlayer packet = (CPacketPlayer)event.getPacket();
-            packet.field_149476_e = (float)this.yaw.get();
-            packet.field_149473_f = (float)this.pitch.get();
+            packet.yaw = (float)this.yaw.get();
+            packet.pitch = (float)this.pitch.get();
             this.shouldRotate.set(false);
         }
     }
 
     @SubscribeEvent
     public void onUpdateWalkingPlayer(UpdateWalkingPlayerEvent event) {
-        if (event.getStage() != 0 || BedBomb.fullNullCheck() || BedBomb.mc.field_71439_g.field_71093_bK != -1 && BedBomb.mc.field_71439_g.field_71093_bK != 1) {
+        if (event.getStage() != 0 || BedBomb.fullNullCheck() || BedBomb.mc.player.dimension != -1 && BedBomb.mc.player.dimension != 1) {
             return;
         }
         this.doBedBomb();
@@ -125,10 +125,10 @@ extends Module {
 
     private void breakBeds() {
         if (this.explode.getValue().booleanValue() && this.breakTimer.passedMs(this.breakDelay.getValue().intValue()) && this.maxPos != null) {
-            BedBomb.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketEntityAction((Entity)BedBomb.mc.field_71439_g, CPacketEntityAction.Action.STOP_SNEAKING));
+            BedBomb.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)BedBomb.mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
             BlockUtil.rightClickBlockLegit(this.maxPos, this.range.getValue().floatValue(), this.rotate.getValue() != false && this.place.getValue() == false, EnumHand.MAIN_HAND, this.yaw, this.pitch, this.shouldRotate, true);
-            if (BedBomb.mc.field_71439_g.func_70093_af()) {
-                BedBomb.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketEntityAction((Entity)BedBomb.mc.field_71439_g, CPacketEntityAction.Action.START_SNEAKING));
+            if (BedBomb.mc.player.isSneaking()) {
+                BedBomb.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)BedBomb.mc.player, CPacketEntityAction.Action.START_SNEAKING));
             }
             this.breakTimer.reset();
         }
@@ -139,38 +139,38 @@ extends Module {
         float maxDamage = 0.5f;
         if (this.removeTiles.getValue().booleanValue()) {
             ArrayList<BedData> removedBlocks = new ArrayList<BedData>();
-            for (TileEntity tile : BedBomb.mc.field_71441_e.field_147482_g) {
+            for (TileEntity tile : BedBomb.mc.world.loadedTileEntityList) {
                 if (!(tile instanceof TileEntityBed)) continue;
                 TileEntityBed bed = (TileEntityBed)tile;
-                BedData data = new BedData(tile.func_174877_v(), BedBomb.mc.field_71441_e.func_180495_p(tile.func_174877_v()), bed, bed.func_193050_e());
+                BedData data = new BedData(tile.getPos(), BedBomb.mc.world.getBlockState(tile.getPos()), bed, bed.isHeadPiece());
                 removedBlocks.add(data);
             }
             for (BedData data : removedBlocks) {
-                BedBomb.mc.field_71441_e.func_175698_g(data.getPos());
+                BedBomb.mc.world.setBlockToAir(data.getPos());
             }
             for (BedData data : removedBlocks) {
                 float selfDamage;
                 BlockPos pos;
-                if (!data.isHeadPiece() || !(BedBomb.mc.field_71439_g.func_174818_b(pos = data.getPos()) <= MathUtil.square(this.breakRange.getValue().floatValue())) || !((double)(selfDamage = DamageUtil.calculateDamage(pos, (Entity)BedBomb.mc.field_71439_g)) + 1.0 < (double)EntityUtil.getHealth((Entity)BedBomb.mc.field_71439_g)) && DamageUtil.canTakeDamage(this.suicide.getValue())) continue;
-                for (EntityPlayer player : BedBomb.mc.field_71441_e.field_73010_i) {
+                if (!data.isHeadPiece() || !(BedBomb.mc.player.getDistanceSq(pos = data.getPos()) <= MathUtil.square(this.breakRange.getValue().floatValue())) || !((double)(selfDamage = DamageUtil.calculateDamage(pos, (Entity)BedBomb.mc.player)) + 1.0 < (double)EntityUtil.getHealth((Entity)BedBomb.mc.player)) && DamageUtil.canTakeDamage(this.suicide.getValue())) continue;
+                for (EntityPlayer player : BedBomb.mc.world.playerEntities) {
                     float damage;
-                    if (!(player.func_174818_b(pos) < MathUtil.square(this.range.getValue().floatValue())) || !EntityUtil.isValid((Entity)player, this.range.getValue().floatValue() + this.breakRange.getValue().floatValue()) || !((damage = DamageUtil.calculateDamage(pos, (Entity)player)) > selfDamage || damage > this.minDamage.getValue().floatValue() && !DamageUtil.canTakeDamage(this.suicide.getValue())) && !(damage > EntityUtil.getHealth((Entity)player)) || !(damage > maxDamage)) continue;
+                    if (!(player.getDistanceSq(pos) < MathUtil.square(this.range.getValue().floatValue())) || !EntityUtil.isValid((Entity)player, this.range.getValue().floatValue() + this.breakRange.getValue().floatValue()) || !((damage = DamageUtil.calculateDamage(pos, (Entity)player)) > selfDamage || damage > this.minDamage.getValue().floatValue() && !DamageUtil.canTakeDamage(this.suicide.getValue())) && !(damage > EntityUtil.getHealth((Entity)player)) || !(damage > maxDamage)) continue;
                     maxDamage = damage;
                     this.maxPos = pos;
                 }
             }
             for (BedData data : removedBlocks) {
-                BedBomb.mc.field_71441_e.func_175656_a(data.getPos(), data.getState());
+                BedBomb.mc.world.setBlockState(data.getPos(), data.getState());
             }
         } else {
-            for (TileEntity tile : BedBomb.mc.field_71441_e.field_147482_g) {
+            for (TileEntity tile : BedBomb.mc.world.loadedTileEntityList) {
                 float selfDamage;
                 BlockPos pos;
                 TileEntityBed bed;
-                if (!(tile instanceof TileEntityBed) || !(bed = (TileEntityBed)tile).func_193050_e() || !(BedBomb.mc.field_71439_g.func_174818_b(pos = bed.func_174877_v()) <= MathUtil.square(this.breakRange.getValue().floatValue())) || !((double)(selfDamage = DamageUtil.calculateDamage(pos, (Entity)BedBomb.mc.field_71439_g)) + 1.0 < (double)EntityUtil.getHealth((Entity)BedBomb.mc.field_71439_g)) && DamageUtil.canTakeDamage(this.suicide.getValue())) continue;
-                for (EntityPlayer player : BedBomb.mc.field_71441_e.field_73010_i) {
+                if (!(tile instanceof TileEntityBed) || !(bed = (TileEntityBed)tile).isHeadPiece() || !(BedBomb.mc.player.getDistanceSq(pos = bed.getPos()) <= MathUtil.square(this.breakRange.getValue().floatValue())) || !((double)(selfDamage = DamageUtil.calculateDamage(pos, (Entity)BedBomb.mc.player)) + 1.0 < (double)EntityUtil.getHealth((Entity)BedBomb.mc.player)) && DamageUtil.canTakeDamage(this.suicide.getValue())) continue;
+                for (EntityPlayer player : BedBomb.mc.world.playerEntities) {
                     float damage;
-                    if (!(player.func_174818_b(pos) < MathUtil.square(this.range.getValue().floatValue())) || !EntityUtil.isValid((Entity)player, this.range.getValue().floatValue() + this.breakRange.getValue().floatValue()) || !((damage = DamageUtil.calculateDamage(pos, (Entity)player)) > selfDamage || damage > this.minDamage.getValue().floatValue() && !DamageUtil.canTakeDamage(this.suicide.getValue())) && !(damage > EntityUtil.getHealth((Entity)player)) || !(damage > maxDamage)) continue;
+                    if (!(player.getDistanceSq(pos) < MathUtil.square(this.range.getValue().floatValue())) || !EntityUtil.isValid((Entity)player, this.range.getValue().floatValue() + this.breakRange.getValue().floatValue()) || !((damage = DamageUtil.calculateDamage(pos, (Entity)player)) > selfDamage || damage > this.minDamage.getValue().floatValue() && !DamageUtil.canTakeDamage(this.suicide.getValue())) && !(damage > EntityUtil.getHealth((Entity)player)) || !(damage > maxDamage)) continue;
                     maxDamage = damage;
                     this.maxPos = pos;
                 }
@@ -182,35 +182,35 @@ extends Module {
         if (this.place.getValue().booleanValue() && this.placeTimer.passedMs(this.placeDelay.getValue().intValue()) && this.maxPos == null) {
             this.bedSlot = this.findBedSlot();
             if (this.bedSlot == -1) {
-                if (BedBomb.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_151104_aV) {
+                if (BedBomb.mc.player.getHeldItemOffhand().getItem() == Items.BED) {
                     this.bedSlot = -2;
                 } else {
                     return;
                 }
             }
-            this.lastHotbarSlot = BedBomb.mc.field_71439_g.field_71071_by.field_70461_c;
+            this.lastHotbarSlot = BedBomb.mc.player.inventory.currentItem;
             this.target = EntityUtil.getClosestEnemy(this.placeRange.getValue().floatValue());
             if (this.target != null) {
-                BlockPos targetPos = new BlockPos(this.target.func_174791_d());
+                BlockPos targetPos = new BlockPos(this.target.getPositionVector());
                 this.placeBed(targetPos, true);
             }
         }
     }
 
     private void placeBed(BlockPos pos, boolean firstCheck) {
-        if (BedBomb.mc.field_71441_e.func_180495_p(pos).func_177230_c() == Blocks.field_150324_C) {
+        if (BedBomb.mc.world.getBlockState(pos).getBlock() == Blocks.BED) {
             return;
         }
-        float damage = DamageUtil.calculateDamage(pos, (Entity)BedBomb.mc.field_71439_g);
-        if ((double)damage > (double)EntityUtil.getHealth((Entity)BedBomb.mc.field_71439_g) + 0.5) {
+        float damage = DamageUtil.calculateDamage(pos, (Entity)BedBomb.mc.player);
+        if ((double)damage > (double)EntityUtil.getHealth((Entity)BedBomb.mc.player) + 0.5) {
             if (firstCheck) {
-                this.placeBed(pos.func_177984_a(), false);
+                this.placeBed(pos.up(), false);
             }
             return;
         }
-        if (!BedBomb.mc.field_71441_e.func_180495_p(pos).func_185904_a().func_76222_j()) {
+        if (!BedBomb.mc.world.getBlockState(pos).getMaterial().isReplaceable()) {
             if (firstCheck) {
-                this.placeBed(pos.func_177984_a(), false);
+                this.placeBed(pos.up(), false);
             }
             return;
         }
@@ -218,17 +218,17 @@ extends Module {
         HashMap<BlockPos, EnumFacing> facings = new HashMap<BlockPos, EnumFacing>();
         for (EnumFacing facing : EnumFacing.values()) {
             BlockPos position;
-            if (facing == EnumFacing.DOWN || facing == EnumFacing.UP || !(BedBomb.mc.field_71439_g.func_174818_b(position = pos.func_177972_a(facing)) <= MathUtil.square(this.placeRange.getValue().floatValue())) || !BedBomb.mc.field_71441_e.func_180495_p(position).func_185904_a().func_76222_j() || BedBomb.mc.field_71441_e.func_180495_p(position.func_177977_b()).func_185904_a().func_76222_j()) continue;
+            if (facing == EnumFacing.DOWN || facing == EnumFacing.UP || !(BedBomb.mc.player.getDistanceSq(position = pos.offset(facing)) <= MathUtil.square(this.placeRange.getValue().floatValue())) || !BedBomb.mc.world.getBlockState(position).getMaterial().isReplaceable() || BedBomb.mc.world.getBlockState(position.down()).getMaterial().isReplaceable()) continue;
             positions.add(position);
-            facings.put(position, facing.func_176734_d());
+            facings.put(position, facing.getOpposite());
         }
         if (positions.isEmpty()) {
             if (firstCheck) {
-                this.placeBed(pos.func_177984_a(), false);
+                this.placeBed(pos.up(), false);
             }
             return;
         }
-        positions.sort(Comparator.comparingDouble(pos2 -> BedBomb.mc.field_71439_g.func_174818_b(pos2)));
+        positions.sort(Comparator.comparingDouble(pos2 -> BedBomb.mc.player.getDistanceSq(pos2)));
         BlockPos finalPos = (BlockPos)positions.get(0);
         EnumFacing finalFacing = (EnumFacing)facings.get((Object)finalPos);
         float[] rotation = RotationUtil.simpleFacing(finalFacing);
@@ -239,18 +239,18 @@ extends Module {
         this.yaw.set((double)rotation[0]);
         this.pitch.set((double)rotation[1]);
         this.shouldRotate.set(true);
-        Vec3d hitVec = new Vec3d((Vec3i)finalPos.func_177977_b()).func_72441_c(0.5, 0.5, 0.5).func_178787_e(new Vec3d(finalFacing.func_176734_d().func_176730_m()).func_186678_a(0.5));
-        BedBomb.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketEntityAction((Entity)BedBomb.mc.field_71439_g, CPacketEntityAction.Action.START_SNEAKING));
+        Vec3d hitVec = new Vec3d((Vec3i)finalPos.down()).addVector(0.5, 0.5, 0.5).add(new Vec3d(finalFacing.getOpposite().getDirectionVec()).scale(0.5));
+        BedBomb.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)BedBomb.mc.player, CPacketEntityAction.Action.START_SNEAKING));
         InventoryUtil.switchToHotbarSlot(this.bedSlot, false);
-        BlockUtil.rightClickBlock(finalPos.func_177977_b(), hitVec, this.bedSlot == -2 ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, EnumFacing.UP, this.packet.getValue());
-        BedBomb.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketEntityAction((Entity)BedBomb.mc.field_71439_g, CPacketEntityAction.Action.STOP_SNEAKING));
+        BlockUtil.rightClickBlock(finalPos.down(), hitVec, this.bedSlot == -2 ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, EnumFacing.UP, this.packet.getValue());
+        BedBomb.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)BedBomb.mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
         this.placeTimer.reset();
     }
 
     @Override
     public String getDisplayInfo() {
         if (this.target != null) {
-            return this.target.func_70005_c_();
+            return this.target.getName();
         }
         return null;
     }
@@ -268,8 +268,8 @@ extends Module {
 
     private int findBedSlot() {
         for (int i = 0; i < 9; ++i) {
-            ItemStack stack = BedBomb.mc.field_71439_g.field_71071_by.func_70301_a(i);
-            if (stack == ItemStack.field_190927_a || stack.func_77973_b() != Items.field_151104_aV) continue;
+            ItemStack stack = BedBomb.mc.player.inventory.getStackInSlot(i);
+            if (stack == ItemStack.EMPTY || stack.getItem() != Items.BED) continue;
             return i;
         }
         return -1;

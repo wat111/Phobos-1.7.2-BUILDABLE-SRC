@@ -79,7 +79,7 @@ import org.lwjgl.util.glu.Sphere;
 
 public class RenderUtil
 implements Util {
-    public static RenderItem itemRender = mc.func_175599_af();
+    public static RenderItem itemRender = mc.getRenderItem();
     public static ICamera camera = new Frustum();
     private static final Frustum frustrum = new Frustum();
     private static boolean depth = GL11.glIsEnabled((int)2896);
@@ -94,22 +94,22 @@ implements Util {
 
     public static void drawRectangleCorrectly(int x, int y, int w, int h, int color) {
         GL11.glLineWidth((float)1.0f);
-        Gui.func_73734_a((int)x, (int)y, (int)(x + w), (int)(y + h), (int)color);
+        Gui.drawRect((int)x, (int)y, (int)(x + w), (int)(y + h), (int)color);
     }
 
     public static AxisAlignedBB interpolateAxis(AxisAlignedBB bb) {
-        return new AxisAlignedBB(bb.field_72340_a - RenderUtil.mc.func_175598_ae().field_78730_l, bb.field_72338_b - RenderUtil.mc.func_175598_ae().field_78731_m, bb.field_72339_c - RenderUtil.mc.func_175598_ae().field_78728_n, bb.field_72336_d - RenderUtil.mc.func_175598_ae().field_78730_l, bb.field_72337_e - RenderUtil.mc.func_175598_ae().field_78731_m, bb.field_72334_f - RenderUtil.mc.func_175598_ae().field_78728_n);
+        return new AxisAlignedBB(bb.minX - RenderUtil.mc.getRenderManager().viewerPosX, bb.minY - RenderUtil.mc.getRenderManager().viewerPosY, bb.minZ - RenderUtil.mc.getRenderManager().viewerPosZ, bb.maxX - RenderUtil.mc.getRenderManager().viewerPosX, bb.maxY - RenderUtil.mc.getRenderManager().viewerPosY, bb.maxZ - RenderUtil.mc.getRenderManager().viewerPosZ);
     }
 
     public static void drawTexturedRect(int x, int y, int textureX, int textureY, int width, int height, int zLevel) {
-        Tessellator tessellator = Tessellator.func_178181_a();
-        BufferBuilder BufferBuilder2 = tessellator.func_178180_c();
-        BufferBuilder2.func_181668_a(7, DefaultVertexFormats.field_181707_g);
-        BufferBuilder2.func_181662_b((double)(x + 0), (double)(y + height), (double)zLevel).func_187315_a((double)((float)(textureX + 0) * 0.00390625f), (double)((float)(textureY + height) * 0.00390625f)).func_181675_d();
-        BufferBuilder2.func_181662_b((double)(x + width), (double)(y + height), (double)zLevel).func_187315_a((double)((float)(textureX + width) * 0.00390625f), (double)((float)(textureY + height) * 0.00390625f)).func_181675_d();
-        BufferBuilder2.func_181662_b((double)(x + width), (double)(y + 0), (double)zLevel).func_187315_a((double)((float)(textureX + width) * 0.00390625f), (double)((float)(textureY + 0) * 0.00390625f)).func_181675_d();
-        BufferBuilder2.func_181662_b((double)(x + 0), (double)(y + 0), (double)zLevel).func_187315_a((double)((float)(textureX + 0) * 0.00390625f), (double)((float)(textureY + 0) * 0.00390625f)).func_181675_d();
-        tessellator.func_78381_a();
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder BufferBuilder2 = tessellator.getBuffer();
+        BufferBuilder2.begin(7, DefaultVertexFormats.POSITION_TEX);
+        BufferBuilder2.pos((double)(x + 0), (double)(y + height), (double)zLevel).tex((double)((float)(textureX + 0) * 0.00390625f), (double)((float)(textureY + height) * 0.00390625f)).endVertex();
+        BufferBuilder2.pos((double)(x + width), (double)(y + height), (double)zLevel).tex((double)((float)(textureX + width) * 0.00390625f), (double)((float)(textureY + height) * 0.00390625f)).endVertex();
+        BufferBuilder2.pos((double)(x + width), (double)(y + 0), (double)zLevel).tex((double)((float)(textureX + width) * 0.00390625f), (double)((float)(textureY + 0) * 0.00390625f)).endVertex();
+        BufferBuilder2.pos((double)(x + 0), (double)(y + 0), (double)zLevel).tex((double)((float)(textureX + 0) * 0.00390625f), (double)((float)(textureY + 0) * 0.00390625f)).endVertex();
+        tessellator.draw();
     }
 
     public static void drawGradientRect(int x, int y, int w, int h, int startColor, int endColor) {
@@ -121,35 +121,35 @@ implements Util {
         float f5 = (float)(endColor >> 16 & 0xFF) / 255.0f;
         float f6 = (float)(endColor >> 8 & 0xFF) / 255.0f;
         float f7 = (float)(endColor & 0xFF) / 255.0f;
-        GlStateManager.func_179090_x();
-        GlStateManager.func_179147_l();
-        GlStateManager.func_179118_c();
-        GlStateManager.func_187428_a((GlStateManager.SourceFactor)GlStateManager.SourceFactor.SRC_ALPHA, (GlStateManager.DestFactor)GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, (GlStateManager.SourceFactor)GlStateManager.SourceFactor.ONE, (GlStateManager.DestFactor)GlStateManager.DestFactor.ZERO);
-        GlStateManager.func_179103_j((int)7425);
-        Tessellator tessellator = Tessellator.func_178181_a();
-        BufferBuilder vertexbuffer = tessellator.func_178180_c();
-        vertexbuffer.func_181668_a(7, DefaultVertexFormats.field_181706_f);
-        vertexbuffer.func_181662_b((double)x + (double)w, (double)y, 0.0).func_181666_a(f1, f2, f3, f).func_181675_d();
-        vertexbuffer.func_181662_b((double)x, (double)y, 0.0).func_181666_a(f1, f2, f3, f).func_181675_d();
-        vertexbuffer.func_181662_b((double)x, (double)y + (double)h, 0.0).func_181666_a(f5, f6, f7, f4).func_181675_d();
-        vertexbuffer.func_181662_b((double)x + (double)w, (double)y + (double)h, 0.0).func_181666_a(f5, f6, f7, f4).func_181675_d();
-        tessellator.func_78381_a();
-        GlStateManager.func_179103_j((int)7424);
-        GlStateManager.func_179084_k();
-        GlStateManager.func_179141_d();
-        GlStateManager.func_179098_w();
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate((GlStateManager.SourceFactor)GlStateManager.SourceFactor.SRC_ALPHA, (GlStateManager.DestFactor)GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, (GlStateManager.SourceFactor)GlStateManager.SourceFactor.ONE, (GlStateManager.DestFactor)GlStateManager.DestFactor.ZERO);
+        GlStateManager.shadeModel((int)7425);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder vertexbuffer = tessellator.getBuffer();
+        vertexbuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        vertexbuffer.pos((double)x + (double)w, (double)y, 0.0).color(f1, f2, f3, f).endVertex();
+        vertexbuffer.pos((double)x, (double)y, 0.0).color(f1, f2, f3, f).endVertex();
+        vertexbuffer.pos((double)x, (double)y + (double)h, 0.0).color(f5, f6, f7, f4).endVertex();
+        vertexbuffer.pos((double)x + (double)w, (double)y + (double)h, 0.0).color(f5, f6, f7, f4).endVertex();
+        tessellator.draw();
+        GlStateManager.shadeModel((int)7424);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
     }
 
     public static void drawGradientBlockOutline(BlockPos pos, Color startColor, Color endColor, float linewidth) {
-        IBlockState iblockstate = RenderUtil.mc.field_71441_e.func_180495_p(pos);
-        Vec3d interp = EntityUtil.interpolateEntity((Entity)RenderUtil.mc.field_71439_g, mc.func_184121_ak());
-        RenderUtil.drawGradientBlockOutline(iblockstate.func_185918_c((World)RenderUtil.mc.field_71441_e, pos).func_186662_g((double)0.002f).func_72317_d(-interp.field_72450_a, -interp.field_72448_b, -interp.field_72449_c), startColor, endColor, linewidth);
+        IBlockState iblockstate = RenderUtil.mc.world.getBlockState(pos);
+        Vec3d interp = EntityUtil.interpolateEntity((Entity)RenderUtil.mc.player, mc.getRenderPartialTicks());
+        RenderUtil.drawGradientBlockOutline(iblockstate.getSelectedBoundingBox((World)RenderUtil.mc.world, pos).grow((double)0.002f).offset(-interp.x, -interp.y, -interp.z), startColor, endColor, linewidth);
     }
 
     public static void drawProperGradientBlockOutline(BlockPos pos, Color startColor, Color midColor, Color endColor, float linewidth) {
-        IBlockState iblockstate = RenderUtil.mc.field_71441_e.func_180495_p(pos);
-        Vec3d interp = EntityUtil.interpolateEntity((Entity)RenderUtil.mc.field_71439_g, mc.func_184121_ak());
-        RenderUtil.drawProperGradientBlockOutline(iblockstate.func_185918_c((World)RenderUtil.mc.field_71441_e, pos).func_186662_g((double)0.002f).func_72317_d(-interp.field_72450_a, -interp.field_72448_b, -interp.field_72449_c), startColor, midColor, endColor, linewidth);
+        IBlockState iblockstate = RenderUtil.mc.world.getBlockState(pos);
+        Vec3d interp = EntityUtil.interpolateEntity((Entity)RenderUtil.mc.player, mc.getRenderPartialTicks());
+        RenderUtil.drawProperGradientBlockOutline(iblockstate.getSelectedBoundingBox((World)RenderUtil.mc.world, pos).grow((double)0.002f).offset(-interp.x, -interp.y, -interp.z), startColor, midColor, endColor, linewidth);
     }
 
     public static void drawProperGradientBlockOutline(AxisAlignedBB bb, Color startColor, Color midColor, Color endColor, float linewidth) {
@@ -165,70 +165,70 @@ implements Util {
         float green2 = (float)startColor.getGreen() / 255.0f;
         float blue2 = (float)startColor.getBlue() / 255.0f;
         float alpha2 = (float)startColor.getAlpha() / 255.0f;
-        double dif = (bb.field_72337_e - bb.field_72338_b) / 2.0;
-        GlStateManager.func_179094_E();
-        GlStateManager.func_179147_l();
-        GlStateManager.func_179097_i();
-        GlStateManager.func_179120_a((int)770, (int)771, (int)0, (int)1);
-        GlStateManager.func_179090_x();
-        GlStateManager.func_179132_a((boolean)false);
+        double dif = (bb.maxY - bb.minY) / 2.0;
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.disableDepth();
+        GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)0, (int)1);
+        GlStateManager.disableTexture2D();
+        GlStateManager.depthMask((boolean)false);
         GL11.glEnable((int)2848);
         GL11.glHint((int)3154, (int)4354);
         GL11.glLineWidth((float)linewidth);
         GL11.glBegin((int)1);
         GL11.glColor4d((double)red, (double)green, (double)blue, (double)alpha);
-        GL11.glVertex3d((double)bb.field_72340_a, (double)bb.field_72338_b, (double)bb.field_72339_c);
-        GL11.glVertex3d((double)bb.field_72336_d, (double)bb.field_72338_b, (double)bb.field_72339_c);
-        GL11.glVertex3d((double)bb.field_72336_d, (double)bb.field_72338_b, (double)bb.field_72339_c);
-        GL11.glVertex3d((double)bb.field_72336_d, (double)bb.field_72338_b, (double)bb.field_72334_f);
-        GL11.glVertex3d((double)bb.field_72336_d, (double)bb.field_72338_b, (double)bb.field_72334_f);
-        GL11.glVertex3d((double)bb.field_72340_a, (double)bb.field_72338_b, (double)bb.field_72334_f);
-        GL11.glVertex3d((double)bb.field_72340_a, (double)bb.field_72338_b, (double)bb.field_72334_f);
-        GL11.glVertex3d((double)bb.field_72340_a, (double)bb.field_72338_b, (double)bb.field_72339_c);
-        GL11.glVertex3d((double)bb.field_72340_a, (double)bb.field_72338_b, (double)bb.field_72339_c);
+        GL11.glVertex3d((double)bb.minX, (double)bb.minY, (double)bb.minZ);
+        GL11.glVertex3d((double)bb.maxX, (double)bb.minY, (double)bb.minZ);
+        GL11.glVertex3d((double)bb.maxX, (double)bb.minY, (double)bb.minZ);
+        GL11.glVertex3d((double)bb.maxX, (double)bb.minY, (double)bb.maxZ);
+        GL11.glVertex3d((double)bb.maxX, (double)bb.minY, (double)bb.maxZ);
+        GL11.glVertex3d((double)bb.minX, (double)bb.minY, (double)bb.maxZ);
+        GL11.glVertex3d((double)bb.minX, (double)bb.minY, (double)bb.maxZ);
+        GL11.glVertex3d((double)bb.minX, (double)bb.minY, (double)bb.minZ);
+        GL11.glVertex3d((double)bb.minX, (double)bb.minY, (double)bb.minZ);
         GL11.glColor4d((double)red1, (double)green1, (double)blue1, (double)alpha1);
-        GL11.glVertex3d((double)bb.field_72340_a, (double)(bb.field_72338_b + dif), (double)bb.field_72339_c);
-        GL11.glVertex3d((double)bb.field_72340_a, (double)(bb.field_72338_b + dif), (double)bb.field_72339_c);
+        GL11.glVertex3d((double)bb.minX, (double)(bb.minY + dif), (double)bb.minZ);
+        GL11.glVertex3d((double)bb.minX, (double)(bb.minY + dif), (double)bb.minZ);
         GL11.glColor4f((float)red2, (float)green2, (float)blue2, (float)alpha2);
-        GL11.glVertex3d((double)bb.field_72340_a, (double)bb.field_72337_e, (double)bb.field_72339_c);
+        GL11.glVertex3d((double)bb.minX, (double)bb.maxY, (double)bb.minZ);
         GL11.glColor4d((double)red, (double)green, (double)blue, (double)alpha);
-        GL11.glVertex3d((double)bb.field_72340_a, (double)bb.field_72338_b, (double)bb.field_72334_f);
+        GL11.glVertex3d((double)bb.minX, (double)bb.minY, (double)bb.maxZ);
         GL11.glColor4d((double)red1, (double)green1, (double)blue1, (double)alpha1);
-        GL11.glVertex3d((double)bb.field_72340_a, (double)(bb.field_72338_b + dif), (double)bb.field_72334_f);
-        GL11.glVertex3d((double)bb.field_72340_a, (double)(bb.field_72338_b + dif), (double)bb.field_72334_f);
+        GL11.glVertex3d((double)bb.minX, (double)(bb.minY + dif), (double)bb.maxZ);
+        GL11.glVertex3d((double)bb.minX, (double)(bb.minY + dif), (double)bb.maxZ);
         GL11.glColor4d((double)red2, (double)green2, (double)blue2, (double)alpha2);
-        GL11.glVertex3d((double)bb.field_72340_a, (double)bb.field_72337_e, (double)bb.field_72334_f);
+        GL11.glVertex3d((double)bb.minX, (double)bb.maxY, (double)bb.maxZ);
         GL11.glColor4d((double)red, (double)green, (double)blue, (double)alpha);
-        GL11.glVertex3d((double)bb.field_72336_d, (double)bb.field_72338_b, (double)bb.field_72334_f);
+        GL11.glVertex3d((double)bb.maxX, (double)bb.minY, (double)bb.maxZ);
         GL11.glColor4d((double)red1, (double)green1, (double)blue1, (double)alpha1);
-        GL11.glVertex3d((double)bb.field_72336_d, (double)(bb.field_72338_b + dif), (double)bb.field_72334_f);
-        GL11.glVertex3d((double)bb.field_72336_d, (double)(bb.field_72338_b + dif), (double)bb.field_72334_f);
+        GL11.glVertex3d((double)bb.maxX, (double)(bb.minY + dif), (double)bb.maxZ);
+        GL11.glVertex3d((double)bb.maxX, (double)(bb.minY + dif), (double)bb.maxZ);
         GL11.glColor4d((double)red2, (double)green2, (double)blue2, (double)alpha2);
-        GL11.glVertex3d((double)bb.field_72336_d, (double)bb.field_72337_e, (double)bb.field_72334_f);
+        GL11.glVertex3d((double)bb.maxX, (double)bb.maxY, (double)bb.maxZ);
         GL11.glColor4d((double)red, (double)green, (double)blue, (double)alpha);
-        GL11.glVertex3d((double)bb.field_72336_d, (double)bb.field_72338_b, (double)bb.field_72339_c);
+        GL11.glVertex3d((double)bb.maxX, (double)bb.minY, (double)bb.minZ);
         GL11.glColor4d((double)red1, (double)green1, (double)blue1, (double)alpha1);
-        GL11.glVertex3d((double)bb.field_72336_d, (double)(bb.field_72338_b + dif), (double)bb.field_72339_c);
-        GL11.glVertex3d((double)bb.field_72336_d, (double)(bb.field_72338_b + dif), (double)bb.field_72339_c);
+        GL11.glVertex3d((double)bb.maxX, (double)(bb.minY + dif), (double)bb.minZ);
+        GL11.glVertex3d((double)bb.maxX, (double)(bb.minY + dif), (double)bb.minZ);
         GL11.glColor4d((double)red2, (double)green2, (double)blue2, (double)alpha2);
-        GL11.glVertex3d((double)bb.field_72336_d, (double)bb.field_72337_e, (double)bb.field_72339_c);
+        GL11.glVertex3d((double)bb.maxX, (double)bb.maxY, (double)bb.minZ);
         GL11.glColor4d((double)red2, (double)green2, (double)blue2, (double)alpha2);
-        GL11.glVertex3d((double)bb.field_72340_a, (double)bb.field_72337_e, (double)bb.field_72339_c);
-        GL11.glVertex3d((double)bb.field_72336_d, (double)bb.field_72337_e, (double)bb.field_72339_c);
-        GL11.glVertex3d((double)bb.field_72336_d, (double)bb.field_72337_e, (double)bb.field_72339_c);
-        GL11.glVertex3d((double)bb.field_72336_d, (double)bb.field_72337_e, (double)bb.field_72334_f);
-        GL11.glVertex3d((double)bb.field_72336_d, (double)bb.field_72337_e, (double)bb.field_72334_f);
-        GL11.glVertex3d((double)bb.field_72340_a, (double)bb.field_72337_e, (double)bb.field_72334_f);
-        GL11.glVertex3d((double)bb.field_72340_a, (double)bb.field_72337_e, (double)bb.field_72334_f);
-        GL11.glVertex3d((double)bb.field_72340_a, (double)bb.field_72337_e, (double)bb.field_72339_c);
-        GL11.glVertex3d((double)bb.field_72340_a, (double)bb.field_72337_e, (double)bb.field_72339_c);
+        GL11.glVertex3d((double)bb.minX, (double)bb.maxY, (double)bb.minZ);
+        GL11.glVertex3d((double)bb.maxX, (double)bb.maxY, (double)bb.minZ);
+        GL11.glVertex3d((double)bb.maxX, (double)bb.maxY, (double)bb.minZ);
+        GL11.glVertex3d((double)bb.maxX, (double)bb.maxY, (double)bb.maxZ);
+        GL11.glVertex3d((double)bb.maxX, (double)bb.maxY, (double)bb.maxZ);
+        GL11.glVertex3d((double)bb.minX, (double)bb.maxY, (double)bb.maxZ);
+        GL11.glVertex3d((double)bb.minX, (double)bb.maxY, (double)bb.maxZ);
+        GL11.glVertex3d((double)bb.minX, (double)bb.maxY, (double)bb.minZ);
+        GL11.glVertex3d((double)bb.minX, (double)bb.maxY, (double)bb.minZ);
         GL11.glEnd();
         GL11.glDisable((int)2848);
-        GlStateManager.func_179132_a((boolean)true);
-        GlStateManager.func_179126_j();
-        GlStateManager.func_179098_w();
-        GlStateManager.func_179084_k();
-        GlStateManager.func_179121_F();
+        GlStateManager.depthMask((boolean)true);
+        GlStateManager.enableDepth();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
     }
 
     public static void drawGradientBlockOutline(AxisAlignedBB bb, Color startColor, Color endColor, float linewidth) {
@@ -240,56 +240,56 @@ implements Util {
         float green1 = (float)endColor.getGreen() / 255.0f;
         float blue1 = (float)endColor.getBlue() / 255.0f;
         float alpha1 = (float)endColor.getAlpha() / 255.0f;
-        GlStateManager.func_179094_E();
-        GlStateManager.func_179147_l();
-        GlStateManager.func_179097_i();
-        GlStateManager.func_179120_a((int)770, (int)771, (int)0, (int)1);
-        GlStateManager.func_179090_x();
-        GlStateManager.func_179132_a((boolean)false);
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.disableDepth();
+        GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)0, (int)1);
+        GlStateManager.disableTexture2D();
+        GlStateManager.depthMask((boolean)false);
         GL11.glEnable((int)2848);
         GL11.glHint((int)3154, (int)4354);
         GL11.glLineWidth((float)linewidth);
-        Tessellator tessellator = Tessellator.func_178181_a();
-        BufferBuilder bufferbuilder = tessellator.func_178180_c();
-        bufferbuilder.func_181668_a(3, DefaultVertexFormats.field_181706_f);
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        tessellator.func_78381_a();
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        tessellator.draw();
         GL11.glDisable((int)2848);
-        GlStateManager.func_179132_a((boolean)true);
-        GlStateManager.func_179126_j();
-        GlStateManager.func_179098_w();
-        GlStateManager.func_179084_k();
-        GlStateManager.func_179121_F();
+        GlStateManager.depthMask((boolean)true);
+        GlStateManager.enableDepth();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
     }
 
     public static void drawGradientFilledBox(BlockPos pos, Color startColor, Color endColor) {
-        IBlockState iblockstate = RenderUtil.mc.field_71441_e.func_180495_p(pos);
-        Vec3d interp = EntityUtil.interpolateEntity((Entity)RenderUtil.mc.field_71439_g, mc.func_184121_ak());
-        RenderUtil.drawGradientFilledBox(iblockstate.func_185918_c((World)RenderUtil.mc.field_71441_e, pos).func_186662_g((double)0.002f).func_72317_d(-interp.field_72450_a, -interp.field_72448_b, -interp.field_72449_c), startColor, endColor);
+        IBlockState iblockstate = RenderUtil.mc.world.getBlockState(pos);
+        Vec3d interp = EntityUtil.interpolateEntity((Entity)RenderUtil.mc.player, mc.getRenderPartialTicks());
+        RenderUtil.drawGradientFilledBox(iblockstate.getSelectedBoundingBox((World)RenderUtil.mc.world, pos).grow((double)0.002f).offset(-interp.x, -interp.y, -interp.z), startColor, endColor);
     }
 
     public static void drawGradientFilledBox(AxisAlignedBB bb, Color startColor, Color endColor) {
-        GlStateManager.func_179094_E();
-        GlStateManager.func_179147_l();
-        GlStateManager.func_179097_i();
-        GlStateManager.func_179120_a((int)770, (int)771, (int)0, (int)1);
-        GlStateManager.func_179090_x();
-        GlStateManager.func_179132_a((boolean)false);
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.disableDepth();
+        GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)0, (int)1);
+        GlStateManager.disableTexture2D();
+        GlStateManager.depthMask((boolean)false);
         float alpha = (float)endColor.getAlpha() / 255.0f;
         float red = (float)endColor.getRed() / 255.0f;
         float green = (float)endColor.getGreen() / 255.0f;
@@ -298,39 +298,39 @@ implements Util {
         float red1 = (float)startColor.getRed() / 255.0f;
         float green1 = (float)startColor.getGreen() / 255.0f;
         float blue1 = (float)startColor.getBlue() / 255.0f;
-        Tessellator tessellator = Tessellator.func_178181_a();
-        BufferBuilder bufferbuilder = tessellator.func_178180_c();
-        bufferbuilder.func_181668_a(7, DefaultVertexFormats.field_181706_f);
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        tessellator.func_78381_a();
-        GlStateManager.func_179132_a((boolean)true);
-        GlStateManager.func_179126_j();
-        GlStateManager.func_179098_w();
-        GlStateManager.func_179084_k();
-        GlStateManager.func_179121_F();
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        tessellator.draw();
+        GlStateManager.depthMask((boolean)true);
+        GlStateManager.enableDepth();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
     }
 
     public static void drawGradientRect(float x, float y, float w, float h, int startColor, int endColor) {
@@ -342,23 +342,23 @@ implements Util {
         float f5 = (float)(endColor >> 16 & 0xFF) / 255.0f;
         float f6 = (float)(endColor >> 8 & 0xFF) / 255.0f;
         float f7 = (float)(endColor & 0xFF) / 255.0f;
-        GlStateManager.func_179090_x();
-        GlStateManager.func_179147_l();
-        GlStateManager.func_179118_c();
-        GlStateManager.func_187428_a((GlStateManager.SourceFactor)GlStateManager.SourceFactor.SRC_ALPHA, (GlStateManager.DestFactor)GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, (GlStateManager.SourceFactor)GlStateManager.SourceFactor.ONE, (GlStateManager.DestFactor)GlStateManager.DestFactor.ZERO);
-        GlStateManager.func_179103_j((int)7425);
-        Tessellator tessellator = Tessellator.func_178181_a();
-        BufferBuilder vertexbuffer = tessellator.func_178180_c();
-        vertexbuffer.func_181668_a(7, DefaultVertexFormats.field_181706_f);
-        vertexbuffer.func_181662_b((double)x + (double)w, (double)y, 0.0).func_181666_a(f1, f2, f3, f).func_181675_d();
-        vertexbuffer.func_181662_b((double)x, (double)y, 0.0).func_181666_a(f1, f2, f3, f).func_181675_d();
-        vertexbuffer.func_181662_b((double)x, (double)y + (double)h, 0.0).func_181666_a(f5, f6, f7, f4).func_181675_d();
-        vertexbuffer.func_181662_b((double)x + (double)w, (double)y + (double)h, 0.0).func_181666_a(f5, f6, f7, f4).func_181675_d();
-        tessellator.func_78381_a();
-        GlStateManager.func_179103_j((int)7424);
-        GlStateManager.func_179084_k();
-        GlStateManager.func_179141_d();
-        GlStateManager.func_179098_w();
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate((GlStateManager.SourceFactor)GlStateManager.SourceFactor.SRC_ALPHA, (GlStateManager.DestFactor)GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, (GlStateManager.SourceFactor)GlStateManager.SourceFactor.ONE, (GlStateManager.DestFactor)GlStateManager.DestFactor.ZERO);
+        GlStateManager.shadeModel((int)7425);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder vertexbuffer = tessellator.getBuffer();
+        vertexbuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        vertexbuffer.pos((double)x + (double)w, (double)y, 0.0).color(f1, f2, f3, f).endVertex();
+        vertexbuffer.pos((double)x, (double)y, 0.0).color(f1, f2, f3, f).endVertex();
+        vertexbuffer.pos((double)x, (double)y + (double)h, 0.0).color(f5, f6, f7, f4).endVertex();
+        vertexbuffer.pos((double)x + (double)w, (double)y + (double)h, 0.0).color(f5, f6, f7, f4).endVertex();
+        tessellator.draw();
+        GlStateManager.shadeModel((int)7424);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
     }
 
     public static void blockESP(BlockPos b, Color c, double length, double length2) {
@@ -384,7 +384,7 @@ implements Util {
     }
 
     public static void glScissor(float x, float y, float x1, float y1, ScaledResolution sr) {
-        GL11.glScissor((int)((int)(x * (float)sr.func_78325_e())), (int)((int)((float)RenderUtil.mc.field_71440_d - y1 * (float)sr.func_78325_e())), (int)((int)((x1 - x) * (float)sr.func_78325_e())), (int)((int)((y1 - y) * (float)sr.func_78325_e())));
+        GL11.glScissor((int)((int)(x * (float)sr.getScaleFactor())), (int)((int)((float)RenderUtil.mc.displayHeight - y1 * (float)sr.getScaleFactor())), (int)((int)((x1 - x) * (float)sr.getScaleFactor())), (int)((int)((y1 - y) * (float)sr.getScaleFactor())));
     }
 
     public static void drawLine(float x, float y, float x1, float y1, float thickness, int hex) {
@@ -392,48 +392,48 @@ implements Util {
         float green = (float)(hex >> 8 & 0xFF) / 255.0f;
         float blue = (float)(hex & 0xFF) / 255.0f;
         float alpha = (float)(hex >> 24 & 0xFF) / 255.0f;
-        GlStateManager.func_179094_E();
-        GlStateManager.func_179090_x();
-        GlStateManager.func_179147_l();
-        GlStateManager.func_179118_c();
-        GlStateManager.func_179120_a((int)770, (int)771, (int)1, (int)0);
-        GlStateManager.func_179103_j((int)7425);
+        GlStateManager.pushMatrix();
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)1, (int)0);
+        GlStateManager.shadeModel((int)7425);
         GL11.glLineWidth((float)thickness);
         GL11.glEnable((int)2848);
         GL11.glHint((int)3154, (int)4354);
-        Tessellator tessellator = Tessellator.func_178181_a();
-        BufferBuilder bufferbuilder = tessellator.func_178180_c();
-        bufferbuilder.func_181668_a(3, DefaultVertexFormats.field_181706_f);
-        bufferbuilder.func_181662_b((double)x, (double)y, 0.0).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b((double)x1, (double)y1, 0.0).func_181666_a(red, green, blue, alpha).func_181675_d();
-        tessellator.func_78381_a();
-        GlStateManager.func_179103_j((int)7424);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
+        bufferbuilder.pos((double)x, (double)y, 0.0).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos((double)x1, (double)y1, 0.0).color(red, green, blue, alpha).endVertex();
+        tessellator.draw();
+        GlStateManager.shadeModel((int)7424);
         GL11.glDisable((int)2848);
-        GlStateManager.func_179084_k();
-        GlStateManager.func_179141_d();
-        GlStateManager.func_179098_w();
-        GlStateManager.func_179121_F();
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
+        GlStateManager.popMatrix();
     }
 
     public static void drawBox(BlockPos pos, Color color) {
-        AxisAlignedBB bb = new AxisAlignedBB((double)pos.func_177958_n() - RenderUtil.mc.func_175598_ae().field_78730_l, (double)pos.func_177956_o() - RenderUtil.mc.func_175598_ae().field_78731_m, (double)pos.func_177952_p() - RenderUtil.mc.func_175598_ae().field_78728_n, (double)(pos.func_177958_n() + 1) - RenderUtil.mc.func_175598_ae().field_78730_l, (double)(pos.func_177956_o() + 1) - RenderUtil.mc.func_175598_ae().field_78731_m, (double)(pos.func_177952_p() + 1) - RenderUtil.mc.func_175598_ae().field_78728_n);
-        camera.func_78547_a(Objects.requireNonNull(RenderUtil.mc.func_175606_aa()).field_70165_t, RenderUtil.mc.func_175606_aa().field_70163_u, RenderUtil.mc.func_175606_aa().field_70161_v);
-        if (camera.func_78546_a(new AxisAlignedBB(bb.field_72340_a + RenderUtil.mc.func_175598_ae().field_78730_l, bb.field_72338_b + RenderUtil.mc.func_175598_ae().field_78731_m, bb.field_72339_c + RenderUtil.mc.func_175598_ae().field_78728_n, bb.field_72336_d + RenderUtil.mc.func_175598_ae().field_78730_l, bb.field_72337_e + RenderUtil.mc.func_175598_ae().field_78731_m, bb.field_72334_f + RenderUtil.mc.func_175598_ae().field_78728_n))) {
-            GlStateManager.func_179094_E();
-            GlStateManager.func_179147_l();
-            GlStateManager.func_179097_i();
-            GlStateManager.func_179120_a((int)770, (int)771, (int)0, (int)1);
-            GlStateManager.func_179090_x();
-            GlStateManager.func_179132_a((boolean)false);
+        AxisAlignedBB bb = new AxisAlignedBB((double)pos.getX() - RenderUtil.mc.getRenderManager().viewerPosX, (double)pos.getY() - RenderUtil.mc.getRenderManager().viewerPosY, (double)pos.getZ() - RenderUtil.mc.getRenderManager().viewerPosZ, (double)(pos.getX() + 1) - RenderUtil.mc.getRenderManager().viewerPosX, (double)(pos.getY() + 1) - RenderUtil.mc.getRenderManager().viewerPosY, (double)(pos.getZ() + 1) - RenderUtil.mc.getRenderManager().viewerPosZ);
+        camera.setPosition(Objects.requireNonNull(RenderUtil.mc.getRenderViewEntity()).posX, RenderUtil.mc.getRenderViewEntity().posY, RenderUtil.mc.getRenderViewEntity().posZ);
+        if (camera.isBoundingBoxInFrustum(new AxisAlignedBB(bb.minX + RenderUtil.mc.getRenderManager().viewerPosX, bb.minY + RenderUtil.mc.getRenderManager().viewerPosY, bb.minZ + RenderUtil.mc.getRenderManager().viewerPosZ, bb.maxX + RenderUtil.mc.getRenderManager().viewerPosX, bb.maxY + RenderUtil.mc.getRenderManager().viewerPosY, bb.maxZ + RenderUtil.mc.getRenderManager().viewerPosZ))) {
+            GlStateManager.pushMatrix();
+            GlStateManager.enableBlend();
+            GlStateManager.disableDepth();
+            GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)0, (int)1);
+            GlStateManager.disableTexture2D();
+            GlStateManager.depthMask((boolean)false);
             GL11.glEnable((int)2848);
             GL11.glHint((int)3154, (int)4354);
-            RenderGlobal.func_189696_b((AxisAlignedBB)bb, (float)((float)color.getRed() / 255.0f), (float)((float)color.getGreen() / 255.0f), (float)((float)color.getBlue() / 255.0f), (float)((float)color.getAlpha() / 255.0f));
+            RenderGlobal.renderFilledBox((AxisAlignedBB)bb, (float)((float)color.getRed() / 255.0f), (float)((float)color.getGreen() / 255.0f), (float)((float)color.getBlue() / 255.0f), (float)((float)color.getAlpha() / 255.0f));
             GL11.glDisable((int)2848);
-            GlStateManager.func_179132_a((boolean)true);
-            GlStateManager.func_179126_j();
-            GlStateManager.func_179098_w();
-            GlStateManager.func_179084_k();
-            GlStateManager.func_179121_F();
+            GlStateManager.depthMask((boolean)true);
+            GlStateManager.enableDepth();
+            GlStateManager.enableTexture2D();
+            GlStateManager.disableBlend();
+            GlStateManager.popMatrix();
         }
     }
 
@@ -446,49 +446,49 @@ implements Util {
         float green1 = (float)endColor.getGreen() / 255.0f;
         float blue1 = (float)endColor.getBlue() / 255.0f;
         float alpha1 = (float)endColor.getAlpha() / 255.0f;
-        AxisAlignedBB bb = new AxisAlignedBB((double)pos.func_177958_n() - RenderUtil.mc.func_175598_ae().field_78730_l, (double)pos.func_177956_o() - RenderUtil.mc.func_175598_ae().field_78731_m, (double)pos.func_177952_p() - RenderUtil.mc.func_175598_ae().field_78728_n, (double)(pos.func_177958_n() + 1) - RenderUtil.mc.func_175598_ae().field_78730_l, (double)(pos.func_177956_o() + 1) - RenderUtil.mc.func_175598_ae().field_78731_m, (double)(pos.func_177952_p() + 1) - RenderUtil.mc.func_175598_ae().field_78728_n);
-        double offset = (bb.field_72337_e - bb.field_72338_b) / 2.0;
-        Tessellator tessellator = Tessellator.func_178181_a();
-        BufferBuilder builder = tessellator.func_178180_c();
-        GlStateManager.func_179094_E();
-        GlStateManager.func_179147_l();
-        GlStateManager.func_179097_i();
-        GlStateManager.func_179120_a((int)770, (int)771, (int)0, (int)1);
-        GlStateManager.func_179090_x();
-        GlStateManager.func_179132_a((boolean)false);
+        AxisAlignedBB bb = new AxisAlignedBB((double)pos.getX() - RenderUtil.mc.getRenderManager().viewerPosX, (double)pos.getY() - RenderUtil.mc.getRenderManager().viewerPosY, (double)pos.getZ() - RenderUtil.mc.getRenderManager().viewerPosZ, (double)(pos.getX() + 1) - RenderUtil.mc.getRenderManager().viewerPosX, (double)(pos.getY() + 1) - RenderUtil.mc.getRenderManager().viewerPosY, (double)(pos.getZ() + 1) - RenderUtil.mc.getRenderManager().viewerPosZ);
+        double offset = (bb.maxY - bb.minY) / 2.0;
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder builder = tessellator.getBuffer();
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.disableDepth();
+        GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)0, (int)1);
+        GlStateManager.disableTexture2D();
+        GlStateManager.depthMask((boolean)false);
         GL11.glEnable((int)2848);
         GL11.glHint((int)3154, (int)4354);
-        builder.func_181668_a(5, DefaultVertexFormats.field_181706_f);
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
+        builder.begin(5, DefaultVertexFormats.POSITION_COLOR);
+        builder.pos(bb.minX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.minX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.maxX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.maxX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.maxX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.maxX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.minX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.maxX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.maxX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.maxX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
     }
 
     public static void drawBetterGradientBox(BlockPos pos, Color startColor, Color midColor, Color endColor) {
@@ -504,46 +504,46 @@ implements Util {
         float green2 = (float)midColor.getGreen() / 255.0f;
         float blue2 = (float)midColor.getBlue() / 255.0f;
         float alpha2 = (float)midColor.getAlpha() / 255.0f;
-        AxisAlignedBB bb = new AxisAlignedBB((double)pos.func_177958_n() - RenderUtil.mc.func_175598_ae().field_78730_l, (double)pos.func_177956_o() - RenderUtil.mc.func_175598_ae().field_78731_m, (double)pos.func_177952_p() - RenderUtil.mc.func_175598_ae().field_78728_n, (double)(pos.func_177958_n() + 1) - RenderUtil.mc.func_175598_ae().field_78730_l, (double)(pos.func_177956_o() + 1) - RenderUtil.mc.func_175598_ae().field_78731_m, (double)(pos.func_177952_p() + 1) - RenderUtil.mc.func_175598_ae().field_78728_n);
-        double offset = (bb.field_72337_e - bb.field_72338_b) / 2.0;
-        Tessellator tessellator = Tessellator.func_178181_a();
-        BufferBuilder builder = tessellator.func_178180_c();
-        GlStateManager.func_179094_E();
-        GlStateManager.func_179147_l();
-        GlStateManager.func_179097_i();
-        GlStateManager.func_179120_a((int)770, (int)771, (int)0, (int)1);
-        GlStateManager.func_179090_x();
-        GlStateManager.func_179132_a((boolean)false);
+        AxisAlignedBB bb = new AxisAlignedBB((double)pos.getX() - RenderUtil.mc.getRenderManager().viewerPosX, (double)pos.getY() - RenderUtil.mc.getRenderManager().viewerPosY, (double)pos.getZ() - RenderUtil.mc.getRenderManager().viewerPosZ, (double)(pos.getX() + 1) - RenderUtil.mc.getRenderManager().viewerPosX, (double)(pos.getY() + 1) - RenderUtil.mc.getRenderManager().viewerPosY, (double)(pos.getZ() + 1) - RenderUtil.mc.getRenderManager().viewerPosZ);
+        double offset = (bb.maxY - bb.minY) / 2.0;
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder builder = tessellator.getBuffer();
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.disableDepth();
+        GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)0, (int)1);
+        GlStateManager.disableTexture2D();
+        GlStateManager.depthMask((boolean)false);
         GL11.glEnable((int)2848);
         GL11.glHint((int)3154, (int)4354);
-        builder.func_181668_a(5, DefaultVertexFormats.field_181706_f);
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b + offset, bb.field_72339_c).func_181666_a(red2, green2, blue2, alpha2).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b + offset, bb.field_72334_f).func_181666_a(red2, green2, blue2, alpha2).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b + offset, bb.field_72334_f).func_181666_a(red2, green2, blue2, alpha2).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72338_b + offset, bb.field_72334_f).func_181666_a(red2, green2, blue2, alpha2).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b + offset, bb.field_72339_c).func_181666_a(red2, green2, blue2, alpha2).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b + offset, bb.field_72339_c).func_181666_a(red2, green2, blue2, alpha2).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b + offset, bb.field_72339_c).func_181666_a(red2, green2, blue2, alpha2).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b + offset, bb.field_72334_f).func_181666_a(red2, green2, blue2, alpha2).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b + offset, bb.field_72334_f).func_181666_a(red2, green2, blue2, alpha2).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72338_b + offset, bb.field_72334_f).func_181666_a(red2, green2, blue2, alpha2).func_181675_d();
-        tessellator.func_78381_a();
+        builder.begin(5, DefaultVertexFormats.POSITION_COLOR);
+        builder.pos(bb.minX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.minY + offset, bb.minZ).color(red2, green2, blue2, alpha2).endVertex();
+        builder.pos(bb.minX, bb.minY + offset, bb.maxZ).color(red2, green2, blue2, alpha2).endVertex();
+        builder.pos(bb.minX, bb.minY + offset, bb.maxZ).color(red2, green2, blue2, alpha2).endVertex();
+        builder.pos(bb.minX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.maxX, bb.minY + offset, bb.maxZ).color(red2, green2, blue2, alpha2).endVertex();
+        builder.pos(bb.maxX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.minY + offset, bb.minZ).color(red2, green2, blue2, alpha2).endVertex();
+        builder.pos(bb.minX, bb.minY + offset, bb.minZ).color(red2, green2, blue2, alpha2).endVertex();
+        builder.pos(bb.minX, bb.minY + offset, bb.minZ).color(red2, green2, blue2, alpha2).endVertex();
+        builder.pos(bb.minX, bb.minY + offset, bb.maxZ).color(red2, green2, blue2, alpha2).endVertex();
+        builder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.minX, bb.minY + offset, bb.maxZ).color(red2, green2, blue2, alpha2).endVertex();
+        builder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.maxX, bb.minY + offset, bb.maxZ).color(red2, green2, blue2, alpha2).endVertex();
+        tessellator.draw();
         GL11.glDisable((int)2848);
-        GlStateManager.func_179132_a((boolean)true);
-        GlStateManager.func_179126_j();
-        GlStateManager.func_179098_w();
-        GlStateManager.func_179084_k();
-        GlStateManager.func_179121_F();
+        GlStateManager.depthMask((boolean)true);
+        GlStateManager.enableDepth();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
     }
 
     public static void drawEvenBetterGradientBox(BlockPos pos, Color startColor, Color midColor, Color endColor) {
@@ -559,93 +559,93 @@ implements Util {
         float green2 = (float)midColor.getGreen() / 255.0f;
         float blue2 = (float)midColor.getBlue() / 255.0f;
         float alpha2 = (float)midColor.getAlpha() / 255.0f;
-        AxisAlignedBB bb = new AxisAlignedBB((double)pos.func_177958_n() - RenderUtil.mc.func_175598_ae().field_78730_l, (double)pos.func_177956_o() - RenderUtil.mc.func_175598_ae().field_78731_m, (double)pos.func_177952_p() - RenderUtil.mc.func_175598_ae().field_78728_n, (double)(pos.func_177958_n() + 1) - RenderUtil.mc.func_175598_ae().field_78730_l, (double)(pos.func_177956_o() + 1) - RenderUtil.mc.func_175598_ae().field_78731_m, (double)(pos.func_177952_p() + 1) - RenderUtil.mc.func_175598_ae().field_78728_n);
-        double offset = (bb.field_72337_e - bb.field_72338_b) / 2.0;
-        Tessellator tessellator = Tessellator.func_178181_a();
-        BufferBuilder builder = tessellator.func_178180_c();
-        GlStateManager.func_179094_E();
-        GlStateManager.func_179147_l();
-        GlStateManager.func_179097_i();
-        GlStateManager.func_179120_a((int)770, (int)771, (int)0, (int)1);
-        GlStateManager.func_179090_x();
-        GlStateManager.func_179132_a((boolean)false);
+        AxisAlignedBB bb = new AxisAlignedBB((double)pos.getX() - RenderUtil.mc.getRenderManager().viewerPosX, (double)pos.getY() - RenderUtil.mc.getRenderManager().viewerPosY, (double)pos.getZ() - RenderUtil.mc.getRenderManager().viewerPosZ, (double)(pos.getX() + 1) - RenderUtil.mc.getRenderManager().viewerPosX, (double)(pos.getY() + 1) - RenderUtil.mc.getRenderManager().viewerPosY, (double)(pos.getZ() + 1) - RenderUtil.mc.getRenderManager().viewerPosZ);
+        double offset = (bb.maxY - bb.minY) / 2.0;
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder builder = tessellator.getBuffer();
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.disableDepth();
+        GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)0, (int)1);
+        GlStateManager.disableTexture2D();
+        GlStateManager.depthMask((boolean)false);
         GL11.glEnable((int)2848);
         GL11.glHint((int)3154, (int)4354);
-        builder.func_181668_a(5, DefaultVertexFormats.field_181706_f);
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red1, green1, blue1, alpha1).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        builder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        tessellator.func_78381_a();
+        builder.begin(5, DefaultVertexFormats.POSITION_COLOR);
+        builder.pos(bb.minX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.minX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.maxX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.maxX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.maxX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.maxX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.minX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.maxX, bb.minY, bb.minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.maxX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.maxX, bb.minY, bb.maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        tessellator.draw();
         GL11.glDisable((int)2848);
-        GlStateManager.func_179132_a((boolean)true);
-        GlStateManager.func_179126_j();
-        GlStateManager.func_179098_w();
-        GlStateManager.func_179084_k();
-        GlStateManager.func_179121_F();
+        GlStateManager.depthMask((boolean)true);
+        GlStateManager.enableDepth();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
     }
 
     public static void drawBox(BlockPos pos, Color color, double height) {
-        AxisAlignedBB bb = new AxisAlignedBB((double)pos.func_177958_n() - RenderUtil.mc.func_175598_ae().field_78730_l, (double)pos.func_177956_o() - RenderUtil.mc.func_175598_ae().field_78731_m, (double)pos.func_177952_p() - RenderUtil.mc.func_175598_ae().field_78728_n, (double)(pos.func_177958_n() + 1) - RenderUtil.mc.func_175598_ae().field_78730_l, (double)(pos.func_177956_o() + 1) - RenderUtil.mc.func_175598_ae().field_78731_m + height, (double)(pos.func_177952_p() + 1) - RenderUtil.mc.func_175598_ae().field_78728_n);
-        camera.func_78547_a(Objects.requireNonNull(RenderUtil.mc.func_175606_aa()).field_70165_t, RenderUtil.mc.func_175606_aa().field_70163_u, RenderUtil.mc.func_175606_aa().field_70161_v);
-        if (camera.func_78546_a(new AxisAlignedBB(bb.field_72340_a + RenderUtil.mc.func_175598_ae().field_78730_l, bb.field_72338_b + RenderUtil.mc.func_175598_ae().field_78731_m, bb.field_72339_c + RenderUtil.mc.func_175598_ae().field_78728_n, bb.field_72336_d + RenderUtil.mc.func_175598_ae().field_78730_l, bb.field_72337_e + RenderUtil.mc.func_175598_ae().field_78731_m, bb.field_72334_f + RenderUtil.mc.func_175598_ae().field_78728_n))) {
-            GlStateManager.func_179094_E();
-            GlStateManager.func_179147_l();
-            GlStateManager.func_179097_i();
-            GlStateManager.func_179120_a((int)770, (int)771, (int)0, (int)1);
-            GlStateManager.func_179090_x();
-            GlStateManager.func_179132_a((boolean)false);
+        AxisAlignedBB bb = new AxisAlignedBB((double)pos.getX() - RenderUtil.mc.getRenderManager().viewerPosX, (double)pos.getY() - RenderUtil.mc.getRenderManager().viewerPosY, (double)pos.getZ() - RenderUtil.mc.getRenderManager().viewerPosZ, (double)(pos.getX() + 1) - RenderUtil.mc.getRenderManager().viewerPosX, (double)(pos.getY() + 1) - RenderUtil.mc.getRenderManager().viewerPosY + height, (double)(pos.getZ() + 1) - RenderUtil.mc.getRenderManager().viewerPosZ);
+        camera.setPosition(Objects.requireNonNull(RenderUtil.mc.getRenderViewEntity()).posX, RenderUtil.mc.getRenderViewEntity().posY, RenderUtil.mc.getRenderViewEntity().posZ);
+        if (camera.isBoundingBoxInFrustum(new AxisAlignedBB(bb.minX + RenderUtil.mc.getRenderManager().viewerPosX, bb.minY + RenderUtil.mc.getRenderManager().viewerPosY, bb.minZ + RenderUtil.mc.getRenderManager().viewerPosZ, bb.maxX + RenderUtil.mc.getRenderManager().viewerPosX, bb.maxY + RenderUtil.mc.getRenderManager().viewerPosY, bb.maxZ + RenderUtil.mc.getRenderManager().viewerPosZ))) {
+            GlStateManager.pushMatrix();
+            GlStateManager.enableBlend();
+            GlStateManager.disableDepth();
+            GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)0, (int)1);
+            GlStateManager.disableTexture2D();
+            GlStateManager.depthMask((boolean)false);
             GL11.glEnable((int)2848);
             GL11.glHint((int)3154, (int)4354);
-            RenderGlobal.func_189696_b((AxisAlignedBB)bb, (float)((float)color.getRed() / 255.0f), (float)((float)color.getGreen() / 255.0f), (float)((float)color.getBlue() / 255.0f), (float)((float)color.getAlpha() / 255.0f));
+            RenderGlobal.renderFilledBox((AxisAlignedBB)bb, (float)((float)color.getRed() / 255.0f), (float)((float)color.getGreen() / 255.0f), (float)((float)color.getBlue() / 255.0f), (float)((float)color.getAlpha() / 255.0f));
             GL11.glDisable((int)2848);
-            GlStateManager.func_179132_a((boolean)true);
-            GlStateManager.func_179126_j();
-            GlStateManager.func_179098_w();
-            GlStateManager.func_179084_k();
-            GlStateManager.func_179121_F();
+            GlStateManager.depthMask((boolean)true);
+            GlStateManager.enableDepth();
+            GlStateManager.enableTexture2D();
+            GlStateManager.disableBlend();
+            GlStateManager.popMatrix();
         }
     }
 
     public static void drawBlockOutline(BlockPos pos, Color color, float linewidth, boolean air) {
-        IBlockState iblockstate = RenderUtil.mc.field_71441_e.func_180495_p(pos);
-        if ((air || iblockstate.func_185904_a() != Material.field_151579_a) && RenderUtil.mc.field_71441_e.func_175723_af().func_177746_a(pos)) {
-            Vec3d interp = EntityUtil.interpolateEntity((Entity)RenderUtil.mc.field_71439_g, mc.func_184121_ak());
-            RenderUtil.drawBlockOutline(iblockstate.func_185918_c((World)RenderUtil.mc.field_71441_e, pos).func_186662_g((double)0.002f).func_72317_d(-interp.field_72450_a, -interp.field_72448_b, -interp.field_72449_c), color, linewidth);
+        IBlockState iblockstate = RenderUtil.mc.world.getBlockState(pos);
+        if ((air || iblockstate.getMaterial() != Material.AIR) && RenderUtil.mc.world.getWorldBorder().contains(pos)) {
+            Vec3d interp = EntityUtil.interpolateEntity((Entity)RenderUtil.mc.player, mc.getRenderPartialTicks());
+            RenderUtil.drawBlockOutline(iblockstate.getSelectedBoundingBox((World)RenderUtil.mc.world, pos).grow((double)0.002f).offset(-interp.x, -interp.y, -interp.z), color, linewidth);
         }
     }
 
     public static void drawBlockOutline(BlockPos pos, Color color, float linewidth, boolean air, double height) {
-        IBlockState iblockstate = RenderUtil.mc.field_71441_e.func_180495_p(pos);
-        if ((air || iblockstate.func_185904_a() != Material.field_151579_a) && RenderUtil.mc.field_71441_e.func_175723_af().func_177746_a(pos)) {
-            AxisAlignedBB blockAxis = new AxisAlignedBB((double)pos.func_177958_n() - RenderUtil.mc.func_175598_ae().field_78730_l, (double)pos.func_177956_o() - RenderUtil.mc.func_175598_ae().field_78731_m, (double)pos.func_177952_p() - RenderUtil.mc.func_175598_ae().field_78728_n, (double)(pos.func_177958_n() + 1) - RenderUtil.mc.func_175598_ae().field_78730_l, (double)(pos.func_177956_o() + 1) - RenderUtil.mc.func_175598_ae().field_78731_m + height, (double)(pos.func_177952_p() + 1) - RenderUtil.mc.func_175598_ae().field_78728_n);
-            RenderUtil.drawBlockOutline(blockAxis.func_186662_g((double)0.002f), color, linewidth);
+        IBlockState iblockstate = RenderUtil.mc.world.getBlockState(pos);
+        if ((air || iblockstate.getMaterial() != Material.AIR) && RenderUtil.mc.world.getWorldBorder().contains(pos)) {
+            AxisAlignedBB blockAxis = new AxisAlignedBB((double)pos.getX() - RenderUtil.mc.getRenderManager().viewerPosX, (double)pos.getY() - RenderUtil.mc.getRenderManager().viewerPosY, (double)pos.getZ() - RenderUtil.mc.getRenderManager().viewerPosZ, (double)(pos.getX() + 1) - RenderUtil.mc.getRenderManager().viewerPosX, (double)(pos.getY() + 1) - RenderUtil.mc.getRenderManager().viewerPosY + height, (double)(pos.getZ() + 1) - RenderUtil.mc.getRenderManager().viewerPosZ);
+            RenderUtil.drawBlockOutline(blockAxis.grow((double)0.002f), color, linewidth);
         }
     }
 
@@ -654,69 +654,69 @@ implements Util {
         float green = (float)color.getGreen() / 255.0f;
         float blue = (float)color.getBlue() / 255.0f;
         float alpha = (float)color.getAlpha() / 255.0f;
-        GlStateManager.func_179094_E();
-        GlStateManager.func_179147_l();
-        GlStateManager.func_179097_i();
-        GlStateManager.func_179120_a((int)770, (int)771, (int)0, (int)1);
-        GlStateManager.func_179090_x();
-        GlStateManager.func_179132_a((boolean)false);
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.disableDepth();
+        GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)0, (int)1);
+        GlStateManager.disableTexture2D();
+        GlStateManager.depthMask((boolean)false);
         GL11.glEnable((int)2848);
         GL11.glHint((int)3154, (int)4354);
         GL11.glLineWidth((float)linewidth);
-        Tessellator tessellator = Tessellator.func_178181_a();
-        BufferBuilder bufferbuilder = tessellator.func_178180_c();
-        bufferbuilder.func_181668_a(3, DefaultVertexFormats.field_181706_f);
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        tessellator.func_78381_a();
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        tessellator.draw();
         GL11.glDisable((int)2848);
-        GlStateManager.func_179132_a((boolean)true);
-        GlStateManager.func_179126_j();
-        GlStateManager.func_179098_w();
-        GlStateManager.func_179084_k();
-        GlStateManager.func_179121_F();
+        GlStateManager.depthMask((boolean)true);
+        GlStateManager.enableDepth();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
     }
 
     public static void drawBoxESP(BlockPos pos, Color color, float lineWidth, boolean outline, boolean box, int boxAlpha) {
-        AxisAlignedBB bb = new AxisAlignedBB((double)pos.func_177958_n() - RenderUtil.mc.func_175598_ae().field_78730_l, (double)pos.func_177956_o() - RenderUtil.mc.func_175598_ae().field_78731_m, (double)pos.func_177952_p() - RenderUtil.mc.func_175598_ae().field_78728_n, (double)(pos.func_177958_n() + 1) - RenderUtil.mc.func_175598_ae().field_78730_l, (double)(pos.func_177956_o() + 1) - RenderUtil.mc.func_175598_ae().field_78731_m, (double)(pos.func_177952_p() + 1) - RenderUtil.mc.func_175598_ae().field_78728_n);
-        camera.func_78547_a(Objects.requireNonNull(RenderUtil.mc.func_175606_aa()).field_70165_t, RenderUtil.mc.func_175606_aa().field_70163_u, RenderUtil.mc.func_175606_aa().field_70161_v);
-        if (camera.func_78546_a(new AxisAlignedBB(bb.field_72340_a + RenderUtil.mc.func_175598_ae().field_78730_l, bb.field_72338_b + RenderUtil.mc.func_175598_ae().field_78731_m, bb.field_72339_c + RenderUtil.mc.func_175598_ae().field_78728_n, bb.field_72336_d + RenderUtil.mc.func_175598_ae().field_78730_l, bb.field_72337_e + RenderUtil.mc.func_175598_ae().field_78731_m, bb.field_72334_f + RenderUtil.mc.func_175598_ae().field_78728_n))) {
-            GlStateManager.func_179094_E();
-            GlStateManager.func_179147_l();
-            GlStateManager.func_179097_i();
-            GlStateManager.func_179120_a((int)770, (int)771, (int)0, (int)1);
-            GlStateManager.func_179090_x();
-            GlStateManager.func_179132_a((boolean)false);
+        AxisAlignedBB bb = new AxisAlignedBB((double)pos.getX() - RenderUtil.mc.getRenderManager().viewerPosX, (double)pos.getY() - RenderUtil.mc.getRenderManager().viewerPosY, (double)pos.getZ() - RenderUtil.mc.getRenderManager().viewerPosZ, (double)(pos.getX() + 1) - RenderUtil.mc.getRenderManager().viewerPosX, (double)(pos.getY() + 1) - RenderUtil.mc.getRenderManager().viewerPosY, (double)(pos.getZ() + 1) - RenderUtil.mc.getRenderManager().viewerPosZ);
+        camera.setPosition(Objects.requireNonNull(RenderUtil.mc.getRenderViewEntity()).posX, RenderUtil.mc.getRenderViewEntity().posY, RenderUtil.mc.getRenderViewEntity().posZ);
+        if (camera.isBoundingBoxInFrustum(new AxisAlignedBB(bb.minX + RenderUtil.mc.getRenderManager().viewerPosX, bb.minY + RenderUtil.mc.getRenderManager().viewerPosY, bb.minZ + RenderUtil.mc.getRenderManager().viewerPosZ, bb.maxX + RenderUtil.mc.getRenderManager().viewerPosX, bb.maxY + RenderUtil.mc.getRenderManager().viewerPosY, bb.maxZ + RenderUtil.mc.getRenderManager().viewerPosZ))) {
+            GlStateManager.pushMatrix();
+            GlStateManager.enableBlend();
+            GlStateManager.disableDepth();
+            GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)0, (int)1);
+            GlStateManager.disableTexture2D();
+            GlStateManager.depthMask((boolean)false);
             GL11.glEnable((int)2848);
             GL11.glHint((int)3154, (int)4354);
             GL11.glLineWidth((float)lineWidth);
-            double dist = RenderUtil.mc.field_71439_g.func_70011_f((double)((float)pos.func_177958_n() + 0.5f), (double)((float)pos.func_177956_o() + 0.5f), (double)((float)pos.func_177952_p() + 0.5f)) * 0.75;
+            double dist = RenderUtil.mc.player.getDistance((double)((float)pos.getX() + 0.5f), (double)((float)pos.getY() + 0.5f), (double)((float)pos.getZ() + 0.5f)) * 0.75;
             if (box) {
-                RenderGlobal.func_189696_b((AxisAlignedBB)bb, (float)((float)color.getRed() / 255.0f), (float)((float)color.getGreen() / 255.0f), (float)((float)color.getBlue() / 255.0f), (float)((float)boxAlpha / 255.0f));
+                RenderGlobal.renderFilledBox((AxisAlignedBB)bb, (float)((float)color.getRed() / 255.0f), (float)((float)color.getGreen() / 255.0f), (float)((float)color.getBlue() / 255.0f), (float)((float)boxAlpha / 255.0f));
             }
             if (outline) {
-                RenderGlobal.func_189694_a((double)bb.field_72340_a, (double)bb.field_72338_b, (double)bb.field_72339_c, (double)bb.field_72336_d, (double)bb.field_72337_e, (double)bb.field_72334_f, (float)((float)color.getRed() / 255.0f), (float)((float)color.getGreen() / 255.0f), (float)((float)color.getBlue() / 255.0f), (float)((float)color.getAlpha() / 255.0f));
+                RenderGlobal.drawBoundingBox((double)bb.minX, (double)bb.minY, (double)bb.minZ, (double)bb.maxX, (double)bb.maxY, (double)bb.maxZ, (float)((float)color.getRed() / 255.0f), (float)((float)color.getGreen() / 255.0f), (float)((float)color.getBlue() / 255.0f), (float)((float)color.getAlpha() / 255.0f));
             }
             GL11.glDisable((int)2848);
-            GlStateManager.func_179132_a((boolean)true);
-            GlStateManager.func_179126_j();
-            GlStateManager.func_179098_w();
-            GlStateManager.func_179084_k();
-            GlStateManager.func_179121_F();
+            GlStateManager.depthMask((boolean)true);
+            GlStateManager.enableDepth();
+            GlStateManager.enableTexture2D();
+            GlStateManager.disableBlend();
+            GlStateManager.popMatrix();
         }
     }
 
@@ -724,24 +724,24 @@ implements Util {
         if (pos == null || text == null) {
             return;
         }
-        GlStateManager.func_179094_E();
-        RenderUtil.glBillboardDistanceScaled((float)pos.func_177958_n() + 0.5f, (float)pos.func_177956_o() + 0.5f, (float)pos.func_177952_p() + 0.5f, (EntityPlayer)RenderUtil.mc.field_71439_g, 1.0f);
-        GlStateManager.func_179097_i();
-        GlStateManager.func_179137_b((double)(-((double)Phobos.textManager.getStringWidth(text) / 2.0)), (double)0.0, (double)0.0);
+        GlStateManager.pushMatrix();
+        RenderUtil.glBillboardDistanceScaled((float)pos.getX() + 0.5f, (float)pos.getY() + 0.5f, (float)pos.getZ() + 0.5f, (EntityPlayer)RenderUtil.mc.player, 1.0f);
+        GlStateManager.disableDepth();
+        GlStateManager.translate((double)(-((double)Phobos.textManager.getStringWidth(text) / 2.0)), (double)0.0, (double)0.0);
         Phobos.textManager.drawStringWithShadow(text, 0.0f, 0.0f, -5592406);
-        GlStateManager.func_179121_F();
+        GlStateManager.popMatrix();
     }
 
     public static void drawOutlinedBlockESP(BlockPos pos, Color color, float linewidth) {
-        IBlockState iblockstate = RenderUtil.mc.field_71441_e.func_180495_p(pos);
-        Vec3d interp = EntityUtil.interpolateEntity((Entity)RenderUtil.mc.field_71439_g, mc.func_184121_ak());
-        RenderUtil.drawBoundingBox(iblockstate.func_185918_c((World)RenderUtil.mc.field_71441_e, pos).func_186662_g((double)0.002f).func_72317_d(-interp.field_72450_a, -interp.field_72448_b, -interp.field_72449_c), linewidth, ColorUtil.toRGBA(color));
+        IBlockState iblockstate = RenderUtil.mc.world.getBlockState(pos);
+        Vec3d interp = EntityUtil.interpolateEntity((Entity)RenderUtil.mc.player, mc.getRenderPartialTicks());
+        RenderUtil.drawBoundingBox(iblockstate.getSelectedBoundingBox((World)RenderUtil.mc.world, pos).grow((double)0.002f).offset(-interp.x, -interp.y, -interp.z), linewidth, ColorUtil.toRGBA(color));
     }
 
     public static void blockEsp(BlockPos blockPos, Color c, double length, double length2) {
-        double x = (double)blockPos.func_177958_n() - RenderUtil.mc.field_175616_W.field_78725_b;
-        double y = (double)blockPos.func_177956_o() - RenderUtil.mc.field_175616_W.field_78726_c;
-        double z = (double)blockPos.func_177952_p() - RenderUtil.mc.field_175616_W.field_78723_d;
+        double x = (double)blockPos.getX() - RenderUtil.mc.renderManager.renderPosX;
+        double y = (double)blockPos.getY() - RenderUtil.mc.renderManager.renderPosY;
+        double z = (double)blockPos.getZ() - RenderUtil.mc.renderManager.renderPosZ;
         GL11.glPushMatrix();
         GL11.glBlendFunc((int)770, (int)771);
         GL11.glEnable((int)3042);
@@ -767,113 +767,113 @@ implements Util {
         float red = (float)(color >> 16 & 0xFF) / 255.0f;
         float green = (float)(color >> 8 & 0xFF) / 255.0f;
         float blue = (float)(color & 0xFF) / 255.0f;
-        Tessellator tessellator = Tessellator.func_178181_a();
-        BufferBuilder bufferbuilder = tessellator.func_178180_c();
-        GlStateManager.func_179147_l();
-        GlStateManager.func_179090_x();
-        GlStateManager.func_179120_a((int)770, (int)771, (int)1, (int)0);
-        bufferbuilder.func_181668_a(7, DefaultVertexFormats.field_181706_f);
-        bufferbuilder.func_181662_b((double)x, (double)h, 0.0).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b((double)w, (double)h, 0.0).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b((double)w, (double)y, 0.0).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b((double)x, (double)y, 0.0).func_181666_a(red, green, blue, alpha).func_181675_d();
-        tessellator.func_78381_a();
-        GlStateManager.func_179098_w();
-        GlStateManager.func_179084_k();
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)1, (int)0);
+        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        bufferbuilder.pos((double)x, (double)h, 0.0).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos((double)w, (double)h, 0.0).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos((double)w, (double)y, 0.0).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos((double)x, (double)y, 0.0).color(red, green, blue, alpha).endVertex();
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
     }
 
     public static void drawColorBox(AxisAlignedBB axisalignedbb, float red, float green, float blue, float alpha) {
-        Tessellator ts = Tessellator.func_178181_a();
-        BufferBuilder vb = ts.func_178180_c();
-        vb.func_181668_a(7, DefaultVertexFormats.field_181707_g);
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72338_b, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72337_e, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72338_b, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72337_e, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72338_b, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72337_e, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72338_b, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72337_e, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        ts.func_78381_a();
-        vb.func_181668_a(7, DefaultVertexFormats.field_181707_g);
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72337_e, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72338_b, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72337_e, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72338_b, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72337_e, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72338_b, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72337_e, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72338_b, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        ts.func_78381_a();
-        vb.func_181668_a(7, DefaultVertexFormats.field_181707_g);
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72337_e, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72337_e, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72337_e, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72337_e, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72337_e, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72337_e, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72337_e, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72337_e, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        ts.func_78381_a();
-        vb.func_181668_a(7, DefaultVertexFormats.field_181707_g);
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72338_b, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72338_b, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72338_b, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72338_b, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72338_b, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72338_b, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72338_b, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72338_b, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        ts.func_78381_a();
-        vb.func_181668_a(7, DefaultVertexFormats.field_181707_g);
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72338_b, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72337_e, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72338_b, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72337_e, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72338_b, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72337_e, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72338_b, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72337_e, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        ts.func_78381_a();
-        vb.func_181668_a(7, DefaultVertexFormats.field_181707_g);
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72337_e, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72338_b, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72337_e, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72340_a, axisalignedbb.field_72338_b, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72337_e, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72338_b, axisalignedbb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72337_e, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        vb.func_181662_b(axisalignedbb.field_72336_d, axisalignedbb.field_72338_b, axisalignedbb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        ts.func_78381_a();
+        Tessellator ts = Tessellator.getInstance();
+        BufferBuilder vb = ts.getBuffer();
+        vb.begin(7, DefaultVertexFormats.POSITION_TEX);
+        vb.pos(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.minX, axisalignedbb.maxY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.minY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.maxY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.minY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.maxY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.minX, axisalignedbb.maxY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        ts.draw();
+        vb.begin(7, DefaultVertexFormats.POSITION_TEX);
+        vb.pos(axisalignedbb.maxX, axisalignedbb.maxY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.minY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.minX, axisalignedbb.maxY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.minX, axisalignedbb.maxY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.maxY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.minY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        ts.draw();
+        vb.begin(7, DefaultVertexFormats.POSITION_TEX);
+        vb.pos(axisalignedbb.minX, axisalignedbb.maxY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.maxY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.maxY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.minX, axisalignedbb.maxY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.minX, axisalignedbb.maxY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.minX, axisalignedbb.maxY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.maxY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.maxY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        ts.draw();
+        vb.begin(7, DefaultVertexFormats.POSITION_TEX);
+        vb.pos(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.minY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.minY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.minY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.minY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        ts.draw();
+        vb.begin(7, DefaultVertexFormats.POSITION_TEX);
+        vb.pos(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.minX, axisalignedbb.maxY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.minX, axisalignedbb.maxY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.minY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.maxY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.minY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.maxY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        ts.draw();
+        vb.begin(7, DefaultVertexFormats.POSITION_TEX);
+        vb.pos(axisalignedbb.minX, axisalignedbb.maxY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.minX, axisalignedbb.maxY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.maxY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.minY, axisalignedbb.minZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.maxY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        vb.pos(axisalignedbb.maxX, axisalignedbb.minY, axisalignedbb.maxZ).color(red, green, blue, alpha).endVertex();
+        ts.draw();
     }
 
     public static void drawSelectionBoundingBox(AxisAlignedBB boundingBox) {
-        Tessellator tessellator = Tessellator.func_178181_a();
-        BufferBuilder vertexbuffer = tessellator.func_178180_c();
-        vertexbuffer.func_181668_a(3, DefaultVertexFormats.field_181705_e);
-        vertexbuffer.func_181662_b(boundingBox.field_72340_a, boundingBox.field_72338_b, boundingBox.field_72339_c).func_181675_d();
-        vertexbuffer.func_181662_b(boundingBox.field_72336_d, boundingBox.field_72338_b, boundingBox.field_72339_c).func_181675_d();
-        vertexbuffer.func_181662_b(boundingBox.field_72336_d, boundingBox.field_72338_b, boundingBox.field_72334_f).func_181675_d();
-        vertexbuffer.func_181662_b(boundingBox.field_72340_a, boundingBox.field_72338_b, boundingBox.field_72334_f).func_181675_d();
-        vertexbuffer.func_181662_b(boundingBox.field_72340_a, boundingBox.field_72338_b, boundingBox.field_72339_c).func_181675_d();
-        tessellator.func_78381_a();
-        vertexbuffer.func_181668_a(3, DefaultVertexFormats.field_181705_e);
-        vertexbuffer.func_181662_b(boundingBox.field_72340_a, boundingBox.field_72337_e, boundingBox.field_72339_c).func_181675_d();
-        vertexbuffer.func_181662_b(boundingBox.field_72336_d, boundingBox.field_72337_e, boundingBox.field_72339_c).func_181675_d();
-        vertexbuffer.func_181662_b(boundingBox.field_72336_d, boundingBox.field_72337_e, boundingBox.field_72334_f).func_181675_d();
-        vertexbuffer.func_181662_b(boundingBox.field_72340_a, boundingBox.field_72337_e, boundingBox.field_72334_f).func_181675_d();
-        vertexbuffer.func_181662_b(boundingBox.field_72340_a, boundingBox.field_72337_e, boundingBox.field_72339_c).func_181675_d();
-        tessellator.func_78381_a();
-        vertexbuffer.func_181668_a(1, DefaultVertexFormats.field_181705_e);
-        vertexbuffer.func_181662_b(boundingBox.field_72340_a, boundingBox.field_72338_b, boundingBox.field_72339_c).func_181675_d();
-        vertexbuffer.func_181662_b(boundingBox.field_72340_a, boundingBox.field_72337_e, boundingBox.field_72339_c).func_181675_d();
-        vertexbuffer.func_181662_b(boundingBox.field_72336_d, boundingBox.field_72338_b, boundingBox.field_72339_c).func_181675_d();
-        vertexbuffer.func_181662_b(boundingBox.field_72336_d, boundingBox.field_72337_e, boundingBox.field_72339_c).func_181675_d();
-        vertexbuffer.func_181662_b(boundingBox.field_72336_d, boundingBox.field_72338_b, boundingBox.field_72334_f).func_181675_d();
-        vertexbuffer.func_181662_b(boundingBox.field_72336_d, boundingBox.field_72337_e, boundingBox.field_72334_f).func_181675_d();
-        vertexbuffer.func_181662_b(boundingBox.field_72340_a, boundingBox.field_72338_b, boundingBox.field_72334_f).func_181675_d();
-        vertexbuffer.func_181662_b(boundingBox.field_72340_a, boundingBox.field_72337_e, boundingBox.field_72334_f).func_181675_d();
-        tessellator.func_78381_a();
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder vertexbuffer = tessellator.getBuffer();
+        vertexbuffer.begin(3, DefaultVertexFormats.POSITION);
+        vertexbuffer.pos(boundingBox.minX, boundingBox.minY, boundingBox.minZ).endVertex();
+        vertexbuffer.pos(boundingBox.maxX, boundingBox.minY, boundingBox.minZ).endVertex();
+        vertexbuffer.pos(boundingBox.maxX, boundingBox.minY, boundingBox.maxZ).endVertex();
+        vertexbuffer.pos(boundingBox.minX, boundingBox.minY, boundingBox.maxZ).endVertex();
+        vertexbuffer.pos(boundingBox.minX, boundingBox.minY, boundingBox.minZ).endVertex();
+        tessellator.draw();
+        vertexbuffer.begin(3, DefaultVertexFormats.POSITION);
+        vertexbuffer.pos(boundingBox.minX, boundingBox.maxY, boundingBox.minZ).endVertex();
+        vertexbuffer.pos(boundingBox.maxX, boundingBox.maxY, boundingBox.minZ).endVertex();
+        vertexbuffer.pos(boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ).endVertex();
+        vertexbuffer.pos(boundingBox.minX, boundingBox.maxY, boundingBox.maxZ).endVertex();
+        vertexbuffer.pos(boundingBox.minX, boundingBox.maxY, boundingBox.minZ).endVertex();
+        tessellator.draw();
+        vertexbuffer.begin(1, DefaultVertexFormats.POSITION);
+        vertexbuffer.pos(boundingBox.minX, boundingBox.minY, boundingBox.minZ).endVertex();
+        vertexbuffer.pos(boundingBox.minX, boundingBox.maxY, boundingBox.minZ).endVertex();
+        vertexbuffer.pos(boundingBox.maxX, boundingBox.minY, boundingBox.minZ).endVertex();
+        vertexbuffer.pos(boundingBox.maxX, boundingBox.maxY, boundingBox.minZ).endVertex();
+        vertexbuffer.pos(boundingBox.maxX, boundingBox.minY, boundingBox.maxZ).endVertex();
+        vertexbuffer.pos(boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ).endVertex();
+        vertexbuffer.pos(boundingBox.minX, boundingBox.minY, boundingBox.maxZ).endVertex();
+        vertexbuffer.pos(boundingBox.minX, boundingBox.maxY, boundingBox.maxZ).endVertex();
+        tessellator.draw();
     }
 
     public static void glrendermethod() {
@@ -884,9 +884,9 @@ implements Util {
         GL11.glDisable((int)3553);
         GL11.glEnable((int)2884);
         GL11.glDisable((int)2929);
-        double viewerPosX = RenderUtil.mc.func_175598_ae().field_78730_l;
-        double viewerPosY = RenderUtil.mc.func_175598_ae().field_78731_m;
-        double viewerPosZ = RenderUtil.mc.func_175598_ae().field_78728_n;
+        double viewerPosX = RenderUtil.mc.getRenderManager().viewerPosX;
+        double viewerPosY = RenderUtil.mc.getRenderManager().viewerPosY;
+        double viewerPosZ = RenderUtil.mc.getRenderManager().viewerPosZ;
         GL11.glPushMatrix();
         GL11.glTranslated((double)(-viewerPosX), (double)(-viewerPosY), (double)(-viewerPosZ));
     }
@@ -906,97 +906,97 @@ implements Util {
     }
 
     public static AxisAlignedBB getBoundingBox(BlockPos blockPos) {
-        return RenderUtil.mc.field_71441_e.func_180495_p(blockPos).func_185900_c((IBlockAccess)RenderUtil.mc.field_71441_e, blockPos).func_186670_a(blockPos);
+        return RenderUtil.mc.world.getBlockState(blockPos).getBoundingBox((IBlockAccess)RenderUtil.mc.world, blockPos).offset(blockPos);
     }
 
     public static void drawOutlinedBox(AxisAlignedBB axisAlignedBB) {
         GL11.glBegin((int)1);
-        GL11.glVertex3d((double)axisAlignedBB.field_72340_a, (double)axisAlignedBB.field_72338_b, (double)axisAlignedBB.field_72339_c);
-        GL11.glVertex3d((double)axisAlignedBB.field_72336_d, (double)axisAlignedBB.field_72338_b, (double)axisAlignedBB.field_72339_c);
-        GL11.glVertex3d((double)axisAlignedBB.field_72336_d, (double)axisAlignedBB.field_72338_b, (double)axisAlignedBB.field_72339_c);
-        GL11.glVertex3d((double)axisAlignedBB.field_72336_d, (double)axisAlignedBB.field_72338_b, (double)axisAlignedBB.field_72334_f);
-        GL11.glVertex3d((double)axisAlignedBB.field_72336_d, (double)axisAlignedBB.field_72338_b, (double)axisAlignedBB.field_72334_f);
-        GL11.glVertex3d((double)axisAlignedBB.field_72340_a, (double)axisAlignedBB.field_72338_b, (double)axisAlignedBB.field_72334_f);
-        GL11.glVertex3d((double)axisAlignedBB.field_72340_a, (double)axisAlignedBB.field_72338_b, (double)axisAlignedBB.field_72334_f);
-        GL11.glVertex3d((double)axisAlignedBB.field_72340_a, (double)axisAlignedBB.field_72338_b, (double)axisAlignedBB.field_72339_c);
-        GL11.glVertex3d((double)axisAlignedBB.field_72340_a, (double)axisAlignedBB.field_72338_b, (double)axisAlignedBB.field_72339_c);
-        GL11.glVertex3d((double)axisAlignedBB.field_72340_a, (double)axisAlignedBB.field_72337_e, (double)axisAlignedBB.field_72339_c);
-        GL11.glVertex3d((double)axisAlignedBB.field_72336_d, (double)axisAlignedBB.field_72338_b, (double)axisAlignedBB.field_72339_c);
-        GL11.glVertex3d((double)axisAlignedBB.field_72336_d, (double)axisAlignedBB.field_72337_e, (double)axisAlignedBB.field_72339_c);
-        GL11.glVertex3d((double)axisAlignedBB.field_72336_d, (double)axisAlignedBB.field_72338_b, (double)axisAlignedBB.field_72334_f);
-        GL11.glVertex3d((double)axisAlignedBB.field_72336_d, (double)axisAlignedBB.field_72337_e, (double)axisAlignedBB.field_72334_f);
-        GL11.glVertex3d((double)axisAlignedBB.field_72340_a, (double)axisAlignedBB.field_72338_b, (double)axisAlignedBB.field_72334_f);
-        GL11.glVertex3d((double)axisAlignedBB.field_72340_a, (double)axisAlignedBB.field_72337_e, (double)axisAlignedBB.field_72334_f);
-        GL11.glVertex3d((double)axisAlignedBB.field_72340_a, (double)axisAlignedBB.field_72337_e, (double)axisAlignedBB.field_72339_c);
-        GL11.glVertex3d((double)axisAlignedBB.field_72336_d, (double)axisAlignedBB.field_72337_e, (double)axisAlignedBB.field_72339_c);
-        GL11.glVertex3d((double)axisAlignedBB.field_72336_d, (double)axisAlignedBB.field_72337_e, (double)axisAlignedBB.field_72339_c);
-        GL11.glVertex3d((double)axisAlignedBB.field_72336_d, (double)axisAlignedBB.field_72337_e, (double)axisAlignedBB.field_72334_f);
-        GL11.glVertex3d((double)axisAlignedBB.field_72336_d, (double)axisAlignedBB.field_72337_e, (double)axisAlignedBB.field_72334_f);
-        GL11.glVertex3d((double)axisAlignedBB.field_72340_a, (double)axisAlignedBB.field_72337_e, (double)axisAlignedBB.field_72334_f);
-        GL11.glVertex3d((double)axisAlignedBB.field_72340_a, (double)axisAlignedBB.field_72337_e, (double)axisAlignedBB.field_72334_f);
-        GL11.glVertex3d((double)axisAlignedBB.field_72340_a, (double)axisAlignedBB.field_72337_e, (double)axisAlignedBB.field_72339_c);
+        GL11.glVertex3d((double)axisAlignedBB.minX, (double)axisAlignedBB.minY, (double)axisAlignedBB.minZ);
+        GL11.glVertex3d((double)axisAlignedBB.maxX, (double)axisAlignedBB.minY, (double)axisAlignedBB.minZ);
+        GL11.glVertex3d((double)axisAlignedBB.maxX, (double)axisAlignedBB.minY, (double)axisAlignedBB.minZ);
+        GL11.glVertex3d((double)axisAlignedBB.maxX, (double)axisAlignedBB.minY, (double)axisAlignedBB.maxZ);
+        GL11.glVertex3d((double)axisAlignedBB.maxX, (double)axisAlignedBB.minY, (double)axisAlignedBB.maxZ);
+        GL11.glVertex3d((double)axisAlignedBB.minX, (double)axisAlignedBB.minY, (double)axisAlignedBB.maxZ);
+        GL11.glVertex3d((double)axisAlignedBB.minX, (double)axisAlignedBB.minY, (double)axisAlignedBB.maxZ);
+        GL11.glVertex3d((double)axisAlignedBB.minX, (double)axisAlignedBB.minY, (double)axisAlignedBB.minZ);
+        GL11.glVertex3d((double)axisAlignedBB.minX, (double)axisAlignedBB.minY, (double)axisAlignedBB.minZ);
+        GL11.glVertex3d((double)axisAlignedBB.minX, (double)axisAlignedBB.maxY, (double)axisAlignedBB.minZ);
+        GL11.glVertex3d((double)axisAlignedBB.maxX, (double)axisAlignedBB.minY, (double)axisAlignedBB.minZ);
+        GL11.glVertex3d((double)axisAlignedBB.maxX, (double)axisAlignedBB.maxY, (double)axisAlignedBB.minZ);
+        GL11.glVertex3d((double)axisAlignedBB.maxX, (double)axisAlignedBB.minY, (double)axisAlignedBB.maxZ);
+        GL11.glVertex3d((double)axisAlignedBB.maxX, (double)axisAlignedBB.maxY, (double)axisAlignedBB.maxZ);
+        GL11.glVertex3d((double)axisAlignedBB.minX, (double)axisAlignedBB.minY, (double)axisAlignedBB.maxZ);
+        GL11.glVertex3d((double)axisAlignedBB.minX, (double)axisAlignedBB.maxY, (double)axisAlignedBB.maxZ);
+        GL11.glVertex3d((double)axisAlignedBB.minX, (double)axisAlignedBB.maxY, (double)axisAlignedBB.minZ);
+        GL11.glVertex3d((double)axisAlignedBB.maxX, (double)axisAlignedBB.maxY, (double)axisAlignedBB.minZ);
+        GL11.glVertex3d((double)axisAlignedBB.maxX, (double)axisAlignedBB.maxY, (double)axisAlignedBB.minZ);
+        GL11.glVertex3d((double)axisAlignedBB.maxX, (double)axisAlignedBB.maxY, (double)axisAlignedBB.maxZ);
+        GL11.glVertex3d((double)axisAlignedBB.maxX, (double)axisAlignedBB.maxY, (double)axisAlignedBB.maxZ);
+        GL11.glVertex3d((double)axisAlignedBB.minX, (double)axisAlignedBB.maxY, (double)axisAlignedBB.maxZ);
+        GL11.glVertex3d((double)axisAlignedBB.minX, (double)axisAlignedBB.maxY, (double)axisAlignedBB.maxZ);
+        GL11.glVertex3d((double)axisAlignedBB.minX, (double)axisAlignedBB.maxY, (double)axisAlignedBB.minZ);
         GL11.glEnd();
     }
 
     public static void drawFilledBoxESPN(BlockPos pos, Color color) {
-        AxisAlignedBB bb = new AxisAlignedBB((double)pos.func_177958_n() - RenderUtil.mc.func_175598_ae().field_78730_l, (double)pos.func_177956_o() - RenderUtil.mc.func_175598_ae().field_78731_m, (double)pos.func_177952_p() - RenderUtil.mc.func_175598_ae().field_78728_n, (double)(pos.func_177958_n() + 1) - RenderUtil.mc.func_175598_ae().field_78730_l, (double)(pos.func_177956_o() + 1) - RenderUtil.mc.func_175598_ae().field_78731_m, (double)(pos.func_177952_p() + 1) - RenderUtil.mc.func_175598_ae().field_78728_n);
+        AxisAlignedBB bb = new AxisAlignedBB((double)pos.getX() - RenderUtil.mc.getRenderManager().viewerPosX, (double)pos.getY() - RenderUtil.mc.getRenderManager().viewerPosY, (double)pos.getZ() - RenderUtil.mc.getRenderManager().viewerPosZ, (double)(pos.getX() + 1) - RenderUtil.mc.getRenderManager().viewerPosX, (double)(pos.getY() + 1) - RenderUtil.mc.getRenderManager().viewerPosY, (double)(pos.getZ() + 1) - RenderUtil.mc.getRenderManager().viewerPosZ);
         int rgba = ColorUtil.toRGBA(color);
         RenderUtil.drawFilledBox(bb, rgba);
     }
 
     public static void drawFilledBox(AxisAlignedBB bb, int color) {
-        GlStateManager.func_179094_E();
-        GlStateManager.func_179147_l();
-        GlStateManager.func_179097_i();
-        GlStateManager.func_179120_a((int)770, (int)771, (int)0, (int)1);
-        GlStateManager.func_179090_x();
-        GlStateManager.func_179132_a((boolean)false);
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.disableDepth();
+        GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)0, (int)1);
+        GlStateManager.disableTexture2D();
+        GlStateManager.depthMask((boolean)false);
         float alpha = (float)(color >> 24 & 0xFF) / 255.0f;
         float red = (float)(color >> 16 & 0xFF) / 255.0f;
         float green = (float)(color >> 8 & 0xFF) / 255.0f;
         float blue = (float)(color & 0xFF) / 255.0f;
-        Tessellator tessellator = Tessellator.func_178181_a();
-        BufferBuilder bufferbuilder = tessellator.func_178180_c();
-        bufferbuilder.func_181668_a(7, DefaultVertexFormats.field_181706_f);
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        tessellator.func_78381_a();
-        GlStateManager.func_179132_a((boolean)true);
-        GlStateManager.func_179126_j();
-        GlStateManager.func_179098_w();
-        GlStateManager.func_179084_k();
-        GlStateManager.func_179121_F();
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        tessellator.draw();
+        GlStateManager.depthMask((boolean)true);
+        GlStateManager.enableDepth();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
     }
 
     public static void drawBoundingBox(AxisAlignedBB bb, float width, int color) {
-        GlStateManager.func_179094_E();
-        GlStateManager.func_179147_l();
-        GlStateManager.func_179097_i();
-        GlStateManager.func_179120_a((int)770, (int)771, (int)0, (int)1);
-        GlStateManager.func_179090_x();
-        GlStateManager.func_179132_a((boolean)false);
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.disableDepth();
+        GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)0, (int)1);
+        GlStateManager.disableTexture2D();
+        GlStateManager.depthMask((boolean)false);
         GL11.glEnable((int)2848);
         GL11.glHint((int)3154, (int)4354);
         GL11.glLineWidth((float)width);
@@ -1004,91 +1004,91 @@ implements Util {
         float red = (float)(color >> 16 & 0xFF) / 255.0f;
         float green = (float)(color >> 8 & 0xFF) / 255.0f;
         float blue = (float)(color & 0xFF) / 255.0f;
-        Tessellator tessellator = Tessellator.func_178181_a();
-        BufferBuilder bufferbuilder = tessellator.func_178180_c();
-        bufferbuilder.func_181668_a(3, DefaultVertexFormats.field_181706_f);
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        tessellator.func_78381_a();
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        tessellator.draw();
         GL11.glDisable((int)2848);
-        GlStateManager.func_179132_a((boolean)true);
-        GlStateManager.func_179126_j();
-        GlStateManager.func_179098_w();
-        GlStateManager.func_179084_k();
-        GlStateManager.func_179121_F();
+        GlStateManager.depthMask((boolean)true);
+        GlStateManager.enableDepth();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
     }
 
     public static void glBillboard(float x, float y, float z) {
         float scale = 0.02666667f;
-        GlStateManager.func_179137_b((double)((double)x - RenderUtil.mc.func_175598_ae().field_78725_b), (double)((double)y - RenderUtil.mc.func_175598_ae().field_78726_c), (double)((double)z - RenderUtil.mc.func_175598_ae().field_78723_d));
-        GlStateManager.func_187432_a((float)0.0f, (float)1.0f, (float)0.0f);
-        GlStateManager.func_179114_b((float)(-RenderUtil.mc.field_71439_g.field_70177_z), (float)0.0f, (float)1.0f, (float)0.0f);
-        GlStateManager.func_179114_b((float)RenderUtil.mc.field_71439_g.field_70125_A, (float)(RenderUtil.mc.field_71474_y.field_74320_O == 2 ? -1.0f : 1.0f), (float)0.0f, (float)0.0f);
-        GlStateManager.func_179152_a((float)(-scale), (float)(-scale), (float)scale);
+        GlStateManager.translate((double)((double)x - RenderUtil.mc.getRenderManager().renderPosX), (double)((double)y - RenderUtil.mc.getRenderManager().renderPosY), (double)((double)z - RenderUtil.mc.getRenderManager().renderPosZ));
+        GlStateManager.glNormal3f((float)0.0f, (float)1.0f, (float)0.0f);
+        GlStateManager.rotate((float)(-RenderUtil.mc.player.rotationYaw), (float)0.0f, (float)1.0f, (float)0.0f);
+        GlStateManager.rotate((float)RenderUtil.mc.player.rotationPitch, (float)(RenderUtil.mc.gameSettings.thirdPersonView == 2 ? -1.0f : 1.0f), (float)0.0f, (float)0.0f);
+        GlStateManager.scale((float)(-scale), (float)(-scale), (float)scale);
     }
 
     public static void glBillboardDistanceScaled(float x, float y, float z, EntityPlayer player, float scale) {
         RenderUtil.glBillboard(x, y, z);
-        int distance = (int)player.func_70011_f((double)x, (double)y, (double)z);
+        int distance = (int)player.getDistance((double)x, (double)y, (double)z);
         float scaleDistance = (float)distance / 2.0f / (2.0f + (2.0f - scale));
         if (scaleDistance < 1.0f) {
             scaleDistance = 1.0f;
         }
-        GlStateManager.func_179152_a((float)scaleDistance, (float)scaleDistance, (float)scaleDistance);
+        GlStateManager.scale((float)scaleDistance, (float)scaleDistance, (float)scaleDistance);
     }
 
     public static void drawColoredBoundingBox(AxisAlignedBB bb, float width, float red, float green, float blue, float alpha) {
-        GlStateManager.func_179094_E();
-        GlStateManager.func_179147_l();
-        GlStateManager.func_179097_i();
-        GlStateManager.func_179120_a((int)770, (int)771, (int)0, (int)1);
-        GlStateManager.func_179090_x();
-        GlStateManager.func_179132_a((boolean)false);
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.disableDepth();
+        GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)0, (int)1);
+        GlStateManager.disableTexture2D();
+        GlStateManager.depthMask((boolean)false);
         GL11.glEnable((int)2848);
         GL11.glHint((int)3154, (int)4354);
         GL11.glLineWidth((float)width);
-        Tessellator tessellator = Tessellator.func_178181_a();
-        BufferBuilder bufferbuilder = tessellator.func_178180_c();
-        bufferbuilder.func_181668_a(3, DefaultVertexFormats.field_181706_f);
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, 0.0f).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, 0.0f).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, 0.0f).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, 0.0f).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-        bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, 0.0f).func_181675_d();
-        tessellator.func_78381_a();
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, 0.0f).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, 0.0f).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, 0.0f).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, 0.0f).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, 0.0f).endVertex();
+        tessellator.draw();
         GL11.glDisable((int)2848);
-        GlStateManager.func_179132_a((boolean)true);
-        GlStateManager.func_179126_j();
-        GlStateManager.func_179098_w();
-        GlStateManager.func_179084_k();
-        GlStateManager.func_179121_F();
+        GlStateManager.depthMask((boolean)true);
+        GlStateManager.enableDepth();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
     }
 
     public static void drawSphere(double x, double y, double z, float size, int slices, int stacks) {
@@ -1101,7 +1101,7 @@ implements Util {
         GL11.glDisable((int)2929);
         GL11.glDepthMask((boolean)false);
         s.setDrawStyle(100013);
-        GL11.glTranslated((double)(x - RenderUtil.mc.field_175616_W.field_78725_b), (double)(y - RenderUtil.mc.field_175616_W.field_78726_c), (double)(z - RenderUtil.mc.field_175616_W.field_78723_d));
+        GL11.glTranslated((double)(x - RenderUtil.mc.renderManager.renderPosX), (double)(y - RenderUtil.mc.renderManager.renderPosY), (double)(z - RenderUtil.mc.renderManager.renderPosZ));
         s.draw(size, slices, stacks);
         GL11.glLineWidth((float)2.0f);
         GL11.glEnable((int)3553);
@@ -1141,28 +1141,28 @@ implements Util {
         if (!override) {
             GL11.glEnable((int)2848);
         }
-        GlStateManager.func_187401_a((GlStateManager.SourceFactor)GlStateManager.SourceFactor.SRC_ALPHA, (GlStateManager.DestFactor)GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.blendFunc((GlStateManager.SourceFactor)GlStateManager.SourceFactor.SRC_ALPHA, (GlStateManager.DestFactor)GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         GL11.glHint((int)3154, (int)4354);
-        GlStateManager.func_179132_a((boolean)false);
+        GlStateManager.depthMask((boolean)false);
     }
 
     public static float[][] getBipedRotations(ModelBiped biped) {
         float[][] rotations = new float[5][];
-        float[] headRotation = new float[]{biped.field_78116_c.field_78795_f, biped.field_78116_c.field_78796_g, biped.field_78116_c.field_78808_h};
+        float[] headRotation = new float[]{biped.bipedHead.rotateAngleX, biped.bipedHead.rotateAngleY, biped.bipedHead.rotateAngleZ};
         rotations[0] = headRotation;
-        float[] rightArmRotation = new float[]{biped.field_178723_h.field_78795_f, biped.field_178723_h.field_78796_g, biped.field_178723_h.field_78808_h};
+        float[] rightArmRotation = new float[]{biped.bipedRightArm.rotateAngleX, biped.bipedRightArm.rotateAngleY, biped.bipedRightArm.rotateAngleZ};
         rotations[1] = rightArmRotation;
-        float[] leftArmRotation = new float[]{biped.field_178724_i.field_78795_f, biped.field_178724_i.field_78796_g, biped.field_178724_i.field_78808_h};
+        float[] leftArmRotation = new float[]{biped.bipedLeftArm.rotateAngleX, biped.bipedLeftArm.rotateAngleY, biped.bipedLeftArm.rotateAngleZ};
         rotations[2] = leftArmRotation;
-        float[] rightLegRotation = new float[]{biped.field_178721_j.field_78795_f, biped.field_178721_j.field_78796_g, biped.field_178721_j.field_78808_h};
+        float[] rightLegRotation = new float[]{biped.bipedRightLeg.rotateAngleX, biped.bipedRightLeg.rotateAngleY, biped.bipedRightLeg.rotateAngleZ};
         rotations[3] = rightLegRotation;
-        float[] leftLegRotation = new float[]{biped.field_178722_k.field_78795_f, biped.field_178722_k.field_78796_g, biped.field_178722_k.field_78808_h};
+        float[] leftLegRotation = new float[]{biped.bipedLeftLeg.rotateAngleX, biped.bipedLeftLeg.rotateAngleY, biped.bipedLeftLeg.rotateAngleZ};
         rotations[4] = leftLegRotation;
         return rotations;
     }
 
     private static void GLPost(boolean depth, boolean texture, boolean clean, boolean bind, boolean override) {
-        GlStateManager.func_179132_a((boolean)true);
+        GlStateManager.depthMask((boolean)true);
         if (!override) {
             GL11.glDisable((int)2848);
         }
@@ -1320,13 +1320,13 @@ implements Util {
     }
 
     public static boolean isInViewFrustrum(Entity entity) {
-        return RenderUtil.isInViewFrustrum(entity.func_174813_aQ()) || entity.field_70158_ak;
+        return RenderUtil.isInViewFrustrum(entity.getEntityBoundingBox()) || entity.ignoreFrustumCheck;
     }
 
     public static boolean isInViewFrustrum(AxisAlignedBB bb) {
-        Entity current = Minecraft.func_71410_x().func_175606_aa();
-        frustrum.func_78547_a(current.field_70165_t, current.field_70163_u, current.field_70161_v);
-        return frustrum.func_78546_a(bb);
+        Entity current = Minecraft.getMinecraft().getRenderViewEntity();
+        frustrum.setPosition(current.posX, current.posY, current.posZ);
+        return frustrum.isBoundingBoxInFrustum(bb);
     }
 
     public static void drawRoundedRectangle(float x, float y, float width, float height, float radius) {
@@ -1393,7 +1393,7 @@ implements Util {
         GL11.glDisable((int)2929);
         GL11.glEnable((int)10754);
         GL11.glPolygonOffset((float)1.0f, (float)-2000000.0f);
-        OpenGlHelper.func_77475_a((int)OpenGlHelper.field_77476_b, (float)240.0f, (float)240.0f);
+        OpenGlHelper.setLightmapTextureCoords((int)OpenGlHelper.lightmapTexUnit, (float)240.0f, (float)240.0f);
     }
 
     public static void renderFive() {
@@ -1416,18 +1416,18 @@ implements Util {
     }
 
     public static void checkSetupFBO() {
-        Framebuffer fbo = RenderUtil.mc.field_147124_at;
-        if (fbo != null && fbo.field_147624_h > -1) {
+        Framebuffer fbo = RenderUtil.mc.framebufferMc;
+        if (fbo != null && fbo.depthBuffer > -1) {
             RenderUtil.setupFBO(fbo);
-            fbo.field_147624_h = -1;
+            fbo.depthBuffer = -1;
         }
     }
 
     private static void setupFBO(Framebuffer fbo) {
-        EXTFramebufferObject.glDeleteRenderbuffersEXT((int)fbo.field_147624_h);
+        EXTFramebufferObject.glDeleteRenderbuffersEXT((int)fbo.depthBuffer);
         int stencilDepthBufferID = EXTFramebufferObject.glGenRenderbuffersEXT();
         EXTFramebufferObject.glBindRenderbufferEXT((int)36161, (int)stencilDepthBufferID);
-        EXTFramebufferObject.glRenderbufferStorageEXT((int)36161, (int)34041, (int)RenderUtil.mc.field_71443_c, (int)RenderUtil.mc.field_71440_d);
+        EXTFramebufferObject.glRenderbufferStorageEXT((int)36161, (int)34041, (int)RenderUtil.mc.displayWidth, (int)RenderUtil.mc.displayHeight);
         EXTFramebufferObject.glFramebufferRenderbufferEXT((int)36160, (int)36128, (int)36161, (int)stencilDepthBufferID);
         EXTFramebufferObject.glFramebufferRenderbufferEXT((int)36160, (int)36096, (int)36161, (int)stencilDepthBufferID);
     }
@@ -1447,20 +1447,20 @@ implements Util {
 
         public static void prepareGL() {
             GL11.glBlendFunc((int)770, (int)771);
-            GlStateManager.func_187428_a((GlStateManager.SourceFactor)GlStateManager.SourceFactor.SRC_ALPHA, (GlStateManager.DestFactor)GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, (GlStateManager.SourceFactor)GlStateManager.SourceFactor.ONE, (GlStateManager.DestFactor)GlStateManager.DestFactor.ZERO);
-            GlStateManager.func_187441_d((float)1.5f);
-            GlStateManager.func_179090_x();
-            GlStateManager.func_179132_a((boolean)false);
-            GlStateManager.func_179147_l();
-            GlStateManager.func_179097_i();
-            GlStateManager.func_179140_f();
-            GlStateManager.func_179129_p();
-            GlStateManager.func_179141_d();
-            GlStateManager.func_179124_c((float)1.0f, (float)1.0f, (float)1.0f);
+            GlStateManager.tryBlendFuncSeparate((GlStateManager.SourceFactor)GlStateManager.SourceFactor.SRC_ALPHA, (GlStateManager.DestFactor)GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, (GlStateManager.SourceFactor)GlStateManager.SourceFactor.ONE, (GlStateManager.DestFactor)GlStateManager.DestFactor.ZERO);
+            GlStateManager.glLineWidth((float)1.5f);
+            GlStateManager.disableTexture2D();
+            GlStateManager.depthMask((boolean)false);
+            GlStateManager.enableBlend();
+            GlStateManager.disableDepth();
+            GlStateManager.disableLighting();
+            GlStateManager.disableCull();
+            GlStateManager.enableAlpha();
+            GlStateManager.color((float)1.0f, (float)1.0f, (float)1.0f);
         }
 
         public static void begin(int mode) {
-            INSTANCE.func_178180_c().func_181668_a(mode, DefaultVertexFormats.field_181706_f);
+            INSTANCE.getBuffer().begin(mode, DefaultVertexFormats.POSITION_COLOR);
         }
 
         public static void release() {
@@ -1469,15 +1469,15 @@ implements Util {
         }
 
         public static void render() {
-            INSTANCE.func_78381_a();
+            INSTANCE.draw();
         }
 
         public static void releaseGL() {
-            GlStateManager.func_179089_o();
-            GlStateManager.func_179132_a((boolean)true);
-            GlStateManager.func_179098_w();
-            GlStateManager.func_179147_l();
-            GlStateManager.func_179126_j();
+            GlStateManager.enableCull();
+            GlStateManager.depthMask((boolean)true);
+            GlStateManager.enableTexture2D();
+            GlStateManager.enableBlend();
+            GlStateManager.enableDepth();
         }
 
         public static void drawBox(BlockPos blockPos, int argb, int sides) {
@@ -1493,143 +1493,143 @@ implements Util {
             int r = argb >>> 16 & 0xFF;
             int g = argb >>> 8 & 0xFF;
             int b = argb & 0xFF;
-            RenderTesselator.drawBox(INSTANCE.func_178180_c(), x, y, z, 1.0f, 1.0f, 1.0f, r, g, b, a, sides);
+            RenderTesselator.drawBox(INSTANCE.getBuffer(), x, y, z, 1.0f, 1.0f, 1.0f, r, g, b, a, sides);
         }
 
         public static void drawBox(BlockPos blockPos, int r, int g, int b, int a, int sides) {
-            RenderTesselator.drawBox(INSTANCE.func_178180_c(), blockPos.func_177958_n(), blockPos.func_177956_o(), blockPos.func_177952_p(), 1.0f, 1.0f, 1.0f, r, g, b, a, sides);
+            RenderTesselator.drawBox(INSTANCE.getBuffer(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), 1.0f, 1.0f, 1.0f, r, g, b, a, sides);
         }
 
         public static BufferBuilder getBufferBuilder() {
-            return INSTANCE.func_178180_c();
+            return INSTANCE.getBuffer();
         }
 
         public static void drawBox(BufferBuilder buffer, float x, float y, float z, float w, float h, float d, int r, int g, int b, int a, int sides) {
             if ((sides & 1) != 0) {
-                buffer.func_181662_b((double)(x + w), (double)y, (double)z).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)(x + w), (double)y, (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)x, (double)y, (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)x, (double)y, (double)z).func_181669_b(r, g, b, a).func_181675_d();
+                buffer.pos((double)(x + w), (double)y, (double)z).color(r, g, b, a).endVertex();
+                buffer.pos((double)(x + w), (double)y, (double)(z + d)).color(r, g, b, a).endVertex();
+                buffer.pos((double)x, (double)y, (double)(z + d)).color(r, g, b, a).endVertex();
+                buffer.pos((double)x, (double)y, (double)z).color(r, g, b, a).endVertex();
             }
             if ((sides & 2) != 0) {
-                buffer.func_181662_b((double)(x + w), (double)(y + h), (double)z).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)x, (double)(y + h), (double)z).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)x, (double)(y + h), (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)(x + w), (double)(y + h), (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
+                buffer.pos((double)(x + w), (double)(y + h), (double)z).color(r, g, b, a).endVertex();
+                buffer.pos((double)x, (double)(y + h), (double)z).color(r, g, b, a).endVertex();
+                buffer.pos((double)x, (double)(y + h), (double)(z + d)).color(r, g, b, a).endVertex();
+                buffer.pos((double)(x + w), (double)(y + h), (double)(z + d)).color(r, g, b, a).endVertex();
             }
             if ((sides & 4) != 0) {
-                buffer.func_181662_b((double)(x + w), (double)y, (double)z).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)x, (double)y, (double)z).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)x, (double)(y + h), (double)z).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)(x + w), (double)(y + h), (double)z).func_181669_b(r, g, b, a).func_181675_d();
+                buffer.pos((double)(x + w), (double)y, (double)z).color(r, g, b, a).endVertex();
+                buffer.pos((double)x, (double)y, (double)z).color(r, g, b, a).endVertex();
+                buffer.pos((double)x, (double)(y + h), (double)z).color(r, g, b, a).endVertex();
+                buffer.pos((double)(x + w), (double)(y + h), (double)z).color(r, g, b, a).endVertex();
             }
             if ((sides & 8) != 0) {
-                buffer.func_181662_b((double)x, (double)y, (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)(x + w), (double)y, (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)(x + w), (double)(y + h), (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)x, (double)(y + h), (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
+                buffer.pos((double)x, (double)y, (double)(z + d)).color(r, g, b, a).endVertex();
+                buffer.pos((double)(x + w), (double)y, (double)(z + d)).color(r, g, b, a).endVertex();
+                buffer.pos((double)(x + w), (double)(y + h), (double)(z + d)).color(r, g, b, a).endVertex();
+                buffer.pos((double)x, (double)(y + h), (double)(z + d)).color(r, g, b, a).endVertex();
             }
             if ((sides & 0x10) != 0) {
-                buffer.func_181662_b((double)x, (double)y, (double)z).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)x, (double)y, (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)x, (double)(y + h), (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)x, (double)(y + h), (double)z).func_181669_b(r, g, b, a).func_181675_d();
+                buffer.pos((double)x, (double)y, (double)z).color(r, g, b, a).endVertex();
+                buffer.pos((double)x, (double)y, (double)(z + d)).color(r, g, b, a).endVertex();
+                buffer.pos((double)x, (double)(y + h), (double)(z + d)).color(r, g, b, a).endVertex();
+                buffer.pos((double)x, (double)(y + h), (double)z).color(r, g, b, a).endVertex();
             }
             if ((sides & 0x20) != 0) {
-                buffer.func_181662_b((double)(x + w), (double)y, (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)(x + w), (double)y, (double)z).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)(x + w), (double)(y + h), (double)z).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)(x + w), (double)(y + h), (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
+                buffer.pos((double)(x + w), (double)y, (double)(z + d)).color(r, g, b, a).endVertex();
+                buffer.pos((double)(x + w), (double)y, (double)z).color(r, g, b, a).endVertex();
+                buffer.pos((double)(x + w), (double)(y + h), (double)z).color(r, g, b, a).endVertex();
+                buffer.pos((double)(x + w), (double)(y + h), (double)(z + d)).color(r, g, b, a).endVertex();
             }
         }
 
         public static void drawLines(BufferBuilder buffer, float x, float y, float z, float w, float h, float d, int r, int g, int b, int a, int sides) {
             if ((sides & 0x11) != 0) {
-                buffer.func_181662_b((double)x, (double)y, (double)z).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)x, (double)y, (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
+                buffer.pos((double)x, (double)y, (double)z).color(r, g, b, a).endVertex();
+                buffer.pos((double)x, (double)y, (double)(z + d)).color(r, g, b, a).endVertex();
             }
             if ((sides & 0x12) != 0) {
-                buffer.func_181662_b((double)x, (double)(y + h), (double)z).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)x, (double)(y + h), (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
+                buffer.pos((double)x, (double)(y + h), (double)z).color(r, g, b, a).endVertex();
+                buffer.pos((double)x, (double)(y + h), (double)(z + d)).color(r, g, b, a).endVertex();
             }
             if ((sides & 0x21) != 0) {
-                buffer.func_181662_b((double)(x + w), (double)y, (double)z).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)(x + w), (double)y, (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
+                buffer.pos((double)(x + w), (double)y, (double)z).color(r, g, b, a).endVertex();
+                buffer.pos((double)(x + w), (double)y, (double)(z + d)).color(r, g, b, a).endVertex();
             }
             if ((sides & 0x22) != 0) {
-                buffer.func_181662_b((double)(x + w), (double)(y + h), (double)z).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)(x + w), (double)(y + h), (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
+                buffer.pos((double)(x + w), (double)(y + h), (double)z).color(r, g, b, a).endVertex();
+                buffer.pos((double)(x + w), (double)(y + h), (double)(z + d)).color(r, g, b, a).endVertex();
             }
             if ((sides & 5) != 0) {
-                buffer.func_181662_b((double)x, (double)y, (double)z).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)(x + w), (double)y, (double)z).func_181669_b(r, g, b, a).func_181675_d();
+                buffer.pos((double)x, (double)y, (double)z).color(r, g, b, a).endVertex();
+                buffer.pos((double)(x + w), (double)y, (double)z).color(r, g, b, a).endVertex();
             }
             if ((sides & 6) != 0) {
-                buffer.func_181662_b((double)x, (double)(y + h), (double)z).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)(x + w), (double)(y + h), (double)z).func_181669_b(r, g, b, a).func_181675_d();
+                buffer.pos((double)x, (double)(y + h), (double)z).color(r, g, b, a).endVertex();
+                buffer.pos((double)(x + w), (double)(y + h), (double)z).color(r, g, b, a).endVertex();
             }
             if ((sides & 9) != 0) {
-                buffer.func_181662_b((double)x, (double)y, (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)(x + w), (double)y, (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
+                buffer.pos((double)x, (double)y, (double)(z + d)).color(r, g, b, a).endVertex();
+                buffer.pos((double)(x + w), (double)y, (double)(z + d)).color(r, g, b, a).endVertex();
             }
             if ((sides & 0xA) != 0) {
-                buffer.func_181662_b((double)x, (double)(y + h), (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)(x + w), (double)(y + h), (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
+                buffer.pos((double)x, (double)(y + h), (double)(z + d)).color(r, g, b, a).endVertex();
+                buffer.pos((double)(x + w), (double)(y + h), (double)(z + d)).color(r, g, b, a).endVertex();
             }
             if ((sides & 0x14) != 0) {
-                buffer.func_181662_b((double)x, (double)y, (double)z).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)x, (double)(y + h), (double)z).func_181669_b(r, g, b, a).func_181675_d();
+                buffer.pos((double)x, (double)y, (double)z).color(r, g, b, a).endVertex();
+                buffer.pos((double)x, (double)(y + h), (double)z).color(r, g, b, a).endVertex();
             }
             if ((sides & 0x24) != 0) {
-                buffer.func_181662_b((double)(x + w), (double)y, (double)z).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)(x + w), (double)(y + h), (double)z).func_181669_b(r, g, b, a).func_181675_d();
+                buffer.pos((double)(x + w), (double)y, (double)z).color(r, g, b, a).endVertex();
+                buffer.pos((double)(x + w), (double)(y + h), (double)z).color(r, g, b, a).endVertex();
             }
             if ((sides & 0x18) != 0) {
-                buffer.func_181662_b((double)x, (double)y, (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)x, (double)(y + h), (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
+                buffer.pos((double)x, (double)y, (double)(z + d)).color(r, g, b, a).endVertex();
+                buffer.pos((double)x, (double)(y + h), (double)(z + d)).color(r, g, b, a).endVertex();
             }
             if ((sides & 0x28) != 0) {
-                buffer.func_181662_b((double)(x + w), (double)y, (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
-                buffer.func_181662_b((double)(x + w), (double)(y + h), (double)(z + d)).func_181669_b(r, g, b, a).func_181675_d();
+                buffer.pos((double)(x + w), (double)y, (double)(z + d)).color(r, g, b, a).endVertex();
+                buffer.pos((double)(x + w), (double)(y + h), (double)(z + d)).color(r, g, b, a).endVertex();
             }
         }
 
         public static void drawBoundingBox(AxisAlignedBB bb, float width, float red, float green, float blue, float alpha) {
-            GlStateManager.func_179094_E();
-            GlStateManager.func_179147_l();
-            GlStateManager.func_179097_i();
-            GlStateManager.func_179120_a((int)770, (int)771, (int)0, (int)1);
-            GlStateManager.func_179090_x();
-            GlStateManager.func_179132_a((boolean)false);
+            GlStateManager.pushMatrix();
+            GlStateManager.enableBlend();
+            GlStateManager.disableDepth();
+            GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)0, (int)1);
+            GlStateManager.disableTexture2D();
+            GlStateManager.depthMask((boolean)false);
             GL11.glEnable((int)2848);
             GL11.glHint((int)3154, (int)4354);
             GL11.glLineWidth((float)width);
-            Tessellator tessellator = Tessellator.func_178181_a();
-            BufferBuilder bufferbuilder = tessellator.func_178180_c();
-            bufferbuilder.func_181668_a(3, DefaultVertexFormats.field_181706_f);
-            bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-            bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-            bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-            bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-            bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-            bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-            bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-            bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-            bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-            bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-            bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-            bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72334_f).func_181666_a(red, green, blue, alpha).func_181675_d();
-            bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-            bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72338_b, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-            bufferbuilder.func_181662_b(bb.field_72336_d, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-            bufferbuilder.func_181662_b(bb.field_72340_a, bb.field_72337_e, bb.field_72339_c).func_181666_a(red, green, blue, alpha).func_181675_d();
-            tessellator.func_78381_a();
+            Tessellator tessellator = Tessellator.getInstance();
+            BufferBuilder bufferbuilder = tessellator.getBuffer();
+            bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
+            bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
+            tessellator.draw();
             GL11.glDisable((int)2848);
-            GlStateManager.func_179132_a((boolean)true);
-            GlStateManager.func_179126_j();
-            GlStateManager.func_179098_w();
-            GlStateManager.func_179084_k();
-            GlStateManager.func_179121_F();
+            GlStateManager.depthMask((boolean)true);
+            GlStateManager.enableDepth();
+            GlStateManager.enableTexture2D();
+            GlStateManager.disableBlend();
+            GlStateManager.popMatrix();
         }
 
         public static void drawFullBox(AxisAlignedBB bb, BlockPos blockPos, float width, int argb, int alpha2) {
@@ -1656,7 +1656,7 @@ implements Util {
         }
 
         public static void drawHalfBox(BlockPos blockPos, int r, int g, int b, int a, int sides) {
-            RenderTesselator.drawBox(INSTANCE.func_178180_c(), blockPos.func_177958_n(), blockPos.func_177956_o(), blockPos.func_177952_p(), 1.0f, 0.5f, 1.0f, r, g, b, a, sides);
+            RenderTesselator.drawBox(INSTANCE.getBuffer(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), 1.0f, 0.5f, 1.0f, r, g, b, a, sides);
         }
     }
 

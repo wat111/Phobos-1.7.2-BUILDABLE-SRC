@@ -69,7 +69,7 @@ extends Module {
             this.disable();
             return;
         }
-        this.lastHotbarSlot = Crasher.mc.field_71439_g.field_71071_by.field_70461_c;
+        this.lastHotbarSlot = Crasher.mc.player.inventory.currentItem;
         this.placeCrystals();
         this.disable();
     }
@@ -78,7 +78,7 @@ extends Module {
     public void onDisable() {
         if (!Crasher.fullNullCheck()) {
             for (int i : this.entityIDs) {
-                Crasher.mc.field_71441_e.func_73028_b(i);
+                Crasher.mc.world.removeEntityFromWorld(i);
             }
         }
         this.entityIDs.clear();
@@ -95,14 +95,14 @@ extends Module {
     }
 
     private void placeCrystals() {
-        this.offhand = Crasher.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_185158_cP;
-        this.mainhand = Crasher.mc.field_71439_g.func_184614_ca().func_77973_b() == Items.field_185158_cP;
+        this.offhand = Crasher.mc.player.getHeldItemOffhand().getItem() == Items.END_CRYSTAL;
+        this.mainhand = Crasher.mc.player.getHeldItemMainhand().getItem() == Items.END_CRYSTAL;
         int crystalcount = 0;
         List<BlockPos> blocks = BlockUtil.possiblePlacePositions(this.placeRange.getValue().floatValue(), false, this.oneDot15.getValue());
         if (this.sort.getValue() == 1) {
-            blocks.sort(Comparator.comparingDouble(hole -> Crasher.mc.field_71439_g.func_174818_b(hole)));
+            blocks.sort(Comparator.comparingDouble(hole -> Crasher.mc.player.getDistanceSq(hole)));
         } else if (this.sort.getValue() == 2) {
-            blocks.sort(Comparator.comparingDouble(hole -> -Crasher.mc.field_71439_g.func_174818_b(hole)));
+            blocks.sort(Comparator.comparingDouble(hole -> -Crasher.mc.player.getDistanceSq(hole)));
         }
         for (BlockPos pos : blocks) {
             if (this.isOff() || crystalcount >= this.crystals.getValue()) break;
@@ -117,14 +117,14 @@ extends Module {
             this.disable();
             return;
         }
-        RayTraceResult result = Crasher.mc.field_71441_e.func_72933_a(new Vec3d(Crasher.mc.field_71439_g.field_70165_t, Crasher.mc.field_71439_g.field_70163_u + (double)Crasher.mc.field_71439_g.func_70047_e(), Crasher.mc.field_71439_g.field_70161_v), new Vec3d((double)pos.func_177958_n() + 0.5, (double)pos.func_177956_o() - 0.5, (double)pos.func_177952_p() + 0.5));
-        EnumFacing facing = result == null || result.field_178784_b == null ? EnumFacing.UP : result.field_178784_b;
-        Crasher.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayerTryUseItemOnBlock(pos, facing, this.offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0.0f, 0.0f, 0.0f));
-        Crasher.mc.field_71439_g.func_184609_a(EnumHand.MAIN_HAND);
-        EntityEnderCrystal fakeCrystal = new EntityEnderCrystal((World)Crasher.mc.field_71441_e, (double)((float)pos.func_177958_n() + 0.5f), (double)(pos.func_177956_o() + 1), (double)((float)pos.func_177952_p() + 0.5f));
+        RayTraceResult result = Crasher.mc.world.rayTraceBlocks(new Vec3d(Crasher.mc.player.posX, Crasher.mc.player.posY + (double)Crasher.mc.player.getEyeHeight(), Crasher.mc.player.posZ), new Vec3d((double)pos.getX() + 0.5, (double)pos.getY() - 0.5, (double)pos.getZ() + 0.5));
+        EnumFacing facing = result == null || result.sideHit == null ? EnumFacing.UP : result.sideHit;
+        Crasher.mc.player.connection.sendPacket((Packet)new CPacketPlayerTryUseItemOnBlock(pos, facing, this.offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0.0f, 0.0f, 0.0f));
+        Crasher.mc.player.swingArm(EnumHand.MAIN_HAND);
+        EntityEnderCrystal fakeCrystal = new EntityEnderCrystal((World)Crasher.mc.world, (double)((float)pos.getX() + 0.5f), (double)(pos.getY() + 1), (double)((float)pos.getZ() + 0.5f));
         int newID = this.currentID--;
         this.entityIDs.add(newID);
-        Crasher.mc.field_71441_e.func_73027_a(newID, (Entity)fakeCrystal);
+        Crasher.mc.world.addEntityToWorld(newID, (Entity)fakeCrystal);
     }
 
     private boolean switchItem(boolean back) {
@@ -132,7 +132,7 @@ extends Module {
         if (this.offhand) {
             return true;
         }
-        boolean[] value = InventoryUtil.switchItemToItem(back, this.lastHotbarSlot, this.switchedItem, this.switchMode.getValue(), Items.field_185158_cP);
+        boolean[] value = InventoryUtil.switchItemToItem(back, this.lastHotbarSlot, this.switchedItem, this.switchMode.getValue(), Items.END_CRYSTAL);
         this.switchedItem = value[0];
         return value[1];
     }

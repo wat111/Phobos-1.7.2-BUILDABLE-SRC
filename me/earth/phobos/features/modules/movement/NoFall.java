@@ -84,19 +84,19 @@ extends Module {
         if (this.mode.getValue() == Mode.ELYTRA) {
             if (this.bypass.getValue().booleanValue()) {
                 this.currentState = this.currentState.onSend(event);
-            } else if (!this.equipped && event.getPacket() instanceof CPacketPlayer && NoFall.mc.field_71439_g.field_70143_R >= 3.0f) {
+            } else if (!this.equipped && event.getPacket() instanceof CPacketPlayer && NoFall.mc.player.fallDistance >= 3.0f) {
                 RayTraceResult result = null;
                 if (!this.glide.getValue().booleanValue()) {
-                    result = NoFall.mc.field_71441_e.func_147447_a(NoFall.mc.field_71439_g.func_174791_d(), NoFall.mc.field_71439_g.func_174791_d().func_72441_c(0.0, -3.0, 0.0), true, true, false);
+                    result = NoFall.mc.world.rayTraceBlocks(NoFall.mc.player.getPositionVector(), NoFall.mc.player.getPositionVector().addVector(0.0, -3.0, 0.0), true, true, false);
                 }
-                if (this.glide.getValue().booleanValue() || result != null && result.field_72313_a == RayTraceResult.Type.BLOCK) {
-                    if (NoFall.mc.field_71439_g.func_184582_a(EntityEquipmentSlot.CHEST).func_77973_b().equals((Object)Items.field_185160_cR)) {
-                        NoFall.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketEntityAction((Entity)NoFall.mc.field_71439_g, CPacketEntityAction.Action.START_FALL_FLYING));
+                if (this.glide.getValue().booleanValue() || result != null && result.typeOfHit == RayTraceResult.Type.BLOCK) {
+                    if (NoFall.mc.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem().equals((Object)Items.ELYTRA)) {
+                        NoFall.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)NoFall.mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
                     } else if (this.silent.getValue().booleanValue()) {
-                        int slot = InventoryUtil.getItemHotbar(Items.field_185160_cR);
+                        int slot = InventoryUtil.getItemHotbar(Items.ELYTRA);
                         if (slot != -1) {
-                            NoFall.mc.field_71442_b.func_187098_a(NoFall.mc.field_71439_g.field_71069_bz.field_75152_c, 6, slot, ClickType.SWAP, (EntityPlayer)NoFall.mc.field_71439_g);
-                            NoFall.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketEntityAction((Entity)NoFall.mc.field_71439_g, CPacketEntityAction.Action.START_FALL_FLYING));
+                            NoFall.mc.playerController.windowClick(NoFall.mc.player.inventoryContainer.windowId, 6, slot, ClickType.SWAP, (EntityPlayer)NoFall.mc.player);
+                            NoFall.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)NoFall.mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
                         }
                         ogslot = slot;
                         this.equipped = true;
@@ -106,7 +106,7 @@ extends Module {
         }
         if (this.mode.getValue() == Mode.PACKET && event.getPacket() instanceof CPacketPlayer) {
             CPacketPlayer packet = (CPacketPlayer)event.getPacket();
-            packet.field_149474_g = true;
+            packet.onGround = true;
         }
     }
 
@@ -134,14 +134,14 @@ extends Module {
             if (this.bypass.getValue().booleanValue()) {
                 this.currentState = this.currentState.onUpdate();
             } else if (this.silent.getValue().booleanValue() && this.equipped && this.gotElytra) {
-                NoFall.mc.field_71442_b.func_187098_a(NoFall.mc.field_71439_g.field_71069_bz.field_75152_c, 6, ogslot, ClickType.SWAP, (EntityPlayer)NoFall.mc.field_71439_g);
-                NoFall.mc.field_71442_b.func_78765_e();
+                NoFall.mc.playerController.windowClick(NoFall.mc.player.inventoryContainer.windowId, 6, ogslot, ClickType.SWAP, (EntityPlayer)NoFall.mc.player);
+                NoFall.mc.playerController.updateController();
                 this.equipped = false;
                 this.gotElytra = false;
-            } else if (this.silent.getValue().booleanValue() && InventoryUtil.getItemHotbar(Items.field_185160_cR) == -1 && (slot = InventoryUtil.findStackInventory(Items.field_185160_cR)) != -1 && ogslot != -1) {
+            } else if (this.silent.getValue().booleanValue() && InventoryUtil.getItemHotbar(Items.ELYTRA) == -1 && (slot = InventoryUtil.findStackInventory(Items.ELYTRA)) != -1 && ogslot != -1) {
                 System.out.println(String.format("Moving %d to hotbar %d", slot, ogslot));
-                NoFall.mc.field_71442_b.func_187098_a(NoFall.mc.field_71439_g.field_71069_bz.field_75152_c, slot, ogslot, ClickType.SWAP, (EntityPlayer)NoFall.mc.field_71439_g);
-                NoFall.mc.field_71442_b.func_78765_e();
+                NoFall.mc.playerController.windowClick(NoFall.mc.player.inventoryContainer.windowId, slot, ogslot, ClickType.SWAP, (EntityPlayer)NoFall.mc.player);
+                NoFall.mc.playerController.updateController();
             }
         }
     }
@@ -153,22 +153,22 @@ extends Module {
         if (NoFall.fullNullCheck()) {
             return;
         }
-        if (this.mode.getValue() == Mode.BUCKET && NoFall.mc.field_71439_g.field_70143_R >= (float)this.distance.getValue().intValue() && !EntityUtil.isAboveWater((Entity)NoFall.mc.field_71439_g) && this.timer.passedMs(100L) && (result = NoFall.mc.field_71441_e.func_147447_a(posVec = NoFall.mc.field_71439_g.func_174791_d(), posVec.func_72441_c(0.0, (double)-5.33f, 0.0), true, true, false)) != null && result.field_72313_a == RayTraceResult.Type.BLOCK) {
+        if (this.mode.getValue() == Mode.BUCKET && NoFall.mc.player.fallDistance >= (float)this.distance.getValue().intValue() && !EntityUtil.isAboveWater((Entity)NoFall.mc.player) && this.timer.passedMs(100L) && (result = NoFall.mc.world.rayTraceBlocks(posVec = NoFall.mc.player.getPositionVector(), posVec.addVector(0.0, (double)-5.33f, 0.0), true, true, false)) != null && result.typeOfHit == RayTraceResult.Type.BLOCK) {
             EnumHand hand = EnumHand.MAIN_HAND;
-            if (NoFall.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_151131_as) {
+            if (NoFall.mc.player.getHeldItemOffhand().getItem() == Items.WATER_BUCKET) {
                 hand = EnumHand.OFF_HAND;
-            } else if (NoFall.mc.field_71439_g.func_184614_ca().func_77973_b() != Items.field_151131_as) {
+            } else if (NoFall.mc.player.getHeldItemMainhand().getItem() != Items.WATER_BUCKET) {
                 for (int i = 0; i < 9; ++i) {
-                    if (NoFall.mc.field_71439_g.field_71071_by.func_70301_a(i).func_77973_b() != Items.field_151131_as) continue;
-                    NoFall.mc.field_71439_g.field_71071_by.field_70461_c = i;
-                    NoFall.mc.field_71439_g.field_70125_A = 90.0f;
+                    if (NoFall.mc.player.inventory.getStackInSlot(i).getItem() != Items.WATER_BUCKET) continue;
+                    NoFall.mc.player.inventory.currentItem = i;
+                    NoFall.mc.player.rotationPitch = 90.0f;
                     this.timer.reset();
                     return;
                 }
                 return;
             }
-            NoFall.mc.field_71439_g.field_70125_A = 90.0f;
-            NoFall.mc.field_71442_b.func_187101_a((EntityPlayer)NoFall.mc.field_71439_g, (World)NoFall.mc.field_71441_e, hand);
+            NoFall.mc.player.rotationPitch = 90.0f;
+            NoFall.mc.playerController.processRightClick((EntityPlayer)NoFall.mc.player, (World)NoFall.mc.world, hand);
             this.timer.reset();
         }
     }
@@ -183,13 +183,13 @@ extends Module {
 
             @Override
             public State onSend(PacketEvent.Send event) {
-                RayTraceResult result = Util.mc.field_71441_e.func_147447_a(Util.mc.field_71439_g.func_174791_d(), Util.mc.field_71439_g.func_174791_d().func_72441_c(0.0, -3.0, 0.0), true, true, false);
-                if (event.getPacket() instanceof CPacketPlayer && Util.mc.field_71439_g.field_70143_R >= 3.0f && result != null && result.field_72313_a == RayTraceResult.Type.BLOCK) {
-                    int slot = InventoryUtil.getItemHotbar(Items.field_185160_cR);
+                RayTraceResult result = Util.mc.world.rayTraceBlocks(Util.mc.player.getPositionVector(), Util.mc.player.getPositionVector().addVector(0.0, -3.0, 0.0), true, true, false);
+                if (event.getPacket() instanceof CPacketPlayer && Util.mc.player.fallDistance >= 3.0f && result != null && result.typeOfHit == RayTraceResult.Type.BLOCK) {
+                    int slot = InventoryUtil.getItemHotbar(Items.ELYTRA);
                     if (slot != -1) {
-                        Util.mc.field_71442_b.func_187098_a(Util.mc.field_71439_g.field_71069_bz.field_75152_c, 6, slot, ClickType.SWAP, (EntityPlayer)Util.mc.field_71439_g);
+                        Util.mc.playerController.windowClick(Util.mc.player.inventoryContainer.windowId, 6, slot, ClickType.SWAP, (EntityPlayer)Util.mc.player);
                         ogslot = slot;
-                        Util.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketEntityAction((Entity)Util.mc.field_71439_g, CPacketEntityAction.Action.START_FALL_FLYING));
+                        Util.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)Util.mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
                         return WAIT_FOR_ELYTRA_DEQUIP;
                     }
                     return this;
@@ -213,15 +213,15 @@ extends Module {
 
             @Override
             public State onUpdate() {
-                Util.mc.field_71442_b.func_187098_a(Util.mc.field_71439_g.field_71069_bz.field_75152_c, 6, ogslot, ClickType.SWAP, (EntityPlayer)Util.mc.field_71439_g);
-                Util.mc.field_71442_b.func_78765_e();
-                int slot = InventoryUtil.findStackInventory(Items.field_185160_cR, true);
+                Util.mc.playerController.windowClick(Util.mc.player.inventoryContainer.windowId, 6, ogslot, ClickType.SWAP, (EntityPlayer)Util.mc.player);
+                Util.mc.playerController.updateController();
+                int slot = InventoryUtil.findStackInventory(Items.ELYTRA, true);
                 if (slot == -1) {
                     Command.sendMessage("\u00a7cElytra not found after regain?");
                     return WAIT_FOR_NEXT_REQUIP;
                 }
-                Util.mc.field_71442_b.func_187098_a(Util.mc.field_71439_g.field_71069_bz.field_75152_c, slot, ogslot, ClickType.SWAP, (EntityPlayer)Util.mc.field_71439_g);
-                Util.mc.field_71442_b.func_78765_e();
+                Util.mc.playerController.windowClick(Util.mc.player.inventoryContainer.windowId, slot, ogslot, ClickType.SWAP, (EntityPlayer)Util.mc.player);
+                Util.mc.playerController.updateController();
                 bypassTimer.reset();
                 return RESET_TIME;
             }
@@ -242,8 +242,8 @@ extends Module {
 
             @Override
             public State onUpdate() {
-                if (Util.mc.field_71439_g.field_70122_E || bypassTimer.passedMs(250L)) {
-                    Util.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketClickWindow(0, 0, 0, ClickType.PICKUP, new ItemStack(Blocks.field_150357_h), 1337));
+                if (Util.mc.player.onGround || bypassTimer.passedMs(250L)) {
+                    Util.mc.player.connection.sendPacket((Packet)new CPacketClickWindow(0, 0, 0, ClickType.PICKUP, new ItemStack(Blocks.BEDROCK), 1337));
                     return FALL_CHECK;
                 }
                 return this;

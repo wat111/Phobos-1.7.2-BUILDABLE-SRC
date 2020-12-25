@@ -52,43 +52,43 @@ extends Module {
                 this.disable();
                 return;
             }
-            if (TPSpeed.mc.field_71439_g.field_191988_bg != 0.0f || TPSpeed.mc.field_71439_g.field_70702_br != 0.0f && TPSpeed.mc.field_71439_g.field_70122_E) {
+            if (TPSpeed.mc.player.moveForward != 0.0f || TPSpeed.mc.player.moveStrafing != 0.0f && TPSpeed.mc.player.onGround) {
                 for (double x = 0.0625; x < this.speed.getValue(); x += 0.262) {
                     double[] dir = MathUtil.directionSpeed(x);
-                    TPSpeed.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.Position(TPSpeed.mc.field_71439_g.field_70165_t + dir[0], TPSpeed.mc.field_71439_g.field_70163_u, TPSpeed.mc.field_71439_g.field_70161_v + dir[1], TPSpeed.mc.field_71439_g.field_70122_E));
+                    TPSpeed.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Position(TPSpeed.mc.player.posX + dir[0], TPSpeed.mc.player.posY, TPSpeed.mc.player.posZ + dir[1], TPSpeed.mc.player.onGround));
                 }
-                TPSpeed.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.Position(TPSpeed.mc.field_71439_g.field_70165_t + TPSpeed.mc.field_71439_g.field_70159_w, 0.0, TPSpeed.mc.field_71439_g.field_70161_v + TPSpeed.mc.field_71439_g.field_70179_y, TPSpeed.mc.field_71439_g.field_70122_E));
+                TPSpeed.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Position(TPSpeed.mc.player.posX + TPSpeed.mc.player.motionX, 0.0, TPSpeed.mc.player.posZ + TPSpeed.mc.player.motionZ, TPSpeed.mc.player.onGround));
                 ++this.tps;
             }
-        } else if ((TPSpeed.mc.field_71439_g.field_191988_bg != 0.0f || TPSpeed.mc.field_71439_g.field_70702_br != 0.0f) && TPSpeed.mc.field_71439_g.field_70122_E) {
+        } else if ((TPSpeed.mc.player.moveForward != 0.0f || TPSpeed.mc.player.moveStrafing != 0.0f) && TPSpeed.mc.player.onGround) {
             double pawnY = 0.0;
             double[] lastStep = MathUtil.directionSpeed(0.262);
             for (double x = 0.0625; x < this.speed.getValue(); x += 0.262) {
                 double[] dir = MathUtil.directionSpeed(x);
-                AxisAlignedBB bb = Objects.requireNonNull(TPSpeed.mc.field_71439_g.func_174813_aQ()).func_72317_d(dir[0], pawnY, dir[1]);
+                AxisAlignedBB bb = Objects.requireNonNull(TPSpeed.mc.player.getEntityBoundingBox()).offset(dir[0], pawnY, dir[1]);
                 while (TPSpeed.collidesHorizontally(bb)) {
                     for (double position : this.selectedPositions) {
-                        TPSpeed.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.Position(TPSpeed.mc.field_71439_g.field_70165_t + dir[0] - lastStep[0], TPSpeed.mc.field_71439_g.field_70163_u + pawnY + position, TPSpeed.mc.field_71439_g.field_70161_v + dir[1] - lastStep[1], true));
+                        TPSpeed.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Position(TPSpeed.mc.player.posX + dir[0] - lastStep[0], TPSpeed.mc.player.posY + pawnY + position, TPSpeed.mc.player.posZ + dir[1] - lastStep[1], true));
                     }
-                    bb = Objects.requireNonNull(TPSpeed.mc.field_71439_g.func_174813_aQ()).func_72317_d(dir[0], pawnY += 1.0, dir[1]);
+                    bb = Objects.requireNonNull(TPSpeed.mc.player.getEntityBoundingBox()).offset(dir[0], pawnY += 1.0, dir[1]);
                 }
-                if (!TPSpeed.mc.field_71441_e.func_72829_c(bb.func_72314_b(0.0125, 0.0, 0.0125).func_72317_d(0.0, -1.0, 0.0))) {
+                if (!TPSpeed.mc.world.checkBlockCollision(bb.grow(0.0125, 0.0, 0.0125).offset(0.0, -1.0, 0.0))) {
                     for (double i = 0.0; i <= 1.0; i += this.fallSpeed.getValue().doubleValue()) {
-                        TPSpeed.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.Position(TPSpeed.mc.field_71439_g.field_70165_t + dir[0], TPSpeed.mc.field_71439_g.field_70163_u + pawnY - i, TPSpeed.mc.field_71439_g.field_70161_v + dir[1], true));
+                        TPSpeed.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Position(TPSpeed.mc.player.posX + dir[0], TPSpeed.mc.player.posY + pawnY - i, TPSpeed.mc.player.posZ + dir[1], true));
                     }
                     pawnY -= 1.0;
                 }
-                TPSpeed.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.Position(TPSpeed.mc.field_71439_g.field_70165_t + dir[0], TPSpeed.mc.field_71439_g.field_70163_u + pawnY, TPSpeed.mc.field_71439_g.field_70161_v + dir[1], TPSpeed.mc.field_71439_g.field_70122_E));
+                TPSpeed.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Position(TPSpeed.mc.player.posX + dir[0], TPSpeed.mc.player.posY + pawnY, TPSpeed.mc.player.posZ + dir[1], TPSpeed.mc.player.onGround));
             }
-            TPSpeed.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.Position(TPSpeed.mc.field_71439_g.field_70165_t + TPSpeed.mc.field_71439_g.field_70159_w, 0.0, TPSpeed.mc.field_71439_g.field_70161_v + TPSpeed.mc.field_71439_g.field_70179_y, TPSpeed.mc.field_71439_g.field_70122_E));
+            TPSpeed.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Position(TPSpeed.mc.player.posX + TPSpeed.mc.player.motionX, 0.0, TPSpeed.mc.player.posZ + TPSpeed.mc.player.motionZ, TPSpeed.mc.player.onGround));
         }
     }
 
     private static boolean collidesHorizontally(AxisAlignedBB bb) {
-        if (TPSpeed.mc.field_71441_e.func_184143_b(bb)) {
-            Vec3d center = bb.func_189972_c();
-            BlockPos blockpos = new BlockPos(center.field_72450_a, bb.field_72338_b, center.field_72449_c);
-            return TPSpeed.mc.field_71441_e.func_175665_u(blockpos.func_177976_e()) || TPSpeed.mc.field_71441_e.func_175665_u(blockpos.func_177974_f()) || TPSpeed.mc.field_71441_e.func_175665_u(blockpos.func_177978_c()) || TPSpeed.mc.field_71441_e.func_175665_u(blockpos.func_177968_d()) || TPSpeed.mc.field_71441_e.func_175665_u(blockpos);
+        if (TPSpeed.mc.world.collidesWithAnyBlock(bb)) {
+            Vec3d center = bb.getCenter();
+            BlockPos blockpos = new BlockPos(center.x, bb.minY, center.z);
+            return TPSpeed.mc.world.isBlockFullCube(blockpos.west()) || TPSpeed.mc.world.isBlockFullCube(blockpos.east()) || TPSpeed.mc.world.isBlockFullCube(blockpos.north()) || TPSpeed.mc.world.isBlockFullCube(blockpos.south()) || TPSpeed.mc.world.isBlockFullCube(blockpos);
         }
         return false;
     }

@@ -42,9 +42,9 @@ extends Module {
 
     @Override
     public void onRender3D(Render3DEvent event) {
-        RayTraceResult ray = BlockHighlight.mc.field_71476_x;
-        if (ray != null && ray.field_72313_a == RayTraceResult.Type.BLOCK) {
-            BlockPos blockpos = ray.func_178782_a();
+        RayTraceResult ray = BlockHighlight.mc.objectMouseOver;
+        if (ray != null && ray.typeOfHit == RayTraceResult.Type.BLOCK) {
+            BlockPos blockpos = ray.getBlockPos();
             if (this.rolling.getValue().booleanValue()) {
                 RenderUtil.drawProperGradientBlockOutline(blockpos, new Color(HUD.getInstance().colorMap.get(0)), new Color(HUD.getInstance().colorMap.get(this.renderer.scaledHeight / 4)), new Color(HUD.getInstance().colorMap.get(this.renderer.scaledHeight / 2)), 1.0f);
             } else {

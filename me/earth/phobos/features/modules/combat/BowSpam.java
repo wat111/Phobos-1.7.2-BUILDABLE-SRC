@@ -71,7 +71,7 @@ extends Module {
 
     @Override
     public void onEnable() {
-        this.lastHotbarSlot = BowSpam.mc.field_71439_g.field_71071_by.field_70461_c;
+        this.lastHotbarSlot = BowSpam.mc.player.inventory.currentItem;
     }
 
     @SubscribeEvent
@@ -79,72 +79,72 @@ extends Module {
         if (event.getStage() != 0) {
             return;
         }
-        if (this.autoSwitch.getValue().booleanValue() && InventoryUtil.findHotbarBlock(ItemBow.class) != -1 && this.ownHealth.getValue().floatValue() <= EntityUtil.getHealth((Entity)BowSpam.mc.field_71439_g) && (!this.onlyWhenSave.getValue().booleanValue() || EntityUtil.isSafe((Entity)BowSpam.mc.field_71439_g))) {
+        if (this.autoSwitch.getValue().booleanValue() && InventoryUtil.findHotbarBlock(ItemBow.class) != -1 && this.ownHealth.getValue().floatValue() <= EntityUtil.getHealth((Entity)BowSpam.mc.player) && (!this.onlyWhenSave.getValue().booleanValue() || EntityUtil.isSafe((Entity)BowSpam.mc.player))) {
             AutoCrystal crystal;
             EntityPlayer target = this.getTarget();
             if (!(target == null || (crystal = Phobos.moduleManager.getModuleByClass(AutoCrystal.class)).isOn() && InventoryUtil.holdingItem(ItemEndCrystal.class))) {
-                Vec3d pos = target.func_174791_d();
-                double xPos = pos.field_72450_a;
-                double yPos = pos.field_72448_b;
-                double zPos = pos.field_72449_c;
-                if (BowSpam.mc.field_71439_g.func_70685_l((Entity)target)) {
+                Vec3d pos = target.getPositionVector();
+                double xPos = pos.x;
+                double yPos = pos.y;
+                double zPos = pos.z;
+                if (BowSpam.mc.player.canEntityBeSeen((Entity)target)) {
                     yPos += (double)target.eyeHeight;
                 } else if (EntityUtil.canEntityFeetBeSeen((Entity)target)) {
                     yPos += 0.1;
                 } else {
                     return;
                 }
-                if (!(BowSpam.mc.field_71439_g.func_184614_ca().func_77973_b() instanceof ItemBow)) {
-                    this.lastHotbarSlot = BowSpam.mc.field_71439_g.field_71071_by.field_70461_c;
+                if (!(BowSpam.mc.player.getHeldItemMainhand().getItem() instanceof ItemBow)) {
+                    this.lastHotbarSlot = BowSpam.mc.player.inventory.currentItem;
                     InventoryUtil.switchToHotbarSlot(ItemBow.class, false);
-                    BowSpam.mc.field_71474_y.field_74313_G.field_74513_e = true;
+                    BowSpam.mc.gameSettings.keyBindUseItem.pressed = true;
                     this.switched = true;
                 }
                 Phobos.rotationManager.lookAtVec3d(xPos, yPos, zPos);
-                if (BowSpam.mc.field_71439_g.func_184614_ca().func_77973_b() instanceof ItemBow) {
+                if (BowSpam.mc.player.getHeldItemMainhand().getItem() instanceof ItemBow) {
                     this.switched = true;
                 }
             }
         } else if (event.getStage() == 0 && this.switched && this.lastHotbarSlot != -1) {
             InventoryUtil.switchToHotbarSlot(this.lastHotbarSlot, false);
-            BowSpam.mc.field_71474_y.field_74313_G.field_74513_e = Mouse.isButtonDown((int)1);
+            BowSpam.mc.gameSettings.keyBindUseItem.pressed = Mouse.isButtonDown((int)1);
             this.switched = false;
         } else {
-            BowSpam.mc.field_71474_y.field_74313_G.field_74513_e = Mouse.isButtonDown((int)1);
+            BowSpam.mc.gameSettings.keyBindUseItem.pressed = Mouse.isButtonDown((int)1);
         }
-        if (this.mode.getValue() == Mode.FAST && (this.offhand || BowSpam.mc.field_71439_g.field_71071_by.func_70448_g().func_77973_b() instanceof ItemBow) && BowSpam.mc.field_71439_g.func_184587_cr()) {
-            float f = BowSpam.mc.field_71439_g.func_184612_cw();
+        if (this.mode.getValue() == Mode.FAST && (this.offhand || BowSpam.mc.player.inventory.getCurrentItem().getItem() instanceof ItemBow) && BowSpam.mc.player.isHandActive()) {
+            float f = BowSpam.mc.player.getItemInUseMaxCount();
             float f2 = this.ticks.getValue().intValue();
             float f3 = this.tpsSync.getValue() != false ? Phobos.serverManager.getTpsFactor() : 1.0f;
             if (f >= f2 * f3) {
-                BowSpam.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayerDigging(CPacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.field_177992_a, BowSpam.mc.field_71439_g.func_174811_aO()));
-                BowSpam.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayerTryUseItem(this.offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND));
-                BowSpam.mc.field_71439_g.func_184597_cx();
+                BowSpam.mc.player.connection.sendPacket((Packet)new CPacketPlayerDigging(CPacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, BowSpam.mc.player.getHorizontalFacing()));
+                BowSpam.mc.player.connection.sendPacket((Packet)new CPacketPlayerTryUseItem(this.offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND));
+                BowSpam.mc.player.stopActiveHand();
             }
         }
     }
 
     @Override
     public void onUpdate() {
-        this.offhand = BowSpam.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_151031_f && this.allowOffhand.getValue() != false;
+        this.offhand = BowSpam.mc.player.getHeldItemOffhand().getItem() == Items.BOW && this.allowOffhand.getValue() != false;
         switch (this.mode.getValue()) {
             case AUTORELEASE: {
-                if (!this.offhand && !(BowSpam.mc.field_71439_g.field_71071_by.func_70448_g().func_77973_b() instanceof ItemBow) || !this.timer.passedMs((int)((float)this.delay.getValue().intValue() * (this.tpsSync.getValue() != false ? Phobos.serverManager.getTpsFactor() : 1.0f)))) break;
-                BowSpam.mc.field_71442_b.func_78766_c((EntityPlayer)BowSpam.mc.field_71439_g);
+                if (!this.offhand && !(BowSpam.mc.player.inventory.getCurrentItem().getItem() instanceof ItemBow) || !this.timer.passedMs((int)((float)this.delay.getValue().intValue() * (this.tpsSync.getValue() != false ? Phobos.serverManager.getTpsFactor() : 1.0f)))) break;
+                BowSpam.mc.playerController.onStoppedUsingItem((EntityPlayer)BowSpam.mc.player);
                 this.timer.reset();
                 break;
             }
             case BOWBOMB: {
-                if (!this.offhand && !(BowSpam.mc.field_71439_g.field_71071_by.func_70448_g().func_77973_b() instanceof ItemBow) || !BowSpam.mc.field_71439_g.func_184587_cr()) break;
-                float f = BowSpam.mc.field_71439_g.func_184612_cw();
+                if (!this.offhand && !(BowSpam.mc.player.inventory.getCurrentItem().getItem() instanceof ItemBow) || !BowSpam.mc.player.isHandActive()) break;
+                float f = BowSpam.mc.player.getItemInUseMaxCount();
                 float f2 = this.ticks.getValue().intValue();
                 float f3 = this.tpsSync.getValue() != false ? Phobos.serverManager.getTpsFactor() : 1.0f;
                 if (!(f >= f2 * f3)) break;
-                BowSpam.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayerDigging(CPacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.field_177992_a, BowSpam.mc.field_71439_g.func_174811_aO()));
-                BowSpam.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.PositionRotation(BowSpam.mc.field_71439_g.field_70165_t, BowSpam.mc.field_71439_g.field_70163_u - 0.0624, BowSpam.mc.field_71439_g.field_70161_v, BowSpam.mc.field_71439_g.field_70177_z, BowSpam.mc.field_71439_g.field_70125_A, false));
-                BowSpam.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.PositionRotation(BowSpam.mc.field_71439_g.field_70165_t, BowSpam.mc.field_71439_g.field_70163_u - 999.0, BowSpam.mc.field_71439_g.field_70161_v, BowSpam.mc.field_71439_g.field_70177_z, BowSpam.mc.field_71439_g.field_70125_A, true));
-                BowSpam.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayerTryUseItem(this.offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND));
-                BowSpam.mc.field_71439_g.func_184597_cx();
+                BowSpam.mc.player.connection.sendPacket((Packet)new CPacketPlayerDigging(CPacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, BowSpam.mc.player.getHorizontalFacing()));
+                BowSpam.mc.player.connection.sendPacket((Packet)new CPacketPlayer.PositionRotation(BowSpam.mc.player.posX, BowSpam.mc.player.posY - 0.0624, BowSpam.mc.player.posZ, BowSpam.mc.player.rotationYaw, BowSpam.mc.player.rotationPitch, false));
+                BowSpam.mc.player.connection.sendPacket((Packet)new CPacketPlayer.PositionRotation(BowSpam.mc.player.posX, BowSpam.mc.player.posY - 999.0, BowSpam.mc.player.posZ, BowSpam.mc.player.rotationYaw, BowSpam.mc.player.rotationPitch, true));
+                BowSpam.mc.player.connection.sendPacket((Packet)new CPacketPlayerTryUseItem(this.offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND));
+                BowSpam.mc.player.stopActiveHand();
             }
         }
     }
@@ -152,22 +152,22 @@ extends Module {
     @SubscribeEvent
     public void onPacketSend(PacketEvent.Send event) {
         CPacketPlayerDigging packet;
-        if (event.getStage() == 0 && this.bowbomb.getValue().booleanValue() && this.mode.getValue() != Mode.BOWBOMB && event.getPacket() instanceof CPacketPlayerDigging && (packet = (CPacketPlayerDigging)event.getPacket()).func_180762_c() == CPacketPlayerDigging.Action.RELEASE_USE_ITEM && (this.offhand || BowSpam.mc.field_71439_g.field_71071_by.func_70448_g().func_77973_b() instanceof ItemBow) && BowSpam.mc.field_71439_g.func_184612_cw() >= 20 && !BowSpam.mc.field_71439_g.field_70122_E) {
-            BowSpam.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.Position(BowSpam.mc.field_71439_g.field_70165_t, BowSpam.mc.field_71439_g.field_70163_u - (double)0.1f, BowSpam.mc.field_71439_g.field_70161_v, false));
-            BowSpam.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.Position(BowSpam.mc.field_71439_g.field_70165_t, BowSpam.mc.field_71439_g.field_70163_u - 10000.0, BowSpam.mc.field_71439_g.field_70161_v, true));
+        if (event.getStage() == 0 && this.bowbomb.getValue().booleanValue() && this.mode.getValue() != Mode.BOWBOMB && event.getPacket() instanceof CPacketPlayerDigging && (packet = (CPacketPlayerDigging)event.getPacket()).getAction() == CPacketPlayerDigging.Action.RELEASE_USE_ITEM && (this.offhand || BowSpam.mc.player.inventory.getCurrentItem().getItem() instanceof ItemBow) && BowSpam.mc.player.getItemInUseMaxCount() >= 20 && !BowSpam.mc.player.onGround) {
+            BowSpam.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Position(BowSpam.mc.player.posX, BowSpam.mc.player.posY - (double)0.1f, BowSpam.mc.player.posZ, false));
+            BowSpam.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Position(BowSpam.mc.player.posX, BowSpam.mc.player.posY - 10000.0, BowSpam.mc.player.posZ, true));
         }
     }
 
     private EntityPlayer getTarget() {
         double maxHealth = 36.0;
         EntityPlayer target = null;
-        for (EntityPlayer player : BowSpam.mc.field_71441_e.field_73010_i) {
-            if (player == null || EntityUtil.isDead((Entity)player) || EntityUtil.getHealth((Entity)player) > this.health.getValue().floatValue() || player.equals((Object)BowSpam.mc.field_71439_g) || Phobos.friendManager.isFriend(player) || BowSpam.mc.field_71439_g.func_70068_e((Entity)player) > MathUtil.square(this.range.getValue().floatValue()) || !BowSpam.mc.field_71439_g.func_70685_l((Entity)player) && !EntityUtil.canEntityFeetBeSeen((Entity)player)) continue;
+        for (EntityPlayer player : BowSpam.mc.world.playerEntities) {
+            if (player == null || EntityUtil.isDead((Entity)player) || EntityUtil.getHealth((Entity)player) > this.health.getValue().floatValue() || player.equals((Object)BowSpam.mc.player) || Phobos.friendManager.isFriend(player) || BowSpam.mc.player.getDistanceSq((Entity)player) > MathUtil.square(this.range.getValue().floatValue()) || !BowSpam.mc.player.canEntityBeSeen((Entity)player) && !EntityUtil.canEntityFeetBeSeen((Entity)player)) continue;
             if (target == null) {
                 target = player;
                 maxHealth = EntityUtil.getHealth((Entity)player);
             }
-            if (this.targetMode.getValue() == Target.CLOSEST && BowSpam.mc.field_71439_g.func_70068_e((Entity)player) < BowSpam.mc.field_71439_g.func_70068_e((Entity)target)) {
+            if (this.targetMode.getValue() == Target.CLOSEST && BowSpam.mc.player.getDistanceSq((Entity)player) < BowSpam.mc.player.getDistanceSq((Entity)target)) {
                 target = player;
                 maxHealth = EntityUtil.getHealth((Entity)player);
             }

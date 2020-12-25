@@ -64,12 +64,12 @@ extends Module {
             return;
         }
         this.blockSlot = this.findBlockSlot();
-        this.startPos = new BlockPos(LagBlock.mc.field_71439_g.func_174791_d());
+        this.startPos = new BlockPos(LagBlock.mc.player.getPositionVector());
         if (!BlockUtil.isElseHole(this.startPos) || this.blockSlot == -1) {
             this.disable();
             return;
         }
-        LagBlock.mc.field_71439_g.func_70664_aZ();
+        LagBlock.mc.player.jump();
         this.timer.reset();
     }
 
@@ -78,15 +78,15 @@ extends Module {
         if (event.getStage() != 0 || !this.timer.passedMs(this.timeOut.getValue().intValue())) {
             return;
         }
-        this.lastHotbarSlot = LagBlock.mc.field_71439_g.field_71071_by.field_70461_c;
+        this.lastHotbarSlot = LagBlock.mc.player.inventory.currentItem;
         InventoryUtil.switchToHotbarSlot(this.blockSlot, false);
         for (int i = 0; i < this.rotations.getValue(); ++i) {
             RotationUtil.faceVector(new Vec3d((Vec3i)this.startPos), true);
         }
-        BlockUtil.placeBlock(this.startPos, this.blockSlot == -2 ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, false, this.packet.getValue(), LagBlock.mc.field_71439_g.func_70093_af());
+        BlockUtil.placeBlock(this.startPos, this.blockSlot == -2 ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, false, this.packet.getValue(), LagBlock.mc.player.isSneaking());
         InventoryUtil.switchToHotbarSlot(this.lastHotbarSlot, false);
         if (this.invalidPacket.getValue().booleanValue()) {
-            LagBlock.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.Position(LagBlock.mc.field_71439_g.field_70165_t, 1337.0, LagBlock.mc.field_71439_g.field_70161_v, true));
+            LagBlock.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Position(LagBlock.mc.player.posX, 1337.0, LagBlock.mc.player.posZ, true));
         }
         this.disable();
     }
@@ -94,11 +94,11 @@ extends Module {
     private int findBlockSlot() {
         int obbySlot = InventoryUtil.findHotbarBlock(BlockObsidian.class);
         if (obbySlot == -1) {
-            if (InventoryUtil.isBlock(LagBlock.mc.field_71439_g.func_184592_cb().func_77973_b(), BlockObsidian.class)) {
+            if (InventoryUtil.isBlock(LagBlock.mc.player.getHeldItemOffhand().getItem(), BlockObsidian.class)) {
                 return -2;
             }
             int echestSlot = InventoryUtil.findHotbarBlock(BlockEnderChest.class);
-            if (echestSlot == -1 && InventoryUtil.isBlock(LagBlock.mc.field_71439_g.func_184592_cb().func_77973_b(), BlockEnderChest.class)) {
+            if (echestSlot == -1 && InventoryUtil.isBlock(LagBlock.mc.player.getHeldItemOffhand().getItem(), BlockEnderChest.class)) {
                 return -2;
             }
             return -1;

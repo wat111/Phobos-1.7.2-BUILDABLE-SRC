@@ -84,14 +84,14 @@ extends CFont {
         y = (y - 3.0) * 2.0;
         if (render) {
             GL11.glPushMatrix();
-            GlStateManager.func_179139_a((double)0.5, (double)0.5, (double)0.5);
-            GlStateManager.func_179147_l();
-            GlStateManager.func_179112_b((int)770, (int)771);
-            GlStateManager.func_179131_c((float)((float)(color >> 16 & 0xFF) / 255.0f), (float)((float)(color >> 8 & 0xFF) / 255.0f), (float)((float)(color & 0xFF) / 255.0f), (float)alpha);
+            GlStateManager.scale((double)0.5, (double)0.5, (double)0.5);
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc((int)770, (int)771);
+            GlStateManager.color((float)((float)(color >> 16 & 0xFF) / 255.0f), (float)((float)(color >> 8 & 0xFF) / 255.0f), (float)((float)(color & 0xFF) / 255.0f), (float)alpha);
             int size = text.length();
-            GlStateManager.func_179098_w();
-            GlStateManager.func_179144_i((int)this.tex.func_110552_b());
-            GL11.glBindTexture((int)3553, (int)this.tex.func_110552_b());
+            GlStateManager.enableTexture2D();
+            GlStateManager.bindTexture((int)this.tex.getGlTextureId());
+            GL11.glBindTexture((int)3553, (int)this.tex.getGlTextureId());
             for (int i = 0; i < size; ++i) {
                 char character = text.charAt(i);
                 if (character == '\u00a7' && i < size) {
@@ -107,7 +107,7 @@ extends CFont {
                         italic = false;
                         underline = false;
                         strikethrough = false;
-                        GlStateManager.func_179144_i((int)this.tex.func_110552_b());
+                        GlStateManager.bindTexture((int)this.tex.getGlTextureId());
                         currentData = this.charData;
                         if (colorIndex < 0 || colorIndex > 15) {
                             colorIndex = 15;
@@ -116,14 +116,14 @@ extends CFont {
                             colorIndex += 16;
                         }
                         int colorcode = this.colorCode[colorIndex];
-                        GlStateManager.func_179131_c((float)((float)(colorcode >> 16 & 0xFF) / 255.0f), (float)((float)(colorcode >> 8 & 0xFF) / 255.0f), (float)((float)(colorcode & 0xFF) / 255.0f), (float)alpha);
+                        GlStateManager.color((float)((float)(colorcode >> 16 & 0xFF) / 255.0f), (float)((float)(colorcode >> 8 & 0xFF) / 255.0f), (float)((float)(colorcode & 0xFF) / 255.0f), (float)alpha);
                     } else if (colorIndex == 17) {
                         bold = true;
                         if (italic) {
-                            GlStateManager.func_179144_i((int)this.texItalicBold.func_110552_b());
+                            GlStateManager.bindTexture((int)this.texItalicBold.getGlTextureId());
                             currentData = this.boldItalicChars;
                         } else {
-                            GlStateManager.func_179144_i((int)this.texBold.func_110552_b());
+                            GlStateManager.bindTexture((int)this.texBold.getGlTextureId());
                             currentData = this.boldChars;
                         }
                     } else if (colorIndex == 18) {
@@ -133,10 +133,10 @@ extends CFont {
                     } else if (colorIndex == 20) {
                         italic = true;
                         if (bold) {
-                            GlStateManager.func_179144_i((int)this.texItalicBold.func_110552_b());
+                            GlStateManager.bindTexture((int)this.texItalicBold.getGlTextureId());
                             currentData = this.boldItalicChars;
                         } else {
-                            GlStateManager.func_179144_i((int)this.texItalic.func_110552_b());
+                            GlStateManager.bindTexture((int)this.texItalic.getGlTextureId());
                             currentData = this.italicChars;
                         }
                     } else if (colorIndex == 21) {
@@ -144,8 +144,8 @@ extends CFont {
                         italic = false;
                         underline = false;
                         strikethrough = false;
-                        GlStateManager.func_179131_c((float)((float)(color >> 16 & 0xFF) / 255.0f), (float)((float)(color >> 8 & 0xFF) / 255.0f), (float)((float)(color & 0xFF) / 255.0f), (float)alpha);
-                        GlStateManager.func_179144_i((int)this.tex.func_110552_b());
+                        GlStateManager.color((float)((float)(color >> 16 & 0xFF) / 255.0f), (float)((float)(color >> 8 & 0xFF) / 255.0f), (float)((float)(color & 0xFF) / 255.0f), (float)alpha);
+                        GlStateManager.bindTexture((int)this.tex.getGlTextureId());
                         currentData = this.charData;
                     }
                     ++i;

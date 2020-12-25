@@ -58,13 +58,13 @@ extends Module {
 
     @Override
     public void onToggle() {
-        Step.mc.field_71439_g.field_70138_W = 0.6f;
+        Step.mc.player.stepHeight = 0.6f;
     }
 
     @Override
     public void onUpdate() {
         if (this.vanilla.getValue().booleanValue()) {
-            Step.mc.field_71439_g.field_70138_W = this.stepHeightVanilla.getValue().floatValue();
+            Step.mc.player.stepHeight = this.stepHeightVanilla.getValue().floatValue();
             return;
         }
         switch (this.stepHeight.getValue()) {
@@ -83,24 +83,24 @@ extends Module {
                 this.selectedPositions = this.fourBlockPositions;
             }
         }
-        if (Step.mc.field_71439_g.field_70123_F && Step.mc.field_71439_g.field_70122_E) {
+        if (Step.mc.player.collidedHorizontally && Step.mc.player.onGround) {
             ++this.packets;
         }
-        AxisAlignedBB bb = Step.mc.field_71439_g.func_174813_aQ();
+        AxisAlignedBB bb = Step.mc.player.getEntityBoundingBox();
         if (this.check.getValue().booleanValue()) {
-            for (int x = MathHelper.func_76128_c((double)bb.field_72340_a); x < MathHelper.func_76128_c((double)(bb.field_72336_d + 1.0)); ++x) {
-                for (int z = MathHelper.func_76128_c((double)bb.field_72339_c); z < MathHelper.func_76128_c((double)(bb.field_72334_f + 1.0)); ++z) {
-                    Block block = Step.mc.field_71441_e.func_180495_p(new BlockPos((double)x, bb.field_72337_e + 1.0, (double)z)).func_177230_c();
+            for (int x = MathHelper.floor((double)bb.minX); x < MathHelper.floor((double)(bb.maxX + 1.0)); ++x) {
+                for (int z = MathHelper.floor((double)bb.minZ); z < MathHelper.floor((double)(bb.maxZ + 1.0)); ++z) {
+                    Block block = Step.mc.world.getBlockState(new BlockPos((double)x, bb.maxY + 1.0, (double)z)).getBlock();
                     if (block instanceof BlockAir) continue;
                     return;
                 }
             }
         }
-        if (Step.mc.field_71439_g.field_70122_E && !Step.mc.field_71439_g.func_70055_a(Material.field_151586_h) && !Step.mc.field_71439_g.func_70055_a(Material.field_151587_i) && Step.mc.field_71439_g.field_70124_G && Step.mc.field_71439_g.field_70143_R == 0.0f && !Step.mc.field_71474_y.field_74314_A.field_74513_e && Step.mc.field_71439_g.field_70123_F && !Step.mc.field_71439_g.func_70617_f_() && (this.packets > this.selectedPositions.length - 2 || this.spoof.getValue().booleanValue() && this.packets > this.ticks.getValue())) {
+        if (Step.mc.player.onGround && !Step.mc.player.isInsideOfMaterial(Material.WATER) && !Step.mc.player.isInsideOfMaterial(Material.LAVA) && Step.mc.player.collidedVertically && Step.mc.player.fallDistance == 0.0f && !Step.mc.gameSettings.keyBindJump.pressed && Step.mc.player.collidedHorizontally && !Step.mc.player.isOnLadder() && (this.packets > this.selectedPositions.length - 2 || this.spoof.getValue().booleanValue() && this.packets > this.ticks.getValue())) {
             for (double position : this.selectedPositions) {
-                Step.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.Position(Step.mc.field_71439_g.field_70165_t, Step.mc.field_71439_g.field_70163_u + position, Step.mc.field_71439_g.field_70161_v, true));
+                Step.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Position(Step.mc.player.posX, Step.mc.player.posY + position, Step.mc.player.posZ, true));
             }
-            Step.mc.field_71439_g.func_70107_b(Step.mc.field_71439_g.field_70165_t, Step.mc.field_71439_g.field_70163_u + this.selectedPositions[this.selectedPositions.length - 1], Step.mc.field_71439_g.field_70161_v);
+            Step.mc.player.setPosition(Step.mc.player.posX, Step.mc.player.posY + this.selectedPositions[this.selectedPositions.length - 1], Step.mc.player.posZ);
             this.packets = 0;
             if (this.turnOff.getValue().booleanValue()) {
                 this.disable();

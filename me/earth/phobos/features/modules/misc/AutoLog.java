@@ -51,9 +51,9 @@ extends Module {
 
     @Override
     public void onTick() {
-        if (!AutoLog.nullCheck() && AutoLog.mc.field_71439_g.func_110143_aJ() <= this.health.getValue().floatValue()) {
+        if (!AutoLog.nullCheck() && AutoLog.mc.player.getHealth() <= this.health.getValue().floatValue()) {
             Phobos.moduleManager.disableModule("AutoReconnect");
-            AutoLog.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new SPacketDisconnect((ITextComponent)new TextComponentString("AutoLogged")));
+            AutoLog.mc.player.connection.sendPacket((Packet)new SPacketDisconnect((ITextComponent)new TextComponentString("AutoLogged")));
             if (this.logout.getValue().booleanValue()) {
                 this.disable();
             }
@@ -63,9 +63,9 @@ extends Module {
     @SubscribeEvent
     public void onReceivePacket(PacketEvent.Receive event) {
         SPacketBlockChange packet;
-        if (event.getPacket() instanceof SPacketBlockChange && this.bed.getValue().booleanValue() && (packet = (SPacketBlockChange)event.getPacket()).func_180728_a().func_177230_c() == Blocks.field_150324_C && AutoLog.mc.field_71439_g.func_174831_c(packet.func_179827_b()) <= MathUtil.square(this.range.getValue().floatValue())) {
+        if (event.getPacket() instanceof SPacketBlockChange && this.bed.getValue().booleanValue() && (packet = (SPacketBlockChange)event.getPacket()).getBlockState().getBlock() == Blocks.BED && AutoLog.mc.player.getDistanceSqToCenter(packet.getBlockPosition()) <= MathUtil.square(this.range.getValue().floatValue())) {
             Phobos.moduleManager.disableModule("AutoReconnect");
-            AutoLog.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new SPacketDisconnect((ITextComponent)new TextComponentString("AutoLogged")));
+            AutoLog.mc.player.connection.sendPacket((Packet)new SPacketDisconnect((ITextComponent)new TextComponentString("AutoLogged")));
             if (this.logout.getValue().booleanValue()) {
                 this.disable();
             }

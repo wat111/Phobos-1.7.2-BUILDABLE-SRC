@@ -65,7 +65,7 @@ extends Module {
 
     @Override
     public void onTick() {
-        if (!(VoidESP.fullNullCheck() || this.noEnd.getValue().booleanValue() && VoidESP.mc.field_71439_g.field_71093_bK == 1 || !this.timer.passedMs(this.updates.getValue().intValue()))) {
+        if (!(VoidESP.fullNullCheck() || this.noEnd.getValue().booleanValue() && VoidESP.mc.player.dimension == 1 || !this.timer.passedMs(this.updates.getValue().intValue()))) {
             this.voidHoles.clear();
             this.voidHoles = this.findVoidHoles();
             if (this.voidHoles.size() > this.voidCap.getValue()) {
@@ -77,7 +77,7 @@ extends Module {
 
     @Override
     public void onRender3D(Render3DEvent event) {
-        if (VoidESP.fullNullCheck() || this.noEnd.getValue().booleanValue() && VoidESP.mc.field_71439_g.field_71093_bK == 1) {
+        if (VoidESP.fullNullCheck() || this.noEnd.getValue().booleanValue() && VoidESP.mc.player.dimension == 1) {
             return;
         }
         for (BlockPos pos : this.voidHoles) {
@@ -87,12 +87,12 @@ extends Module {
     }
 
     private List<BlockPos> findVoidHoles() {
-        BlockPos playerPos = EntityUtil.getPlayerPos((EntityPlayer)VoidESP.mc.field_71439_g);
-        return BlockUtil.getDisc(playerPos.func_177982_a(0, -playerPos.func_177956_o(), 0), this.radius.getValue().floatValue()).stream().filter(this::isVoid).collect(Collectors.toList());
+        BlockPos playerPos = EntityUtil.getPlayerPos((EntityPlayer)VoidESP.mc.player);
+        return BlockUtil.getDisc(playerPos.add(0, -playerPos.getY(), 0), this.radius.getValue().floatValue()).stream().filter(this::isVoid).collect(Collectors.toList());
     }
 
     private boolean isVoid(BlockPos pos) {
-        return (VoidESP.mc.field_71441_e.func_180495_p(pos).func_177230_c() == Blocks.field_150350_a || this.air.getValue() == false && VoidESP.mc.field_71441_e.func_180495_p(pos).func_177230_c() != Blocks.field_150357_h) && pos.func_177956_o() < 1 && pos.func_177956_o() >= 0;
+        return (VoidESP.mc.world.getBlockState(pos).getBlock() == Blocks.AIR || this.air.getValue() == false && VoidESP.mc.world.getBlockState(pos).getBlock() != Blocks.BEDROCK) && pos.getY() < 1 && pos.getY() >= 0;
     }
 }
 

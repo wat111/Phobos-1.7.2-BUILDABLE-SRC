@@ -65,40 +65,40 @@ extends Module {
         if (this.isOff() || Scaffold.fullNullCheck() || event.getStage() == 0) {
             return;
         }
-        if (!Scaffold.mc.field_71474_y.field_74314_A.func_151470_d()) {
+        if (!Scaffold.mc.gameSettings.keyBindJump.isKeyDown()) {
             this.timer.reset();
         }
-        if (BlockUtil.isScaffoldPos((playerBlock = EntityUtil.getPlayerPosWithEntity()).func_177982_a(0, -1, 0))) {
-            if (BlockUtil.isValidBlock(playerBlock.func_177982_a(0, -2, 0))) {
-                this.place(playerBlock.func_177982_a(0, -1, 0), EnumFacing.UP);
-            } else if (BlockUtil.isValidBlock(playerBlock.func_177982_a(-1, -1, 0))) {
-                this.place(playerBlock.func_177982_a(0, -1, 0), EnumFacing.EAST);
-            } else if (BlockUtil.isValidBlock(playerBlock.func_177982_a(1, -1, 0))) {
-                this.place(playerBlock.func_177982_a(0, -1, 0), EnumFacing.WEST);
-            } else if (BlockUtil.isValidBlock(playerBlock.func_177982_a(0, -1, -1))) {
-                this.place(playerBlock.func_177982_a(0, -1, 0), EnumFacing.SOUTH);
-            } else if (BlockUtil.isValidBlock(playerBlock.func_177982_a(0, -1, 1))) {
-                this.place(playerBlock.func_177982_a(0, -1, 0), EnumFacing.NORTH);
-            } else if (BlockUtil.isValidBlock(playerBlock.func_177982_a(1, -1, 1))) {
-                if (BlockUtil.isValidBlock(playerBlock.func_177982_a(0, -1, 1))) {
-                    this.place(playerBlock.func_177982_a(0, -1, 1), EnumFacing.NORTH);
+        if (BlockUtil.isScaffoldPos((playerBlock = EntityUtil.getPlayerPosWithEntity()).add(0, -1, 0))) {
+            if (BlockUtil.isValidBlock(playerBlock.add(0, -2, 0))) {
+                this.place(playerBlock.add(0, -1, 0), EnumFacing.UP);
+            } else if (BlockUtil.isValidBlock(playerBlock.add(-1, -1, 0))) {
+                this.place(playerBlock.add(0, -1, 0), EnumFacing.EAST);
+            } else if (BlockUtil.isValidBlock(playerBlock.add(1, -1, 0))) {
+                this.place(playerBlock.add(0, -1, 0), EnumFacing.WEST);
+            } else if (BlockUtil.isValidBlock(playerBlock.add(0, -1, -1))) {
+                this.place(playerBlock.add(0, -1, 0), EnumFacing.SOUTH);
+            } else if (BlockUtil.isValidBlock(playerBlock.add(0, -1, 1))) {
+                this.place(playerBlock.add(0, -1, 0), EnumFacing.NORTH);
+            } else if (BlockUtil.isValidBlock(playerBlock.add(1, -1, 1))) {
+                if (BlockUtil.isValidBlock(playerBlock.add(0, -1, 1))) {
+                    this.place(playerBlock.add(0, -1, 1), EnumFacing.NORTH);
                 }
-                this.place(playerBlock.func_177982_a(1, -1, 1), EnumFacing.EAST);
-            } else if (BlockUtil.isValidBlock(playerBlock.func_177982_a(-1, -1, 1))) {
-                if (BlockUtil.isValidBlock(playerBlock.func_177982_a(-1, -1, 0))) {
-                    this.place(playerBlock.func_177982_a(0, -1, 1), EnumFacing.WEST);
+                this.place(playerBlock.add(1, -1, 1), EnumFacing.EAST);
+            } else if (BlockUtil.isValidBlock(playerBlock.add(-1, -1, 1))) {
+                if (BlockUtil.isValidBlock(playerBlock.add(-1, -1, 0))) {
+                    this.place(playerBlock.add(0, -1, 1), EnumFacing.WEST);
                 }
-                this.place(playerBlock.func_177982_a(-1, -1, 1), EnumFacing.SOUTH);
-            } else if (BlockUtil.isValidBlock(playerBlock.func_177982_a(1, -1, 1))) {
-                if (BlockUtil.isValidBlock(playerBlock.func_177982_a(0, -1, 1))) {
-                    this.place(playerBlock.func_177982_a(0, -1, 1), EnumFacing.SOUTH);
+                this.place(playerBlock.add(-1, -1, 1), EnumFacing.SOUTH);
+            } else if (BlockUtil.isValidBlock(playerBlock.add(1, -1, 1))) {
+                if (BlockUtil.isValidBlock(playerBlock.add(0, -1, 1))) {
+                    this.place(playerBlock.add(0, -1, 1), EnumFacing.SOUTH);
                 }
-                this.place(playerBlock.func_177982_a(1, -1, 1), EnumFacing.WEST);
-            } else if (BlockUtil.isValidBlock(playerBlock.func_177982_a(1, -1, 1))) {
-                if (BlockUtil.isValidBlock(playerBlock.func_177982_a(0, -1, 1))) {
-                    this.place(playerBlock.func_177982_a(0, -1, 1), EnumFacing.EAST);
+                this.place(playerBlock.add(1, -1, 1), EnumFacing.WEST);
+            } else if (BlockUtil.isValidBlock(playerBlock.add(1, -1, 1))) {
+                if (BlockUtil.isValidBlock(playerBlock.add(0, -1, 1))) {
+                    this.place(playerBlock.add(0, -1, 1), EnumFacing.EAST);
                 }
-                this.place(playerBlock.func_177982_a(1, -1, 1), EnumFacing.NORTH);
+                this.place(playerBlock.add(1, -1, 1), EnumFacing.NORTH);
             }
         }
     }
@@ -107,21 +107,21 @@ extends Module {
         Block block;
         BlockPos pos = posI;
         if (face == EnumFacing.UP) {
-            pos = pos.func_177982_a(0, -1, 0);
+            pos = pos.add(0, -1, 0);
         } else if (face == EnumFacing.NORTH) {
-            pos = pos.func_177982_a(0, 0, 1);
+            pos = pos.add(0, 0, 1);
         } else if (face == EnumFacing.SOUTH) {
-            pos = pos.func_177982_a(0, 0, -1);
+            pos = pos.add(0, 0, -1);
         } else if (face == EnumFacing.EAST) {
-            pos = pos.func_177982_a(-1, 0, 0);
+            pos = pos.add(-1, 0, 0);
         } else if (face == EnumFacing.WEST) {
-            pos = pos.func_177982_a(1, 0, 0);
+            pos = pos.add(1, 0, 0);
         }
-        int oldSlot = Scaffold.mc.field_71439_g.field_71071_by.field_70461_c;
+        int oldSlot = Scaffold.mc.player.inventory.currentItem;
         int newSlot = -1;
         for (int i = 0; i < 9; ++i) {
-            ItemStack stack = Scaffold.mc.field_71439_g.field_71071_by.func_70301_a(i);
-            if (InventoryUtil.isNull(stack) || !(stack.func_77973_b() instanceof ItemBlock) || !Block.func_149634_a((Item)stack.func_77973_b()).func_176223_P().func_185913_b()) continue;
+            ItemStack stack = Scaffold.mc.player.inventory.getStackInSlot(i);
+            if (InventoryUtil.isNull(stack) || !(stack.getItem() instanceof ItemBlock) || !Block.getBlockFromItem((Item)stack.getItem()).getDefaultState().isFullBlock()) continue;
             newSlot = i;
             break;
         }
@@ -129,35 +129,35 @@ extends Module {
             return;
         }
         boolean crouched = false;
-        if (!Scaffold.mc.field_71439_g.func_70093_af() && BlockUtil.blackList.contains((Object)(block = Scaffold.mc.field_71441_e.func_180495_p(pos).func_177230_c()))) {
-            Scaffold.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketEntityAction((Entity)Scaffold.mc.field_71439_g, CPacketEntityAction.Action.START_SNEAKING));
+        if (!Scaffold.mc.player.isSneaking() && BlockUtil.blackList.contains((Object)(block = Scaffold.mc.world.getBlockState(pos).getBlock()))) {
+            Scaffold.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)Scaffold.mc.player, CPacketEntityAction.Action.START_SNEAKING));
             crouched = true;
         }
-        if (!(Scaffold.mc.field_71439_g.func_184614_ca().func_77973_b() instanceof ItemBlock)) {
-            Scaffold.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketHeldItemChange(newSlot));
-            Scaffold.mc.field_71439_g.field_71071_by.field_70461_c = newSlot;
-            Scaffold.mc.field_71442_b.func_78765_e();
+        if (!(Scaffold.mc.player.getHeldItemMainhand().getItem() instanceof ItemBlock)) {
+            Scaffold.mc.player.connection.sendPacket((Packet)new CPacketHeldItemChange(newSlot));
+            Scaffold.mc.player.inventory.currentItem = newSlot;
+            Scaffold.mc.playerController.updateController();
         }
-        if (Scaffold.mc.field_71474_y.field_74314_A.func_151470_d()) {
-            Scaffold.mc.field_71439_g.field_70159_w *= 0.3;
-            Scaffold.mc.field_71439_g.field_70179_y *= 0.3;
-            Scaffold.mc.field_71439_g.func_70664_aZ();
+        if (Scaffold.mc.gameSettings.keyBindJump.isKeyDown()) {
+            Scaffold.mc.player.motionX *= 0.3;
+            Scaffold.mc.player.motionZ *= 0.3;
+            Scaffold.mc.player.jump();
             if (this.timer.passedMs(1500L)) {
-                Scaffold.mc.field_71439_g.field_70181_x = -0.28;
+                Scaffold.mc.player.motionY = -0.28;
                 this.timer.reset();
             }
         }
         if (this.rotation.getValue().booleanValue()) {
-            float[] angle = MathUtil.calcAngle(Scaffold.mc.field_71439_g.func_174824_e(mc.func_184121_ak()), new Vec3d((double)((float)pos.func_177958_n() + 0.5f), (double)((float)pos.func_177956_o() - 0.5f), (double)((float)pos.func_177952_p() + 0.5f)));
-            Scaffold.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.Rotation(angle[0], (float)MathHelper.func_180184_b((int)((int)angle[1]), (int)360), Scaffold.mc.field_71439_g.field_70122_E));
+            float[] angle = MathUtil.calcAngle(Scaffold.mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d((double)((float)pos.getX() + 0.5f), (double)((float)pos.getY() - 0.5f), (double)((float)pos.getZ() + 0.5f)));
+            Scaffold.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Rotation(angle[0], (float)MathHelper.normalizeAngle((int)((int)angle[1]), (int)360), Scaffold.mc.player.onGround));
         }
-        Scaffold.mc.field_71442_b.func_187099_a(Scaffold.mc.field_71439_g, Scaffold.mc.field_71441_e, pos, face, new Vec3d(0.5, 0.5, 0.5), EnumHand.MAIN_HAND);
-        Scaffold.mc.field_71439_g.func_184609_a(EnumHand.MAIN_HAND);
-        Scaffold.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketHeldItemChange(oldSlot));
-        Scaffold.mc.field_71439_g.field_71071_by.field_70461_c = oldSlot;
-        Scaffold.mc.field_71442_b.func_78765_e();
+        Scaffold.mc.playerController.processRightClickBlock(Scaffold.mc.player, Scaffold.mc.world, pos, face, new Vec3d(0.5, 0.5, 0.5), EnumHand.MAIN_HAND);
+        Scaffold.mc.player.swingArm(EnumHand.MAIN_HAND);
+        Scaffold.mc.player.connection.sendPacket((Packet)new CPacketHeldItemChange(oldSlot));
+        Scaffold.mc.player.inventory.currentItem = oldSlot;
+        Scaffold.mc.playerController.updateController();
         if (crouched) {
-            Scaffold.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketEntityAction((Entity)Scaffold.mc.field_71439_g, CPacketEntityAction.Action.STOP_SNEAKING));
+            Scaffold.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)Scaffold.mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
         }
     }
 }

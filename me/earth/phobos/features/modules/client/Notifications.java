@@ -90,15 +90,15 @@ extends Module {
             this.check = false;
         }
         if (this.visualRange.getValue().booleanValue()) {
-            ArrayList tickPlayerList = new ArrayList(Notifications.mc.field_71441_e.field_73010_i);
+            ArrayList tickPlayerList = new ArrayList(Notifications.mc.world.playerEntities);
             if (tickPlayerList.size() > 0) {
                 for (EntityPlayer player : tickPlayerList) {
-                    if (player.func_70005_c_().equals(Notifications.mc.field_71439_g.func_70005_c_()) || this.knownPlayers.contains((Object)player)) continue;
+                    if (player.getName().equals(Notifications.mc.player.getName()) || this.knownPlayers.contains((Object)player)) continue;
                     this.knownPlayers.add(player);
                     if (Phobos.friendManager.isFriend(player)) {
-                        Command.sendMessage("Player \u00a7a" + player.func_70005_c_() + "\u00a7r" + " entered your visual range" + (this.coords.getValue() != false ? " at (" + (int)player.field_70165_t + ", " + (int)player.field_70163_u + ", " + (int)player.field_70161_v + ")!" : "!"), this.popUp.getValue());
+                        Command.sendMessage("Player \u00a7a" + player.getName() + "\u00a7r" + " entered your visual range" + (this.coords.getValue() != false ? " at (" + (int)player.posX + ", " + (int)player.posY + ", " + (int)player.posZ + ")!" : "!"), this.popUp.getValue());
                     } else {
-                        Command.sendMessage("Player \u00a7c" + player.func_70005_c_() + "\u00a7r" + " entered your visual range" + (this.coords.getValue() != false ? " at (" + (int)player.field_70165_t + ", " + (int)player.field_70163_u + ", " + (int)player.field_70161_v + ")!" : "!"), this.popUp.getValue());
+                        Command.sendMessage("Player \u00a7c" + player.getName() + "\u00a7r" + " entered your visual range" + (this.coords.getValue() != false ? " at (" + (int)player.posX + ", " + (int)player.posY + ", " + (int)player.posZ + ")!" : "!"), this.popUp.getValue());
                     }
                     return;
                 }
@@ -109,9 +109,9 @@ extends Module {
                     this.knownPlayers.remove((Object)player);
                     if (this.leaving.getValue().booleanValue()) {
                         if (Phobos.friendManager.isFriend(player)) {
-                            Command.sendMessage("Player \u00a7a" + player.func_70005_c_() + "\u00a7r" + " left your visual range" + (this.coords.getValue() != false ? " at (" + (int)player.field_70165_t + ", " + (int)player.field_70163_u + ", " + (int)player.field_70161_v + ")!" : "!"), this.popUp.getValue());
+                            Command.sendMessage("Player \u00a7a" + player.getName() + "\u00a7r" + " left your visual range" + (this.coords.getValue() != false ? " at (" + (int)player.posX + ", " + (int)player.posY + ", " + (int)player.posZ + ")!" : "!"), this.popUp.getValue());
                         } else {
-                            Command.sendMessage("Player \u00a7c" + player.func_70005_c_() + "\u00a7r" + " left your visual range" + (this.coords.getValue() != false ? " at (" + (int)player.field_70165_t + ", " + (int)player.field_70163_u + ", " + (int)player.field_70161_v + ")!" : "!"), this.popUp.getValue());
+                            Command.sendMessage("Player \u00a7c" + player.getName() + "\u00a7r" + " left your visual range" + (this.coords.getValue() != false ? " at (" + (int)player.posX + ", " + (int)player.posY + ", " + (int)player.posZ + ")!" : "!"), this.popUp.getValue());
                         }
                     }
                     return;
@@ -135,12 +135,12 @@ extends Module {
     public void onReceivePacket(PacketEvent.Receive event) {
         if (event.getPacket() instanceof SPacketSpawnObject && this.pearls.getValue().booleanValue()) {
             SPacketSpawnObject packet = (SPacketSpawnObject)event.getPacket();
-            EntityPlayer player = Notifications.mc.field_71441_e.func_184137_a(packet.func_186880_c(), packet.func_186882_d(), packet.func_186881_e(), 1.0, false);
+            EntityPlayer player = Notifications.mc.world.getClosestPlayer(packet.getX(), packet.getY(), packet.getZ(), 1.0, false);
             if (player == null) {
                 return;
             }
-            if (packet.func_149001_c() == 85) {
-                Command.sendMessage("\u00a7cPearl thrown by " + player.func_70005_c_() + " at X:" + (int)packet.func_186880_c() + " Y:" + (int)packet.func_186882_d() + " Z:" + (int)packet.func_186881_e());
+            if (packet.getEntityID() == 85) {
+                Command.sendMessage("\u00a7cPearl thrown by " + player.getName() + " at X:" + (int)packet.getX() + " Y:" + (int)packet.getY() + " Z:" + (int)packet.getZ());
             }
         }
     }
@@ -160,10 +160,10 @@ extends Module {
             }
             if (this.watermark.getValue().booleanValue()) {
                 TextComponentString textComponentString = new TextComponentString(Phobos.commandManager.getClientMessage() + " " + "\u00a7r" + "\u00a7c" + module.getDisplayName() + " disabled.");
-                Notifications.mc.field_71456_v.func_146158_b().func_146234_a((ITextComponent)textComponentString, moduleNumber);
+                Notifications.mc.ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion((ITextComponent)textComponentString, moduleNumber);
             } else {
                 TextComponentString textComponentString = new TextComponentString("\u00a7c" + module.getDisplayName() + " disabled.");
-                Notifications.mc.field_71456_v.func_146158_b().func_146234_a((ITextComponent)textComponentString, moduleNumber);
+                Notifications.mc.ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion((ITextComponent)textComponentString, moduleNumber);
             }
         }
         if (event.getStage() == 1 && (modules.contains((module = (Module)event.getFeature()).getDisplayName()) || !this.list.getValue().booleanValue())) {
@@ -174,10 +174,10 @@ extends Module {
             }
             if (this.watermark.getValue().booleanValue()) {
                 TextComponentString textComponentString = new TextComponentString(Phobos.commandManager.getClientMessage() + " " + "\u00a7r" + "\u00a7a" + module.getDisplayName() + " enabled.");
-                Notifications.mc.field_71456_v.func_146158_b().func_146234_a((ITextComponent)textComponentString, moduleNumber);
+                Notifications.mc.ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion((ITextComponent)textComponentString, moduleNumber);
             } else {
                 TextComponentString textComponentString = new TextComponentString("\u00a7a" + module.getDisplayName() + " enabled.");
-                Notifications.mc.field_71456_v.func_146158_b().func_146234_a((ITextComponent)textComponentString, moduleNumber);
+                Notifications.mc.ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion((ITextComponent)textComponentString, moduleNumber);
             }
         }
     }

@@ -28,7 +28,7 @@ extends Module {
     @Override
     public void onUpdate() {
         if (this.normalOffset.getValue().booleanValue()) {
-            SmallShield.mc.field_71460_t.field_78516_c.field_187471_h = this.offset.getValue().floatValue();
+            SmallShield.mc.entityRenderer.itemRenderer.equippedProgressOffHand = this.offset.getValue().floatValue();
         }
     }
 

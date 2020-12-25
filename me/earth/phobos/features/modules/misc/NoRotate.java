@@ -55,8 +55,8 @@ extends Module {
     public void onPacketReceive(PacketEvent.Receive event) {
         if (event.getStage() == 0 && this.cancelPackets && event.getPacket() instanceof SPacketPlayerPosLook) {
             SPacketPlayerPosLook packet = (SPacketPlayerPosLook)event.getPacket();
-            packet.field_148936_d = NoRotate.mc.field_71439_g.field_70177_z;
-            packet.field_148937_e = NoRotate.mc.field_71439_g.field_70125_A;
+            packet.yaw = NoRotate.mc.player.rotationYaw;
+            packet.pitch = NoRotate.mc.player.rotationPitch;
         }
     }
 }

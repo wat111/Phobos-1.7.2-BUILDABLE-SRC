@@ -27,7 +27,7 @@ extends Feature {
     }
 
     public boolean isFriend(EntityPlayer player) {
-        return this.isFriend(player.func_70005_c_());
+        return this.isFriend(player.getName());
     }
 
     public void addFriend(String name) {

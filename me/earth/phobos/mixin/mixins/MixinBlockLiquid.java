@@ -50,7 +50,7 @@ extends Block {
 
     @Inject(method={"canCollideCheck"}, at={@At(value="HEAD")}, cancellable=true)
     public void canCollideCheckHook(IBlockState blockState, boolean hitIfLiquid, CallbackInfoReturnable<Boolean> info) {
-        info.setReturnValue(hitIfLiquid && (Integer)blockState.func_177229_b((IProperty)BlockLiquid.field_176367_b) == 0 || LiquidInteract.getInstance().isOn());
+        info.setReturnValue(hitIfLiquid && (Integer)blockState.getValue((IProperty)BlockLiquid.LEVEL) == 0 || LiquidInteract.getInstance().isOn());
     }
 }
 

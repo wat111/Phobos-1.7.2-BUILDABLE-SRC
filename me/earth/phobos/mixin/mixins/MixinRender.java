@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinRender<T extends Entity> {
     @Inject(method={"shouldRender"}, at={@At(value="HEAD")}, cancellable=true)
     public void shouldRender(T livingEntity, ICamera camera, double camX, double camY, double camZ, CallbackInfoReturnable<Boolean> info) {
-        if (livingEntity == null || camera == null || livingEntity.func_184177_bl() == null) {
+        if (livingEntity == null || camera == null || livingEntity.getRenderBoundingBox() == null) {
             info.setReturnValue(false);
         }
     }

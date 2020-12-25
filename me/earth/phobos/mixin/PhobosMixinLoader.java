@@ -21,7 +21,7 @@ implements IFMLLoadingPlugin {
         Phobos.LOGGER.info("Phobos mixins initialized");
         MixinBootstrap.init();
         Mixins.addConfiguration("mixins.phobos.json");
-        MixinEnvironment.getDefaultEnvironment().setObfuscationContext("searge");
+        MixinEnvironment.getDefaultEnvironment().setObfuscationContext("name");
         Phobos.LOGGER.info(MixinEnvironment.getDefaultEnvironment().getObfuscationContext());
     }
 

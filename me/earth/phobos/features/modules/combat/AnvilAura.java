@@ -68,8 +68,8 @@ extends Module {
         if (event.getStage() == 0 && this.rotate.getValue().booleanValue() && this.rotating) {
             if (event.getPacket() instanceof CPacketPlayer) {
                 CPacketPlayer packet = (CPacketPlayer)event.getPacket();
-                packet.field_149476_e = this.yaw;
-                packet.field_149473_f = this.pitch;
+                packet.yaw = this.yaw;
+                packet.pitch = this.pitch;
             }
             ++this.rotationPacketsSpoofed;
             if (this.rotationPacketsSpoofed >= this.rotations.getValue()) {
@@ -96,35 +96,35 @@ extends Module {
         if (this.switcher.getValue().booleanValue() && !this.isHoldingAnvil()) {
             this.doSwitch();
         }
-        BlockUtil.placeBlock(pos, EnumHand.MAIN_HAND, false, this.packet.getValue(), AnvilAura.mc.field_71439_g.func_70093_af());
+        BlockUtil.placeBlock(pos, EnumHand.MAIN_HAND, false, this.packet.getValue(), AnvilAura.mc.player.isSneaking());
     }
 
     public boolean isHoldingAnvil() {
         int obbySlot = InventoryUtil.findHotbarBlock(BlockObsidian.class);
-        return AnvilAura.mc.field_71439_g.func_184614_ca().func_77973_b() instanceof ItemBlock && ((ItemBlock)AnvilAura.mc.field_71439_g.func_184614_ca().func_77973_b()).func_179223_d() instanceof BlockAnvil || AnvilAura.mc.field_71439_g.func_184592_cb().func_77973_b() instanceof ItemBlock && ((ItemBlock)AnvilAura.mc.field_71439_g.func_184592_cb().func_77973_b()).func_179223_d() instanceof BlockAnvil;
+        return AnvilAura.mc.player.getHeldItemMainhand().getItem() instanceof ItemBlock && ((ItemBlock)AnvilAura.mc.player.getHeldItemMainhand().getItem()).getBlock() instanceof BlockAnvil || AnvilAura.mc.player.getHeldItemOffhand().getItem() instanceof ItemBlock && ((ItemBlock)AnvilAura.mc.player.getHeldItemOffhand().getItem()).getBlock() instanceof BlockAnvil;
     }
 
     public void doSwitch() {
         int obbySlot = InventoryUtil.findHotbarBlock(BlockObsidian.class);
         if (obbySlot == -1) {
             for (int l = 0; l < 9; ++l) {
-                ItemStack stack = AnvilAura.mc.field_71439_g.field_71071_by.func_70301_a(l);
-                Block block = ((ItemBlock)stack.func_77973_b()).func_179223_d();
+                ItemStack stack = AnvilAura.mc.player.inventory.getStackInSlot(l);
+                Block block = ((ItemBlock)stack.getItem()).getBlock();
                 if (!(block instanceof BlockObsidian)) continue;
                 obbySlot = l;
             }
         }
         if (obbySlot != -1) {
-            AnvilAura.mc.field_71439_g.field_71071_by.field_70461_c = obbySlot;
+            AnvilAura.mc.player.inventory.currentItem = obbySlot;
         }
     }
 
     public EntityPlayer getTarget() {
         double shortestDistance = -1.0;
         EntityPlayer target = null;
-        for (EntityPlayer player : AnvilAura.mc.field_71441_e.field_73010_i) {
-            if (this.getPlaceableBlocksAboveEntity((Entity)player).isEmpty() || shortestDistance != -1.0 && !(AnvilAura.mc.field_71439_g.func_70068_e((Entity)player) < MathUtil.square(shortestDistance))) continue;
-            shortestDistance = AnvilAura.mc.field_71439_g.func_70032_d((Entity)player);
+        for (EntityPlayer player : AnvilAura.mc.world.playerEntities) {
+            if (this.getPlaceableBlocksAboveEntity((Entity)player).isEmpty() || shortestDistance != -1.0 && !(AnvilAura.mc.player.getDistanceSq((Entity)player) < MathUtil.square(shortestDistance))) continue;
+            shortestDistance = AnvilAura.mc.player.getDistance((Entity)player);
             target = player;
         }
         return target;
@@ -134,18 +134,18 @@ extends Module {
         double distance = -1.0;
         BlockPos finalPos = null;
         for (BlockPos pos : this.getPlaceableBlocksAboveEntity(target)) {
-            if (distance != -1.0 && !(AnvilAura.mc.field_71439_g.func_174818_b(pos) < MathUtil.square(distance))) continue;
+            if (distance != -1.0 && !(AnvilAura.mc.player.getDistanceSq(pos) < MathUtil.square(distance))) continue;
             finalPos = pos;
-            distance = AnvilAura.mc.field_71439_g.func_70011_f((double)pos.func_177958_n(), (double)pos.func_177956_o(), (double)pos.func_177952_p());
+            distance = AnvilAura.mc.player.getDistance((double)pos.getX(), (double)pos.getY(), (double)pos.getZ());
         }
         return finalPos;
     }
 
     public List<BlockPos> getPlaceableBlocksAboveEntity(Entity target) {
         BlockPos pos;
-        BlockPos playerPos = new BlockPos(Math.floor(AnvilAura.mc.field_71439_g.field_70165_t), Math.floor(AnvilAura.mc.field_71439_g.field_70163_u), Math.floor(AnvilAura.mc.field_71439_g.field_70161_v));
+        BlockPos playerPos = new BlockPos(Math.floor(AnvilAura.mc.player.posX), Math.floor(AnvilAura.mc.player.posY), Math.floor(AnvilAura.mc.player.posZ));
         ArrayList<BlockPos> positions = new ArrayList<BlockPos>();
-        for (int i = (int)Math.floor(AnvilAura.mc.field_71439_g.field_70163_u + 2.0); i <= 256 && BlockUtil.isPositionPlaceable(pos = new BlockPos(Math.floor(AnvilAura.mc.field_71439_g.field_70165_t), (double)i, Math.floor(AnvilAura.mc.field_71439_g.field_70161_v)), false) != 0 && BlockUtil.isPositionPlaceable(pos, false) != -1 && BlockUtil.isPositionPlaceable(pos, false) != 2; ++i) {
+        for (int i = (int)Math.floor(AnvilAura.mc.player.posY + 2.0); i <= 256 && BlockUtil.isPositionPlaceable(pos = new BlockPos(Math.floor(AnvilAura.mc.player.posX), (double)i, Math.floor(AnvilAura.mc.player.posZ)), false) != 0 && BlockUtil.isPositionPlaceable(pos, false) != -1 && BlockUtil.isPositionPlaceable(pos, false) != 2; ++i) {
             positions.add(pos);
         }
         return positions;
@@ -153,7 +153,7 @@ extends Module {
 
     private void rotateToPos(BlockPos pos) {
         if (this.rotate.getValue().booleanValue()) {
-            float[] angle = MathUtil.calcAngle(AnvilAura.mc.field_71439_g.func_174824_e(mc.func_184121_ak()), new Vec3d((double)((float)pos.func_177958_n() + 0.5f), (double)((float)pos.func_177956_o() - 0.5f), (double)((float)pos.func_177952_p() + 0.5f)));
+            float[] angle = MathUtil.calcAngle(AnvilAura.mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d((double)((float)pos.getX() + 0.5f), (double)((float)pos.getY() - 0.5f), (double)((float)pos.getZ() + 0.5f)));
             this.yaw = angle[0];
             this.pitch = angle[1];
             this.rotating = true;

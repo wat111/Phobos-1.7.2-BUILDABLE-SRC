@@ -28,12 +28,12 @@ public class Notifications {
     }
 
     public void onDraw(int y) {
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.func_71410_x());
+        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
         if (this.timer.passedMs(this.disableTime)) {
             Phobos.notificationManager.getNotifications().remove(this);
         }
-        RenderUtil.drawRect((float)(scaledResolution.func_78326_a() - 4) - this.width, y, scaledResolution.func_78326_a() - 2, y + Phobos.moduleManager.getModuleByClass(HUD.class).renderer.getFontHeight() + 3, 0x75000000);
-        Phobos.moduleManager.getModuleByClass(HUD.class).renderer.drawString(this.text, (float)scaledResolution.func_78326_a() - this.width - 3.0f, y + 2, -1, true);
+        RenderUtil.drawRect((float)(scaledResolution.getScaledWidth() - 4) - this.width, y, scaledResolution.getScaledWidth() - 2, y + Phobos.moduleManager.getModuleByClass(HUD.class).renderer.getFontHeight() + 3, 0x75000000);
+        Phobos.moduleManager.getModuleByClass(HUD.class).renderer.drawString(this.text, (float)scaledResolution.getScaledWidth() - this.width - 3.0f, y + 2, -1, true);
     }
 }
 

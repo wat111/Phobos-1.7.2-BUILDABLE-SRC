@@ -64,7 +64,7 @@ extends Module {
         int drawnHoles = 0;
         for (BlockPos pos : Phobos.holeManager.getSortedHoles()) {
             if (drawnHoles >= this.holes.getValue()) break;
-            if (pos.equals((Object)new BlockPos(HoleESP.mc.field_71439_g.field_70165_t, HoleESP.mc.field_71439_g.field_70163_u, HoleESP.mc.field_71439_g.field_70161_v)) || !RotationUtil.isInFov(pos)) continue;
+            if (pos.equals((Object)new BlockPos(HoleESP.mc.player.posX, HoleESP.mc.player.posY, HoleESP.mc.player.posZ)) || !RotationUtil.isInFov(pos)) continue;
             if (this.safeColor.getValue().booleanValue() && Phobos.holeManager.isSafe(pos)) {
                 RenderUtil.drawBoxESP(pos, new Color(this.safeRed.getValue(), this.safeGreen.getValue(), this.safeBlue.getValue(), this.safeAlpha.getValue()), this.customOutline.getValue(), new Color(this.safecRed.getValue(), this.safecGreen.getValue(), this.safecBlue.getValue(), this.safecAlpha.getValue()), this.lineWidth.getValue().floatValue(), this.outline.getValue(), this.box.getValue(), this.boxAlpha.getValue(), true, this.height.getValue());
             } else {

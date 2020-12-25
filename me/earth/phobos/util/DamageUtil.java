@@ -58,7 +58,7 @@ import net.minecraft.world.World;
 public class DamageUtil
 implements Util {
     public static boolean isArmorLow(EntityPlayer player, int durability) {
-        for (ItemStack piece : player.field_71071_by.field_70460_b) {
+        for (ItemStack piece : player.inventory.armorInventory) {
             if (piece == null) {
                 return true;
             }
@@ -69,19 +69,19 @@ implements Util {
     }
 
     public static boolean isNaked(EntityPlayer player) {
-        for (ItemStack piece : player.field_71071_by.field_70460_b) {
-            if (piece == null || piece.func_190926_b()) continue;
+        for (ItemStack piece : player.inventory.armorInventory) {
+            if (piece == null || piece.isEmpty()) continue;
             return false;
         }
         return true;
     }
 
     public static int getItemDamage(ItemStack stack) {
-        return stack.func_77958_k() - stack.func_77952_i();
+        return stack.getMaxDamage() - stack.getItemDamage();
     }
 
     public static float getDamageInPercent(ItemStack stack) {
-        return (float)DamageUtil.getItemDamage(stack) / (float)stack.func_77958_k() * 100.0f;
+        return (float)DamageUtil.getItemDamage(stack) / (float)stack.getMaxDamage() * 100.0f;
     }
 
     public static int getRoundedDamage(ItemStack stack) {
@@ -89,26 +89,26 @@ implements Util {
     }
 
     public static boolean hasDurability(ItemStack stack) {
-        Item item = stack.func_77973_b();
+        Item item = stack.getItem();
         return item instanceof ItemArmor || item instanceof ItemSword || item instanceof ItemTool || item instanceof ItemShield;
     }
 
     public static boolean canBreakWeakness(EntityPlayer player) {
         int strengthAmp = 0;
-        PotionEffect effect = DamageUtil.mc.field_71439_g.func_70660_b(MobEffects.field_76420_g);
+        PotionEffect effect = DamageUtil.mc.player.getActivePotionEffect(MobEffects.STRENGTH);
         if (effect != null) {
-            strengthAmp = effect.func_76458_c();
+            strengthAmp = effect.getAmplifier();
         }
-        return !DamageUtil.mc.field_71439_g.func_70644_a(MobEffects.field_76437_t) || strengthAmp >= 1 || DamageUtil.mc.field_71439_g.func_184614_ca().func_77973_b() instanceof ItemSword || DamageUtil.mc.field_71439_g.func_184614_ca().func_77973_b() instanceof ItemPickaxe || DamageUtil.mc.field_71439_g.func_184614_ca().func_77973_b() instanceof ItemAxe || DamageUtil.mc.field_71439_g.func_184614_ca().func_77973_b() instanceof ItemSpade;
+        return !DamageUtil.mc.player.isPotionActive(MobEffects.WEAKNESS) || strengthAmp >= 1 || DamageUtil.mc.player.getHeldItemMainhand().getItem() instanceof ItemSword || DamageUtil.mc.player.getHeldItemMainhand().getItem() instanceof ItemPickaxe || DamageUtil.mc.player.getHeldItemMainhand().getItem() instanceof ItemAxe || DamageUtil.mc.player.getHeldItemMainhand().getItem() instanceof ItemSpade;
     }
 
     public static float calculateDamage(double posX, double posY, double posZ, Entity entity) {
         float doubleExplosionSize = 12.0f;
-        double distancedsize = entity.func_70011_f(posX, posY, posZ) / (double)doubleExplosionSize;
+        double distancedsize = entity.getDistance(posX, posY, posZ) / (double)doubleExplosionSize;
         Vec3d vec3d = new Vec3d(posX, posY, posZ);
         double blockDensity = 0.0;
         try {
-            blockDensity = entity.field_70170_p.func_72842_a(vec3d, entity.func_174813_aQ());
+            blockDensity = entity.world.getBlockDensity(vec3d, entity.getEntityBoundingBox());
         }
         catch (Exception exception) {
             // empty catch block
@@ -117,7 +117,7 @@ implements Util {
         float damage = (int)((v * v + v) / 2.0 * 7.0 * (double)doubleExplosionSize + 1.0);
         double finald = 1.0;
         if (entity instanceof EntityLivingBase) {
-            finald = DamageUtil.getBlastReduction((EntityLivingBase)entity, DamageUtil.getDamageMultiplied(damage), new Explosion((World)DamageUtil.mc.field_71441_e, null, posX, posY, posZ, 6.0f, false, true));
+            finald = DamageUtil.getBlastReduction((EntityLivingBase)entity, DamageUtil.getDamageMultiplied(damage), new Explosion((World)DamageUtil.mc.world, null, posX, posY, posZ, 6.0f, false, true));
         }
         return (float)finald;
     }
@@ -126,65 +126,65 @@ implements Util {
         float damage = damageI;
         if (entity instanceof EntityPlayer) {
             EntityPlayer ep = (EntityPlayer)entity;
-            DamageSource ds = DamageSource.func_94539_a((Explosion)explosion);
-            damage = CombatRules.func_189427_a((float)damage, (float)ep.func_70658_aO(), (float)((float)ep.func_110148_a(SharedMonsterAttributes.field_189429_h).func_111126_e()));
+            DamageSource ds = DamageSource.causeExplosionDamage((Explosion)explosion);
+            damage = CombatRules.getDamageAfterAbsorb((float)damage, (float)ep.getTotalArmorValue(), (float)((float)ep.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue()));
             int k = 0;
             try {
-                k = EnchantmentHelper.func_77508_a((Iterable)ep.func_184193_aE(), (DamageSource)ds);
+                k = EnchantmentHelper.getEnchantmentModifierDamage((Iterable)ep.getArmorInventoryList(), (DamageSource)ds);
             }
             catch (Exception exception) {
                 // empty catch block
             }
-            float f = MathHelper.func_76131_a((float)k, (float)0.0f, (float)20.0f);
+            float f = MathHelper.clamp((float)k, (float)0.0f, (float)20.0f);
             damage *= 1.0f - f / 25.0f;
-            if (entity.func_70644_a(MobEffects.field_76429_m)) {
+            if (entity.isPotionActive(MobEffects.RESISTANCE)) {
                 damage -= damage / 4.0f;
             }
             damage = Math.max(damage, 0.0f);
             return damage;
         }
-        damage = CombatRules.func_189427_a((float)damage, (float)entity.func_70658_aO(), (float)((float)entity.func_110148_a(SharedMonsterAttributes.field_189429_h).func_111126_e()));
+        damage = CombatRules.getDamageAfterAbsorb((float)damage, (float)entity.getTotalArmorValue(), (float)((float)entity.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue()));
         return damage;
     }
 
     public static float getDamageMultiplied(float damage) {
-        int diff = DamageUtil.mc.field_71441_e.func_175659_aa().func_151525_a();
+        int diff = DamageUtil.mc.world.getDifficulty().getDifficultyId();
         return damage * (diff == 0 ? 0.0f : (diff == 2 ? 1.0f : (diff == 1 ? 0.5f : 1.5f)));
     }
 
     public static float calculateDamage(Entity crystal, Entity entity) {
-        return DamageUtil.calculateDamage(crystal.field_70165_t, crystal.field_70163_u, crystal.field_70161_v, entity);
+        return DamageUtil.calculateDamage(crystal.posX, crystal.posY, crystal.posZ, entity);
     }
 
     public static float calculateDamage(BlockPos pos, Entity entity) {
-        return DamageUtil.calculateDamage((double)pos.func_177958_n() + 0.5, pos.func_177956_o() + 1, (double)pos.func_177952_p() + 0.5, entity);
+        return DamageUtil.calculateDamage((double)pos.getX() + 0.5, pos.getY() + 1, (double)pos.getZ() + 0.5, entity);
     }
 
     public static boolean canTakeDamage(boolean suicide) {
-        return !DamageUtil.mc.field_71439_g.field_71075_bZ.field_75098_d && !suicide;
+        return !DamageUtil.mc.player.capabilities.isCreativeMode && !suicide;
     }
 
     public static int getCooldownByWeapon(EntityPlayer player) {
-        Item item = player.func_184614_ca().func_77973_b();
+        Item item = player.getHeldItemMainhand().getItem();
         if (item instanceof ItemSword) {
             return 600;
         }
         if (item instanceof ItemPickaxe) {
             return 850;
         }
-        if (item == Items.field_151036_c) {
+        if (item == Items.IRON_AXE) {
             return 1100;
         }
-        if (item == Items.field_151018_J) {
+        if (item == Items.STONE_HOE) {
             return 500;
         }
-        if (item == Items.field_151019_K) {
+        if (item == Items.IRON_HOE) {
             return 350;
         }
-        if (item == Items.field_151053_p || item == Items.field_151049_t) {
+        if (item == Items.WOODEN_AXE || item == Items.STONE_AXE) {
             return 1250;
         }
-        if (item instanceof ItemSpade || item == Items.field_151006_E || item == Items.field_151056_x || item == Items.field_151017_I || item == Items.field_151013_M) {
+        if (item instanceof ItemSpade || item == Items.GOLDEN_AXE || item == Items.DIAMOND_AXE || item == Items.WOODEN_HOE || item == Items.GOLDEN_HOE) {
             return 1000;
         }
         return 250;

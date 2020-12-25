@@ -73,7 +73,7 @@ extends Render<T> {
                 GL11.glDepthMask((boolean)false);
                 GL11.glEnable((int)10754);
                 GL11.glColor4f((float)((float)rainbowColor.getRed() / 255.0f), (float)((float)rainbowColor.getGreen() / 255.0f), (float)((float)rainbowColor.getBlue() / 255.0f), (float)((float)Chams.getInstance().alpha.getValue().intValue() / 255.0f));
-                modelBase.func_78088_a(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+                modelBase.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
                 GL11.glEnable((int)2929);
                 GL11.glDepthMask((boolean)true);
             } else if (Chams.getInstance().xqz.getValue().booleanValue()) {
@@ -83,18 +83,18 @@ extends Render<T> {
                 GL11.glDepthMask((boolean)false);
                 GL11.glEnable((int)10754);
                 GL11.glColor4f((float)((float)hiddenColor.getRed() / 255.0f), (float)((float)hiddenColor.getGreen() / 255.0f), (float)((float)hiddenColor.getBlue() / 255.0f), (float)((float)Chams.getInstance().alpha.getValue().intValue() / 255.0f));
-                modelBase.func_78088_a(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+                modelBase.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
                 GL11.glEnable((int)2929);
                 GL11.glDepthMask((boolean)true);
                 GL11.glColor4f((float)((float)visibleColor.getRed() / 255.0f), (float)((float)visibleColor.getGreen() / 255.0f), (float)((float)visibleColor.getBlue() / 255.0f), (float)((float)Chams.getInstance().alpha.getValue().intValue() / 255.0f));
-                modelBase.func_78088_a(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+                modelBase.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
             } else {
                 Color visibleColor = Chams.getInstance().colorSync.getValue() != false ? Colors.INSTANCE.getCurrentColor() : EntityUtil.getColor(entityIn, Chams.getInstance().red.getValue(), Chams.getInstance().green.getValue(), Chams.getInstance().blue.getValue(), Chams.getInstance().alpha.getValue(), true);
                 GL11.glDisable((int)2929);
                 GL11.glDepthMask((boolean)false);
                 GL11.glEnable((int)10754);
                 GL11.glColor4f((float)((float)visibleColor.getRed() / 255.0f), (float)((float)visibleColor.getGreen() / 255.0f), (float)((float)visibleColor.getBlue() / 255.0f), (float)((float)Chams.getInstance().alpha.getValue().intValue() / 255.0f));
-                modelBase.func_78088_a(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+                modelBase.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
                 GL11.glEnable((int)2929);
                 GL11.glDepthMask((boolean)true);
             }
@@ -104,7 +104,7 @@ extends Render<T> {
             GL11.glEnable((int)3008);
             GL11.glPopAttrib();
         } else if (!cancel) {
-            modelBase.func_78088_a(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+            modelBase.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
         }
     }
 

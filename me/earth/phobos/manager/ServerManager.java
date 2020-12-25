@@ -86,7 +86,7 @@ extends Feature {
             return 0;
         }
         try {
-            return Objects.requireNonNull(mc.func_147114_u()).func_175102_a(mc.func_147114_u().func_175105_e().getId()).func_178853_c();
+            return Objects.requireNonNull(mc.getConnection()).getPlayerInfo(mc.getConnection().getGameProfile().getId()).getResponseTime();
         }
         catch (Exception e) {
             return 0;

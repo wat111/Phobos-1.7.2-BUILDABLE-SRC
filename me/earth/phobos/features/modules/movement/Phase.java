@@ -84,11 +84,11 @@ extends Module {
     public void onDisable() {
         this.packets.clear();
         this.posLookPackets = 0;
-        if (Phase.mc.field_71439_g != null) {
+        if (Phase.mc.player != null) {
             if (this.resetConfirm.getValue().booleanValue()) {
                 this.teleportIds = 0;
             }
-            Phase.mc.field_71439_g.field_70145_X = false;
+            Phase.mc.player.noClip = false;
         }
     }
 
@@ -99,15 +99,15 @@ extends Module {
 
     @SubscribeEvent
     public void onMove(MoveEvent event) {
-        if (this.setOnMove.getValue().booleanValue() && this.type.getValue() == PacketFlyMode.SETBACK && event.getStage() == 0 && !mc.func_71356_B() && this.mode.getValue() == Mode.PACKETFLY) {
-            event.setX(Phase.mc.field_71439_g.field_70159_w);
-            event.setY(Phase.mc.field_71439_g.field_70181_x);
-            event.setZ(Phase.mc.field_71439_g.field_70179_y);
+        if (this.setOnMove.getValue().booleanValue() && this.type.getValue() == PacketFlyMode.SETBACK && event.getStage() == 0 && !mc.isSingleplayer() && this.mode.getValue() == Mode.PACKETFLY) {
+            event.setX(Phase.mc.player.motionX);
+            event.setY(Phase.mc.player.motionY);
+            event.setZ(Phase.mc.player.motionZ);
             if (this.cliperino.getValue().booleanValue()) {
-                Phase.mc.field_71439_g.field_70145_X = true;
+                Phase.mc.player.noClip = true;
             }
         }
-        if (this.type.getValue() == PacketFlyMode.NONE || event.getStage() != 0 || mc.func_71356_B() || this.mode.getValue() != Mode.PACKETFLY) {
+        if (this.type.getValue() == PacketFlyMode.NONE || event.getStage() != 0 || mc.isSingleplayer() || this.mode.getValue() != Mode.PACKETFLY) {
             return;
         }
         if (!this.boundingBox.getValue().booleanValue() && !this.updates.getValue().booleanValue()) {
@@ -137,78 +137,78 @@ extends Module {
     private void doPhase(MoveEvent event) {
         if (this.type.getValue() == PacketFlyMode.SETBACK && !this.boundingBox.getValue().booleanValue()) {
             double[] dirSpeed = this.getMotion(this.teleport ? (double)this.yMove.getValue().intValue() / 10000.0 : (double)(this.yMove.getValue() - 1) / 10000.0);
-            double posX = Phase.mc.field_71439_g.field_70165_t + dirSpeed[0];
-            double posY = Phase.mc.field_71439_g.field_70163_u + (Phase.mc.field_71474_y.field_74314_A.func_151470_d() ? (this.teleport ? (double)this.yMove.getValue().intValue() / 10000.0 : (double)(this.yMove.getValue() - 1) / 10000.0) : 1.0E-8) - (Phase.mc.field_71474_y.field_74311_E.func_151470_d() ? (this.teleport ? (double)this.yMove.getValue().intValue() / 10000.0 : (double)(this.yMove.getValue() - 1) / 10000.0) : 2.0E-8);
-            double posZ = Phase.mc.field_71439_g.field_70161_v + dirSpeed[1];
-            CPacketPlayer.PositionRotation packetPlayer = new CPacketPlayer.PositionRotation(posX, posY, posZ, Phase.mc.field_71439_g.field_70177_z, Phase.mc.field_71439_g.field_70125_A, false);
+            double posX = Phase.mc.player.posX + dirSpeed[0];
+            double posY = Phase.mc.player.posY + (Phase.mc.gameSettings.keyBindJump.isKeyDown() ? (this.teleport ? (double)this.yMove.getValue().intValue() / 10000.0 : (double)(this.yMove.getValue() - 1) / 10000.0) : 1.0E-8) - (Phase.mc.gameSettings.keyBindSneak.isKeyDown() ? (this.teleport ? (double)this.yMove.getValue().intValue() / 10000.0 : (double)(this.yMove.getValue() - 1) / 10000.0) : 2.0E-8);
+            double posZ = Phase.mc.player.posZ + dirSpeed[1];
+            CPacketPlayer.PositionRotation packetPlayer = new CPacketPlayer.PositionRotation(posX, posY, posZ, Phase.mc.player.rotationYaw, Phase.mc.player.rotationPitch, false);
             this.packets.add((CPacketPlayer)packetPlayer);
-            Phase.mc.field_71439_g.field_71174_a.func_147297_a((Packet)packetPlayer);
+            Phase.mc.player.connection.sendPacket((Packet)packetPlayer);
             if (this.teleportConfirm.getValue() != 3) {
-                Phase.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketConfirmTeleport(this.teleportIds - 1));
+                Phase.mc.player.connection.sendPacket((Packet)new CPacketConfirmTeleport(this.teleportIds - 1));
                 ++this.teleportIds;
             }
             if (this.extra.getValue().booleanValue()) {
-                CPacketPlayer.PositionRotation packet = new CPacketPlayer.PositionRotation(Phase.mc.field_71439_g.field_70165_t, (double)this.offset.getValue().intValue() + Phase.mc.field_71439_g.field_70163_u, Phase.mc.field_71439_g.field_70161_v, Phase.mc.field_71439_g.field_70177_z, Phase.mc.field_71439_g.field_70125_A, true);
+                CPacketPlayer.PositionRotation packet = new CPacketPlayer.PositionRotation(Phase.mc.player.posX, (double)this.offset.getValue().intValue() + Phase.mc.player.posY, Phase.mc.player.posZ, Phase.mc.player.rotationYaw, Phase.mc.player.rotationPitch, true);
                 this.packets.add((CPacketPlayer)packet);
-                Phase.mc.field_71439_g.field_71174_a.func_147297_a((Packet)packet);
+                Phase.mc.player.connection.sendPacket((Packet)packet);
             }
             if (this.teleportConfirm.getValue() != 1) {
-                Phase.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketConfirmTeleport(this.teleportIds + 1));
+                Phase.mc.player.connection.sendPacket((Packet)new CPacketConfirmTeleport(this.teleportIds + 1));
                 ++this.teleportIds;
             }
             if (this.ultraPacket.getValue().booleanValue()) {
-                CPacketPlayer.PositionRotation packet2 = new CPacketPlayer.PositionRotation(posX, posY, posZ, Phase.mc.field_71439_g.field_70177_z, Phase.mc.field_71439_g.field_70125_A, false);
+                CPacketPlayer.PositionRotation packet2 = new CPacketPlayer.PositionRotation(posX, posY, posZ, Phase.mc.player.rotationYaw, Phase.mc.player.rotationPitch, false);
                 this.packets.add((CPacketPlayer)packet2);
-                Phase.mc.field_71439_g.field_71174_a.func_147297_a((Packet)packet2);
+                Phase.mc.player.connection.sendPacket((Packet)packet2);
             }
             if (this.teleportConfirm.getValue() == 4) {
-                Phase.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketConfirmTeleport(this.teleportIds));
+                Phase.mc.player.connection.sendPacket((Packet)new CPacketConfirmTeleport(this.teleportIds));
                 ++this.teleportIds;
             }
             if (this.fallPacket.getValue().booleanValue()) {
-                Phase.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketEntityAction((Entity)Phase.mc.field_71439_g, CPacketEntityAction.Action.START_FALL_FLYING));
+                Phase.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)Phase.mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
             }
-            Phase.mc.field_71439_g.func_70107_b(posX, posY, posZ);
+            Phase.mc.player.setPosition(posX, posY, posZ);
             boolean bl = this.teleport = this.teleporter.getValue() == false || !this.teleport;
             if (event != null) {
                 event.setX(0.0);
                 event.setY(0.0);
                 event.setX(0.0);
             } else {
-                Phase.mc.field_71439_g.field_70159_w = 0.0;
-                Phase.mc.field_71439_g.field_70181_x = 0.0;
-                Phase.mc.field_71439_g.field_70179_y = 0.0;
+                Phase.mc.player.motionX = 0.0;
+                Phase.mc.player.motionY = 0.0;
+                Phase.mc.player.motionZ = 0.0;
             }
         }
     }
 
     private void doBoundingBox() {
         double[] dirSpeed = this.getMotion(this.teleport ? (double)0.0225f : (double)0.0224f);
-        Phase.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.PositionRotation(Phase.mc.field_71439_g.field_70165_t + dirSpeed[0], Phase.mc.field_71439_g.field_70163_u + (Phase.mc.field_71474_y.field_74314_A.func_151470_d() ? (this.teleport ? 0.0625 : 0.0624) : 1.0E-8) - (Phase.mc.field_71474_y.field_74311_E.func_151470_d() ? (this.teleport ? 0.0625 : 0.0624) : 2.0E-8), Phase.mc.field_71439_g.field_70161_v + dirSpeed[1], Phase.mc.field_71439_g.field_70177_z, Phase.mc.field_71439_g.field_70125_A, false));
-        Phase.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.PositionRotation(Phase.mc.field_71439_g.field_70165_t, -1337.0, Phase.mc.field_71439_g.field_70161_v, Phase.mc.field_71439_g.field_70177_z, Phase.mc.field_71439_g.field_70125_A, true));
-        Phase.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketEntityAction((Entity)Phase.mc.field_71439_g, CPacketEntityAction.Action.START_FALL_FLYING));
-        Phase.mc.field_71439_g.func_70107_b(Phase.mc.field_71439_g.field_70165_t + dirSpeed[0], Phase.mc.field_71439_g.field_70163_u + (Phase.mc.field_71474_y.field_74314_A.func_151470_d() ? (this.teleport ? 0.0625 : 0.0624) : 1.0E-8) - (Phase.mc.field_71474_y.field_74311_E.func_151470_d() ? (this.teleport ? 0.0625 : 0.0624) : 2.0E-8), Phase.mc.field_71439_g.field_70161_v + dirSpeed[1]);
+        Phase.mc.player.connection.sendPacket((Packet)new CPacketPlayer.PositionRotation(Phase.mc.player.posX + dirSpeed[0], Phase.mc.player.posY + (Phase.mc.gameSettings.keyBindJump.isKeyDown() ? (this.teleport ? 0.0625 : 0.0624) : 1.0E-8) - (Phase.mc.gameSettings.keyBindSneak.isKeyDown() ? (this.teleport ? 0.0625 : 0.0624) : 2.0E-8), Phase.mc.player.posZ + dirSpeed[1], Phase.mc.player.rotationYaw, Phase.mc.player.rotationPitch, false));
+        Phase.mc.player.connection.sendPacket((Packet)new CPacketPlayer.PositionRotation(Phase.mc.player.posX, -1337.0, Phase.mc.player.posZ, Phase.mc.player.rotationYaw, Phase.mc.player.rotationPitch, true));
+        Phase.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)Phase.mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
+        Phase.mc.player.setPosition(Phase.mc.player.posX + dirSpeed[0], Phase.mc.player.posY + (Phase.mc.gameSettings.keyBindJump.isKeyDown() ? (this.teleport ? 0.0625 : 0.0624) : 1.0E-8) - (Phase.mc.gameSettings.keyBindSneak.isKeyDown() ? (this.teleport ? 0.0625 : 0.0624) : 2.0E-8), Phase.mc.player.posZ + dirSpeed[1]);
         this.teleport = !this.teleport;
-        Phase.mc.field_71439_g.field_70179_y = 0.0;
-        Phase.mc.field_71439_g.field_70181_x = 0.0;
-        Phase.mc.field_71439_g.field_70159_w = 0.0;
-        Phase.mc.field_71439_g.field_70145_X = this.teleport;
+        Phase.mc.player.motionZ = 0.0;
+        Phase.mc.player.motionY = 0.0;
+        Phase.mc.player.motionX = 0.0;
+        Phase.mc.player.noClip = this.teleport;
     }
 
     @SubscribeEvent
     public void onPacketReceive(PacketEvent.Receive event) {
         if (this.posLook.getValue().booleanValue() && event.getPacket() instanceof SPacketPlayerPosLook) {
             SPacketPlayerPosLook packet = (SPacketPlayerPosLook)event.getPacket();
-            if (Phase.mc.field_71439_g.func_70089_S() && Phase.mc.field_71441_e.func_175667_e(new BlockPos(Phase.mc.field_71439_g.field_70165_t, Phase.mc.field_71439_g.field_70163_u, Phase.mc.field_71439_g.field_70161_v)) && !(Phase.mc.field_71462_r instanceof GuiDownloadTerrain)) {
+            if (Phase.mc.player.isEntityAlive() && Phase.mc.world.isBlockLoaded(new BlockPos(Phase.mc.player.posX, Phase.mc.player.posY, Phase.mc.player.posZ)) && !(Phase.mc.currentScreen instanceof GuiDownloadTerrain)) {
                 if (this.teleportIds <= 0) {
-                    this.teleportIds = packet.func_186965_f();
+                    this.teleportIds = packet.getTeleportId();
                 }
                 if (this.cancel.getValue().booleanValue() && this.cancelType.getValue().booleanValue()) {
-                    packet.field_148936_d = Phase.mc.field_71439_g.field_70177_z;
-                    packet.field_148937_e = Phase.mc.field_71439_g.field_70125_A;
+                    packet.yaw = Phase.mc.player.rotationYaw;
+                    packet.pitch = Phase.mc.player.rotationPitch;
                     return;
                 }
-                if (!(!this.cancel.getValue().booleanValue() || this.posLookPackets < this.cancelPacket.getValue() || this.onlyY.getValue().booleanValue() && (Phase.mc.field_71474_y.field_74351_w.func_151470_d() || Phase.mc.field_71474_y.field_74366_z.func_151470_d() || Phase.mc.field_71474_y.field_74370_x.func_151470_d() || Phase.mc.field_71474_y.field_74368_y.func_151470_d()))) {
+                if (!(!this.cancel.getValue().booleanValue() || this.posLookPackets < this.cancelPacket.getValue() || this.onlyY.getValue().booleanValue() && (Phase.mc.gameSettings.keyBindForward.isKeyDown() || Phase.mc.gameSettings.keyBindRight.isKeyDown() || Phase.mc.gameSettings.keyBindLeft.isKeyDown() || Phase.mc.gameSettings.keyBindBack.isKeyDown()))) {
                     this.posLookPackets = 0;
                     event.setCanceled(true);
                 }
@@ -230,9 +230,9 @@ extends Module {
     }
 
     private double[] getMotion(double speed) {
-        float moveForward = Phase.mc.field_71439_g.field_71158_b.field_192832_b;
-        float moveStrafe = Phase.mc.field_71439_g.field_71158_b.field_78902_a;
-        float rotationYaw = Phase.mc.field_71439_g.field_70126_B + (Phase.mc.field_71439_g.field_70177_z - Phase.mc.field_71439_g.field_70126_B) * mc.func_184121_ak();
+        float moveForward = Phase.mc.player.movementInput.moveForward;
+        float moveStrafe = Phase.mc.player.movementInput.moveStrafe;
+        float rotationYaw = Phase.mc.player.prevRotationYaw + (Phase.mc.player.rotationYaw - Phase.mc.player.prevRotationYaw) * mc.getRenderPartialTicks();
         if (moveForward != 0.0f) {
             if (moveStrafe > 0.0f) {
                 rotationYaw += (float)(moveForward > 0.0f ? -45 : 45);

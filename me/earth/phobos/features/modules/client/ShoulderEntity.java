@@ -35,15 +35,15 @@ extends Module {
 
     @Override
     public void onEnable() {
-        ShoulderEntity.mc.field_71441_e.func_73027_a(-101, (Entity)new EntityOcelot((World)ShoulderEntity.mc.field_71441_e));
+        ShoulderEntity.mc.world.addEntityToWorld(-101, (Entity)new EntityOcelot((World)ShoulderEntity.mc.world));
         NBTTagCompound tag = new NBTTagCompound();
-        tag.func_74782_a("id", (NBTBase)new NBTTagInt(-101));
-        ShoulderEntity.mc.field_71439_g.func_192027_g(tag);
+        tag.setTag("id", (NBTBase)new NBTTagInt(-101));
+        ShoulderEntity.mc.player.addShoulderEntity(tag);
     }
 
     @Override
     public void onDisable() {
-        ShoulderEntity.mc.field_71441_e.func_73028_b(-101);
+        ShoulderEntity.mc.world.removeEntityFromWorld(-101);
     }
 
     @SubscribeEvent

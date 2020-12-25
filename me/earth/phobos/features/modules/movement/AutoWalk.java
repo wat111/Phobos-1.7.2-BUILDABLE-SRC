@@ -19,7 +19,7 @@ extends Module {
 
     @SubscribeEvent
     public void onUpdateInput(InputUpdateEvent event) {
-        event.getMovementInput().field_192832_b = 1.0f;
+        event.getMovementInput().moveForward = 1.0f;
     }
 }
 

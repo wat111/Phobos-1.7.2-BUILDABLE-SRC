@@ -66,12 +66,12 @@ extends Module {
         int color;
         BlockPos pos;
         HashMap<BlockPos, Integer> positions = new HashMap<BlockPos, Integer>();
-        for (TileEntity tileEntity : StorageESP.mc.field_71441_e.field_147482_g) {
-            if (!(tileEntity instanceof TileEntityChest && this.chest.getValue() != false || tileEntity instanceof TileEntityDispenser && this.dispenser.getValue() != false || tileEntity instanceof TileEntityShulkerBox && this.shulker.getValue() != false || tileEntity instanceof TileEntityEnderChest && this.echest.getValue() != false || tileEntity instanceof TileEntityFurnace && this.furnace.getValue() != false) && (!(tileEntity instanceof TileEntityHopper) || !this.hopper.getValue().booleanValue()) || !(StorageESP.mc.field_71439_g.func_174818_b(pos = tileEntity.func_174877_v()) <= MathUtil.square(this.range.getValue().floatValue())) || (color = this.getTileEntityColor(tileEntity)) == -1) continue;
+        for (TileEntity tileEntity : StorageESP.mc.world.loadedTileEntityList) {
+            if (!(tileEntity instanceof TileEntityChest && this.chest.getValue() != false || tileEntity instanceof TileEntityDispenser && this.dispenser.getValue() != false || tileEntity instanceof TileEntityShulkerBox && this.shulker.getValue() != false || tileEntity instanceof TileEntityEnderChest && this.echest.getValue() != false || tileEntity instanceof TileEntityFurnace && this.furnace.getValue() != false) && (!(tileEntity instanceof TileEntityHopper) || !this.hopper.getValue().booleanValue()) || !(StorageESP.mc.player.getDistanceSq(pos = tileEntity.getPos()) <= MathUtil.square(this.range.getValue().floatValue())) || (color = this.getTileEntityColor(tileEntity)) == -1) continue;
             positions.put(pos, color);
         }
-        for (Entity entity : StorageESP.mc.field_71441_e.field_72996_f) {
-            if ((!(entity instanceof EntityItemFrame) || !this.frame.getValue().booleanValue()) && (!(entity instanceof EntityMinecartChest) || !this.cart.getValue().booleanValue()) || !(StorageESP.mc.field_71439_g.func_174818_b(pos = entity.func_180425_c()) <= MathUtil.square(this.range.getValue().floatValue())) || (color = this.getEntityColor(entity)) == -1) continue;
+        for (Entity entity : StorageESP.mc.world.loadedEntityList) {
+            if ((!(entity instanceof EntityItemFrame) || !this.frame.getValue().booleanValue()) && (!(entity instanceof EntityMinecartChest) || !this.cart.getValue().booleanValue()) || !(StorageESP.mc.player.getDistanceSq(pos = entity.getPosition()) <= MathUtil.square(this.range.getValue().floatValue())) || (color = this.getEntityColor(entity)) == -1) continue;
             positions.put(pos, color);
         }
         for (Map.Entry entry : positions.entrySet()) {
@@ -107,10 +107,10 @@ extends Module {
         if (entity instanceof EntityMinecartChest) {
             return ColorUtil.Colors.ORANGE;
         }
-        if (entity instanceof EntityItemFrame && ((EntityItemFrame)entity).func_82335_i().func_77973_b() instanceof ItemShulkerBox) {
+        if (entity instanceof EntityItemFrame && ((EntityItemFrame)entity).getDisplayedItem().getItem() instanceof ItemShulkerBox) {
             return ColorUtil.Colors.YELLOW;
         }
-        if (entity instanceof EntityItemFrame && !(((EntityItemFrame)entity).func_82335_i().func_77973_b() instanceof ItemShulkerBox)) {
+        if (entity instanceof EntityItemFrame && !(((EntityItemFrame)entity).getDisplayedItem().getItem() instanceof ItemShulkerBox)) {
             return ColorUtil.Colors.ORANGE;
         }
         return -1;

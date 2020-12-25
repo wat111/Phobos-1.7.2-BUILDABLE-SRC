@@ -25,15 +25,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinAbstractClientPlayer {
     @Shadow
     @Nullable
-    protected abstract NetworkPlayerInfo func_175155_b();
+    protected abstract NetworkPlayerInfo getPlayerInfo();
 
     @Inject(method={"getLocationCape"}, at={@At(value="HEAD")}, cancellable=true)
     public void getLocationCape(CallbackInfoReturnable<ResourceLocation> callbackInfoReturnable) {
         if (Capes.getInstance().isEnabled()) {
-            NetworkPlayerInfo info = this.func_175155_b();
+            NetworkPlayerInfo info = this.getPlayerInfo();
             UUID uuid = null;
             if (info != null) {
-                uuid = this.func_175155_b().func_178845_a().getId();
+                uuid = this.getPlayerInfo().getGameProfile().getId();
             }
             ResourceLocation cape = Capes.getCapeResource((AbstractClientPlayer)this);
             if (uuid != null && Capes.hasCape(uuid)) {

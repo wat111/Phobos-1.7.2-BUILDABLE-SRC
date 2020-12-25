@@ -156,7 +156,7 @@ extends Module {
     }
 
     public void onItemFinish(ItemStack stack, EntityLivingBase base) {
-        if (this.noOffhandGC.getValue().booleanValue() && base.equals((Object)Offhand.mc.field_71439_g) && stack.func_77973_b() == Offhand.mc.field_71439_g.func_184592_cb().func_77973_b()) {
+        if (this.noOffhandGC.getValue().booleanValue() && base.equals((Object)Offhand.mc.player) && stack.getItem() == Offhand.mc.player.getHeldItemOffhand().getItem()) {
             this.secondTimer.reset();
             this.second = true;
         }
@@ -172,10 +172,10 @@ extends Module {
 
     @SubscribeEvent
     public void onUpdateWalkingPlayer(ProcessRightClickBlockEvent event) {
-        if (this.noOffhandGC.getValue().booleanValue() && event.hand == EnumHand.MAIN_HAND && event.stack.func_77973_b() == Items.field_185158_cP && Offhand.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_151153_ao && Offhand.mc.field_71476_x != null && event.pos == Offhand.mc.field_71476_x.func_178782_a()) {
+        if (this.noOffhandGC.getValue().booleanValue() && event.hand == EnumHand.MAIN_HAND && event.stack.getItem() == Items.END_CRYSTAL && Offhand.mc.player.getHeldItemOffhand().getItem() == Items.GOLDEN_APPLE && Offhand.mc.objectMouseOver != null && event.pos == Offhand.mc.objectMouseOver.getBlockPos()) {
             event.setCanceled(true);
-            Offhand.mc.field_71439_g.func_184598_c(EnumHand.OFF_HAND);
-            Offhand.mc.field_71442_b.func_187101_a((EntityPlayer)Offhand.mc.field_71439_g, (World)Offhand.mc.field_71441_e, EnumHand.OFF_HAND);
+            Offhand.mc.player.setActiveHand(EnumHand.OFF_HAND);
+            Offhand.mc.playerController.processRightClick((EntityPlayer)Offhand.mc.player, (World)Offhand.mc.world, EnumHand.OFF_HAND);
         }
     }
 
@@ -183,12 +183,12 @@ extends Module {
     public void onUpdate() {
         if (this.noOffhandGC.getValue().booleanValue() && this.retardOGC.getValue().booleanValue()) {
             if (this.timer.passedMs(this.timeout.getValue().intValue())) {
-                if (Offhand.mc.field_71439_g != null && Offhand.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_151153_ao && Offhand.mc.field_71439_g.func_184614_ca().func_77973_b() == Items.field_185158_cP && Mouse.isButtonDown((int)1)) {
-                    Offhand.mc.field_71439_g.func_184598_c(EnumHand.OFF_HAND);
-                    Offhand.mc.field_71474_y.field_74313_G.field_74513_e = Mouse.isButtonDown((int)1);
+                if (Offhand.mc.player != null && Offhand.mc.player.getHeldItemOffhand().getItem() == Items.GOLDEN_APPLE && Offhand.mc.player.getHeldItemMainhand().getItem() == Items.END_CRYSTAL && Mouse.isButtonDown((int)1)) {
+                    Offhand.mc.player.setActiveHand(EnumHand.OFF_HAND);
+                    Offhand.mc.gameSettings.keyBindUseItem.pressed = Mouse.isButtonDown((int)1);
                 }
-            } else if (Offhand.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_151153_ao && Offhand.mc.field_71439_g.func_184614_ca().func_77973_b() == Items.field_185158_cP) {
-                Offhand.mc.field_71474_y.field_74313_G.field_74513_e = false;
+            } else if (Offhand.mc.player.getHeldItemOffhand().getItem() == Items.GOLDEN_APPLE && Offhand.mc.player.getHeldItemMainhand().getItem() == Items.END_CRYSTAL) {
+                Offhand.mc.gameSettings.keyBindUseItem.pressed = false;
             }
         }
         if (Offhand.nullCheck() || this.updates.getValue() == 2) {
@@ -264,18 +264,18 @@ extends Module {
 
     @SubscribeEvent
     public void onPacketSend(PacketEvent.Send event) {
-        if (this.noOffhandGC.getValue().booleanValue() && !Offhand.fullNullCheck() && Offhand.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_151153_ao && Offhand.mc.field_71439_g.func_184614_ca().func_77973_b() == Items.field_185158_cP && Offhand.mc.field_71474_y.field_74313_G.func_151470_d()) {
+        if (this.noOffhandGC.getValue().booleanValue() && !Offhand.fullNullCheck() && Offhand.mc.player.getHeldItemOffhand().getItem() == Items.GOLDEN_APPLE && Offhand.mc.player.getHeldItemMainhand().getItem() == Items.END_CRYSTAL && Offhand.mc.gameSettings.keyBindUseItem.isKeyDown()) {
             CPacketPlayerTryUseItem packet;
             if (event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock) {
                 CPacketPlayerTryUseItemOnBlock packet2 = (CPacketPlayerTryUseItemOnBlock)event.getPacket();
-                if (packet2.func_187022_c() == EnumHand.MAIN_HAND && !AutoCrystal.placedPos.contains((Object)packet2.func_187023_a())) {
+                if (packet2.getHand() == EnumHand.MAIN_HAND && !AutoCrystal.placedPos.contains((Object)packet2.getPos())) {
                     if (this.timer.passedMs(this.timeout.getValue().intValue())) {
-                        Offhand.mc.field_71439_g.func_184598_c(EnumHand.OFF_HAND);
-                        Offhand.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayerTryUseItem(EnumHand.OFF_HAND));
+                        Offhand.mc.player.setActiveHand(EnumHand.OFF_HAND);
+                        Offhand.mc.player.connection.sendPacket((Packet)new CPacketPlayerTryUseItem(EnumHand.OFF_HAND));
                     }
                     event.setCanceled(true);
                 }
-            } else if (event.getPacket() instanceof CPacketPlayerTryUseItem && (packet = (CPacketPlayerTryUseItem)event.getPacket()).func_187028_a() == EnumHand.OFF_HAND && !this.timer.passedMs(this.timeout.getValue().intValue())) {
+            } else if (event.getPacket() instanceof CPacketPlayerTryUseItem && (packet = (CPacketPlayerTryUseItem)event.getPacket()).getHand() == EnumHand.OFF_HAND && !this.timer.passedMs(this.timeout.getValue().intValue())) {
                 event.setCanceled(true);
             }
         }
@@ -357,11 +357,11 @@ extends Module {
 
     public void doOffhand() {
         if (this.type.getValue() == Type.NEW) {
-            if (Offhand.mc.field_71462_r instanceof GuiContainer && !this.guis.getValue().booleanValue() && !(Offhand.mc.field_71462_r instanceof GuiInventory)) {
+            if (Offhand.mc.currentScreen instanceof GuiContainer && !this.guis.getValue().booleanValue() && !(Offhand.mc.currentScreen instanceof GuiInventory)) {
                 return;
             }
             if (this.gapSwap.getValue().booleanValue()) {
-                if ((this.getSlot(Mode.GAPPLES) != -1 || Offhand.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_151153_ao) && Offhand.mc.field_71439_g.func_184614_ca().func_77973_b() != Items.field_151153_ao && Offhand.mc.field_71474_y.field_74313_G.func_151470_d()) {
+                if ((this.getSlot(Mode.GAPPLES) != -1 || Offhand.mc.player.getHeldItemOffhand().getItem() == Items.GOLDEN_APPLE) && Offhand.mc.player.getHeldItemMainhand().getItem() != Items.GOLDEN_APPLE && Offhand.mc.gameSettings.keyBindUseItem.isKeyDown()) {
                     this.setMode(Mode.GAPPLES);
                     this.eatingApple = true;
                     this.swapToTotem = false;
@@ -375,27 +375,27 @@ extends Module {
                 }
             }
             if (!this.shouldTotem()) {
-                if (Offhand.mc.field_71439_g.func_184592_cb() == ItemStack.field_190927_a || !this.isItemInOffhand()) {
+                if (Offhand.mc.player.getHeldItemOffhand() == ItemStack.EMPTY || !this.isItemInOffhand()) {
                     int slot;
                     int n = slot = this.getSlot(this.mode) < 9 ? this.getSlot(this.mode) + 36 : this.getSlot(this.mode);
                     if (this.getSlot(this.mode) != -1) {
                         if (this.oldSlot != -1) {
-                            Offhand.mc.field_71442_b.func_187098_a(0, 45, 0, ClickType.PICKUP, (EntityPlayer)Offhand.mc.field_71439_g);
-                            Offhand.mc.field_71442_b.func_187098_a(0, this.oldSlot, 0, ClickType.PICKUP, (EntityPlayer)Offhand.mc.field_71439_g);
+                            Offhand.mc.playerController.windowClick(0, 45, 0, ClickType.PICKUP, (EntityPlayer)Offhand.mc.player);
+                            Offhand.mc.playerController.windowClick(0, this.oldSlot, 0, ClickType.PICKUP, (EntityPlayer)Offhand.mc.player);
                         }
                         this.oldSlot = slot;
-                        Offhand.mc.field_71442_b.func_187098_a(0, slot, 0, ClickType.PICKUP, (EntityPlayer)Offhand.mc.field_71439_g);
-                        Offhand.mc.field_71442_b.func_187098_a(0, 45, 0, ClickType.PICKUP, (EntityPlayer)Offhand.mc.field_71439_g);
-                        Offhand.mc.field_71442_b.func_187098_a(0, slot, 0, ClickType.PICKUP, (EntityPlayer)Offhand.mc.field_71439_g);
+                        Offhand.mc.playerController.windowClick(0, slot, 0, ClickType.PICKUP, (EntityPlayer)Offhand.mc.player);
+                        Offhand.mc.playerController.windowClick(0, 45, 0, ClickType.PICKUP, (EntityPlayer)Offhand.mc.player);
+                        Offhand.mc.playerController.windowClick(0, slot, 0, ClickType.PICKUP, (EntityPlayer)Offhand.mc.player);
                     }
                 }
-            } else if (!(this.eatingApple || Offhand.mc.field_71439_g.func_184592_cb() != ItemStack.field_190927_a && Offhand.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_190929_cY)) {
+            } else if (!(this.eatingApple || Offhand.mc.player.getHeldItemOffhand() != ItemStack.EMPTY && Offhand.mc.player.getHeldItemOffhand().getItem() == Items.TOTEM_OF_UNDYING)) {
                 int slot;
                 int n = slot = this.getTotemSlot() < 9 ? this.getTotemSlot() + 36 : this.getTotemSlot();
                 if (this.getTotemSlot() != -1) {
-                    Offhand.mc.field_71442_b.func_187098_a(0, slot, 0, ClickType.PICKUP, (EntityPlayer)Offhand.mc.field_71439_g);
-                    Offhand.mc.field_71442_b.func_187098_a(0, 45, 0, ClickType.PICKUP, (EntityPlayer)Offhand.mc.field_71439_g);
-                    Offhand.mc.field_71442_b.func_187098_a(0, this.oldSlot, 0, ClickType.PICKUP, (EntityPlayer)Offhand.mc.field_71439_g);
+                    Offhand.mc.playerController.windowClick(0, slot, 0, ClickType.PICKUP, (EntityPlayer)Offhand.mc.player);
+                    Offhand.mc.playerController.windowClick(0, 45, 0, ClickType.PICKUP, (EntityPlayer)Offhand.mc.player);
+                    Offhand.mc.playerController.windowClick(0, this.oldSlot, 0, ClickType.PICKUP, (EntityPlayer)Offhand.mc.player);
                     this.oldSlot = -1;
                 }
             }
@@ -404,31 +404,31 @@ extends Module {
                 this.manageDrawn();
             }
             this.didSwitchThisTick = false;
-            this.holdingCrystal = Offhand.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_185158_cP;
-            this.holdingTotem = Offhand.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_190929_cY;
-            this.holdingGapple = Offhand.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_151153_ao;
-            this.holdingObby = InventoryUtil.isBlock(Offhand.mc.field_71439_g.func_184592_cb().func_77973_b(), BlockObsidian.class);
-            this.holdingWeb = InventoryUtil.isBlock(Offhand.mc.field_71439_g.func_184592_cb().func_77973_b(), BlockWeb.class);
-            this.totems = Offhand.mc.field_71439_g.field_71071_by.field_70462_a.stream().filter(itemStack -> itemStack.func_77973_b() == Items.field_190929_cY).mapToInt(ItemStack::func_190916_E).sum();
+            this.holdingCrystal = Offhand.mc.player.getHeldItemOffhand().getItem() == Items.END_CRYSTAL;
+            this.holdingTotem = Offhand.mc.player.getHeldItemOffhand().getItem() == Items.TOTEM_OF_UNDYING;
+            this.holdingGapple = Offhand.mc.player.getHeldItemOffhand().getItem() == Items.GOLDEN_APPLE;
+            this.holdingObby = InventoryUtil.isBlock(Offhand.mc.player.getHeldItemOffhand().getItem(), BlockObsidian.class);
+            this.holdingWeb = InventoryUtil.isBlock(Offhand.mc.player.getHeldItemOffhand().getItem(), BlockWeb.class);
+            this.totems = Offhand.mc.player.inventory.mainInventory.stream().filter(itemStack -> itemStack.getItem() == Items.TOTEM_OF_UNDYING).mapToInt(ItemStack::getCount).sum();
             if (this.holdingTotem) {
-                this.totems += Offhand.mc.field_71439_g.field_71071_by.field_184439_c.stream().filter(itemStack -> itemStack.func_77973_b() == Items.field_190929_cY).mapToInt(ItemStack::func_190916_E).sum();
+                this.totems += Offhand.mc.player.inventory.offHandInventory.stream().filter(itemStack -> itemStack.getItem() == Items.TOTEM_OF_UNDYING).mapToInt(ItemStack::getCount).sum();
             }
-            this.crystals = Offhand.mc.field_71439_g.field_71071_by.field_70462_a.stream().filter(itemStack -> itemStack.func_77973_b() == Items.field_185158_cP).mapToInt(ItemStack::func_190916_E).sum();
+            this.crystals = Offhand.mc.player.inventory.mainInventory.stream().filter(itemStack -> itemStack.getItem() == Items.END_CRYSTAL).mapToInt(ItemStack::getCount).sum();
             if (this.holdingCrystal) {
-                this.crystals += Offhand.mc.field_71439_g.field_71071_by.field_184439_c.stream().filter(itemStack -> itemStack.func_77973_b() == Items.field_185158_cP).mapToInt(ItemStack::func_190916_E).sum();
+                this.crystals += Offhand.mc.player.inventory.offHandInventory.stream().filter(itemStack -> itemStack.getItem() == Items.END_CRYSTAL).mapToInt(ItemStack::getCount).sum();
             }
-            this.gapples = Offhand.mc.field_71439_g.field_71071_by.field_70462_a.stream().filter(itemStack -> itemStack.func_77973_b() == Items.field_151153_ao).mapToInt(ItemStack::func_190916_E).sum();
+            this.gapples = Offhand.mc.player.inventory.mainInventory.stream().filter(itemStack -> itemStack.getItem() == Items.GOLDEN_APPLE).mapToInt(ItemStack::getCount).sum();
             if (this.holdingGapple) {
-                this.gapples += Offhand.mc.field_71439_g.field_71071_by.field_184439_c.stream().filter(itemStack -> itemStack.func_77973_b() == Items.field_151153_ao).mapToInt(ItemStack::func_190916_E).sum();
+                this.gapples += Offhand.mc.player.inventory.offHandInventory.stream().filter(itemStack -> itemStack.getItem() == Items.GOLDEN_APPLE).mapToInt(ItemStack::getCount).sum();
             }
             if (this.currentMode == Mode2.WEBS || this.currentMode == Mode2.OBSIDIAN) {
-                this.obby = Offhand.mc.field_71439_g.field_71071_by.field_70462_a.stream().filter(itemStack -> InventoryUtil.isBlock(itemStack.func_77973_b(), BlockObsidian.class)).mapToInt(ItemStack::func_190916_E).sum();
+                this.obby = Offhand.mc.player.inventory.mainInventory.stream().filter(itemStack -> InventoryUtil.isBlock(itemStack.getItem(), BlockObsidian.class)).mapToInt(ItemStack::getCount).sum();
                 if (this.holdingObby) {
-                    this.obby += Offhand.mc.field_71439_g.field_71071_by.field_184439_c.stream().filter(itemStack -> InventoryUtil.isBlock(itemStack.func_77973_b(), BlockObsidian.class)).mapToInt(ItemStack::func_190916_E).sum();
+                    this.obby += Offhand.mc.player.inventory.offHandInventory.stream().filter(itemStack -> InventoryUtil.isBlock(itemStack.getItem(), BlockObsidian.class)).mapToInt(ItemStack::getCount).sum();
                 }
-                this.webs = Offhand.mc.field_71439_g.field_71071_by.field_70462_a.stream().filter(itemStack -> InventoryUtil.isBlock(itemStack.func_77973_b(), BlockWeb.class)).mapToInt(ItemStack::func_190916_E).sum();
+                this.webs = Offhand.mc.player.inventory.mainInventory.stream().filter(itemStack -> InventoryUtil.isBlock(itemStack.getItem(), BlockWeb.class)).mapToInt(ItemStack::getCount).sum();
                 if (this.holdingWeb) {
-                    this.webs += Offhand.mc.field_71439_g.field_71071_by.field_184439_c.stream().filter(itemStack -> InventoryUtil.isBlock(itemStack.func_77973_b(), BlockWeb.class)).mapToInt(ItemStack::func_190916_E).sum();
+                    this.webs += Offhand.mc.player.inventory.offHandInventory.stream().filter(itemStack -> InventoryUtil.isBlock(itemStack.getItem(), BlockWeb.class)).mapToInt(ItemStack::getCount).sum();
                 }
             }
             this.doSwitch();
@@ -446,8 +446,8 @@ extends Module {
 
     public void doSwitch() {
         if (this.autoGapple.getValue().booleanValue()) {
-            if (Offhand.mc.field_71474_y.field_74313_G.func_151470_d()) {
-                if (Offhand.mc.field_71439_g.func_184614_ca().func_77973_b() instanceof ItemSword && (!this.onlyWTotem.getValue().booleanValue() || Offhand.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_190929_cY)) {
+            if (Offhand.mc.gameSettings.keyBindUseItem.isKeyDown()) {
+                if (Offhand.mc.player.getHeldItemMainhand().getItem() instanceof ItemSword && (!this.onlyWTotem.getValue().booleanValue() || Offhand.mc.player.getHeldItemOffhand().getItem() == Items.TOTEM_OF_UNDYING)) {
                     this.setMode(Mode.GAPPLES);
                     this.autoGappleSwitch = true;
                 }
@@ -456,31 +456,31 @@ extends Module {
                 this.autoGappleSwitch = false;
             }
         }
-        if (this.currentMode == Mode2.GAPPLES && (!EntityUtil.isSafe((Entity)Offhand.mc.field_71439_g) && EntityUtil.getHealth((Entity)Offhand.mc.field_71439_g, this.absorption.getValue()) <= this.gappleHealth.getValue().floatValue() || EntityUtil.getHealth((Entity)Offhand.mc.field_71439_g, this.absorption.getValue()) <= this.gappleHoleHealth.getValue().floatValue()) || this.currentMode == Mode2.CRYSTALS && (!EntityUtil.isSafe((Entity)Offhand.mc.field_71439_g) && EntityUtil.getHealth((Entity)Offhand.mc.field_71439_g, this.absorption.getValue()) <= this.crystalHealth.getValue().floatValue() || EntityUtil.getHealth((Entity)Offhand.mc.field_71439_g, this.absorption.getValue()) <= this.crystalHoleHealth.getValue().floatValue()) || this.currentMode == Mode2.OBSIDIAN && (!EntityUtil.isSafe((Entity)Offhand.mc.field_71439_g) && EntityUtil.getHealth((Entity)Offhand.mc.field_71439_g, this.absorption.getValue()) <= this.obsidianHealth.getValue().floatValue() || EntityUtil.getHealth((Entity)Offhand.mc.field_71439_g, this.absorption.getValue()) <= this.obsidianHoleHealth.getValue().floatValue()) || this.currentMode == Mode2.WEBS && (!EntityUtil.isSafe((Entity)Offhand.mc.field_71439_g) && EntityUtil.getHealth((Entity)Offhand.mc.field_71439_g, this.absorption.getValue()) <= this.webHealth.getValue().floatValue() || EntityUtil.getHealth((Entity)Offhand.mc.field_71439_g, this.absorption.getValue()) <= this.webHoleHealth.getValue().floatValue())) {
+        if (this.currentMode == Mode2.GAPPLES && (!EntityUtil.isSafe((Entity)Offhand.mc.player) && EntityUtil.getHealth((Entity)Offhand.mc.player, this.absorption.getValue()) <= this.gappleHealth.getValue().floatValue() || EntityUtil.getHealth((Entity)Offhand.mc.player, this.absorption.getValue()) <= this.gappleHoleHealth.getValue().floatValue()) || this.currentMode == Mode2.CRYSTALS && (!EntityUtil.isSafe((Entity)Offhand.mc.player) && EntityUtil.getHealth((Entity)Offhand.mc.player, this.absorption.getValue()) <= this.crystalHealth.getValue().floatValue() || EntityUtil.getHealth((Entity)Offhand.mc.player, this.absorption.getValue()) <= this.crystalHoleHealth.getValue().floatValue()) || this.currentMode == Mode2.OBSIDIAN && (!EntityUtil.isSafe((Entity)Offhand.mc.player) && EntityUtil.getHealth((Entity)Offhand.mc.player, this.absorption.getValue()) <= this.obsidianHealth.getValue().floatValue() || EntityUtil.getHealth((Entity)Offhand.mc.player, this.absorption.getValue()) <= this.obsidianHoleHealth.getValue().floatValue()) || this.currentMode == Mode2.WEBS && (!EntityUtil.isSafe((Entity)Offhand.mc.player) && EntityUtil.getHealth((Entity)Offhand.mc.player, this.absorption.getValue()) <= this.webHealth.getValue().floatValue() || EntityUtil.getHealth((Entity)Offhand.mc.player, this.absorption.getValue()) <= this.webHoleHealth.getValue().floatValue())) {
             if (this.returnToCrystal.getValue().booleanValue() && this.currentMode == Mode2.CRYSTALS) {
                 this.switchedForHealthReason = true;
             }
             this.setMode(Mode2.TOTEMS);
         }
-        if (this.switchedForHealthReason && (EntityUtil.isSafe((Entity)Offhand.mc.field_71439_g) && EntityUtil.getHealth((Entity)Offhand.mc.field_71439_g, this.absorption.getValue()) > this.crystalHoleHealth.getValue().floatValue() || EntityUtil.getHealth((Entity)Offhand.mc.field_71439_g, this.absorption.getValue()) > this.crystalHealth.getValue().floatValue())) {
+        if (this.switchedForHealthReason && (EntityUtil.isSafe((Entity)Offhand.mc.player) && EntityUtil.getHealth((Entity)Offhand.mc.player, this.absorption.getValue()) > this.crystalHoleHealth.getValue().floatValue() || EntityUtil.getHealth((Entity)Offhand.mc.player, this.absorption.getValue()) > this.crystalHealth.getValue().floatValue())) {
             this.setMode(Mode2.CRYSTALS);
             this.switchedForHealthReason = false;
         }
-        if (Offhand.mc.field_71462_r instanceof GuiContainer && !this.guis.getValue().booleanValue() && !(Offhand.mc.field_71462_r instanceof GuiInventory)) {
+        if (Offhand.mc.currentScreen instanceof GuiContainer && !this.guis.getValue().booleanValue() && !(Offhand.mc.currentScreen instanceof GuiInventory)) {
             return;
         }
-        Item currentOffhandItem = Offhand.mc.field_71439_g.func_184592_cb().func_77973_b();
+        Item currentOffhandItem = Offhand.mc.player.getHeldItemOffhand().getItem();
         switch (this.currentMode) {
             case TOTEMS: {
                 if (this.totems <= 0 || this.holdingTotem) break;
-                this.lastTotemSlot = InventoryUtil.findItemInventorySlot(Items.field_190929_cY, false);
+                this.lastTotemSlot = InventoryUtil.findItemInventorySlot(Items.TOTEM_OF_UNDYING, false);
                 int lastSlot = this.getLastSlot(currentOffhandItem, this.lastTotemSlot);
                 this.putItemInOffhand(this.lastTotemSlot, lastSlot);
                 break;
             }
             case GAPPLES: {
                 if (this.gapples <= 0 || this.holdingGapple) break;
-                this.lastGappleSlot = InventoryUtil.findItemInventorySlot(Items.field_151153_ao, false);
+                this.lastGappleSlot = InventoryUtil.findItemInventorySlot(Items.GOLDEN_APPLE, false);
                 int lastSlot = this.getLastSlot(currentOffhandItem, this.lastGappleSlot);
                 this.putItemInOffhand(this.lastGappleSlot, lastSlot);
                 break;
@@ -501,7 +501,7 @@ extends Module {
             }
             default: {
                 if (this.crystals <= 0 || this.holdingCrystal) break;
-                this.lastCrystalSlot = InventoryUtil.findItemInventorySlot(Items.field_185158_cP, false);
+                this.lastCrystalSlot = InventoryUtil.findItemInventorySlot(Items.END_CRYSTAL, false);
                 int lastSlot = this.getLastSlot(currentOffhandItem, this.lastCrystalSlot);
                 this.putItemInOffhand(this.lastCrystalSlot, lastSlot);
             }
@@ -516,13 +516,13 @@ extends Module {
     }
 
     private int getLastSlot(Item item, int slotIn) {
-        if (item == Items.field_185158_cP) {
+        if (item == Items.END_CRYSTAL) {
             return this.lastCrystalSlot;
         }
-        if (item == Items.field_151153_ao) {
+        if (item == Items.GOLDEN_APPLE) {
             return this.lastGappleSlot;
         }
-        if (item == Items.field_190929_cY) {
+        if (item == Items.TOTEM_OF_UNDYING) {
             return this.lastTotemSlot;
         }
         if (InventoryUtil.isBlock(item, BlockObsidian.class)) {
@@ -531,7 +531,7 @@ extends Module {
         if (InventoryUtil.isBlock(item, BlockWeb.class)) {
             return this.lastWebSlot;
         }
-        if (item == Items.field_190931_a) {
+        if (item == Items.AIR) {
             return -1;
         }
         return slotIn;
@@ -547,22 +547,22 @@ extends Module {
     }
 
     private boolean noNearbyPlayers() {
-        return this.mode == Mode.CRYSTALS && Offhand.mc.field_71441_e.field_73010_i.stream().noneMatch(e -> e != Offhand.mc.field_71439_g && !Phobos.friendManager.isFriend((EntityPlayer)e) && Offhand.mc.field_71439_g.func_70032_d((Entity)e) <= this.cTargetDistance.getValue().floatValue());
+        return this.mode == Mode.CRYSTALS && Offhand.mc.world.playerEntities.stream().noneMatch(e -> e != Offhand.mc.player && !Phobos.friendManager.isFriend((EntityPlayer)e) && Offhand.mc.player.getDistance((Entity)e) <= this.cTargetDistance.getValue().floatValue());
     }
 
     private boolean isItemInOffhand() {
         switch (this.mode) {
             case GAPPLES: {
-                return Offhand.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_151153_ao;
+                return Offhand.mc.player.getHeldItemOffhand().getItem() == Items.GOLDEN_APPLE;
             }
             case CRYSTALS: {
-                return Offhand.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_185158_cP;
+                return Offhand.mc.player.getHeldItemOffhand().getItem() == Items.END_CRYSTAL;
             }
             case OBSIDIAN: {
-                return Offhand.mc.field_71439_g.func_184592_cb().func_77973_b() instanceof ItemBlock && ((ItemBlock)Offhand.mc.field_71439_g.func_184592_cb().func_77973_b()).field_150939_a == Blocks.field_150343_Z;
+                return Offhand.mc.player.getHeldItemOffhand().getItem() instanceof ItemBlock && ((ItemBlock)Offhand.mc.player.getHeldItemOffhand().getItem()).block == Blocks.OBSIDIAN;
             }
             case WEBS: {
-                return Offhand.mc.field_71439_g.func_184592_cb().func_77973_b() instanceof ItemBlock && ((ItemBlock)Offhand.mc.field_71439_g.func_184592_cb().func_77973_b()).field_150939_a == Blocks.field_150321_G;
+                return Offhand.mc.player.getHeldItemOffhand().getItem() instanceof ItemBlock && ((ItemBlock)Offhand.mc.player.getHeldItemOffhand().getItem()).block == Blocks.WEB;
             }
         }
         return false;
@@ -571,16 +571,16 @@ extends Module {
     private boolean isHeldInMainHand() {
         switch (this.mode) {
             case GAPPLES: {
-                return Offhand.mc.field_71439_g.func_184614_ca().func_77973_b() == Items.field_151153_ao;
+                return Offhand.mc.player.getHeldItemMainhand().getItem() == Items.GOLDEN_APPLE;
             }
             case CRYSTALS: {
-                return Offhand.mc.field_71439_g.func_184614_ca().func_77973_b() == Items.field_185158_cP;
+                return Offhand.mc.player.getHeldItemMainhand().getItem() == Items.END_CRYSTAL;
             }
             case OBSIDIAN: {
-                return Offhand.mc.field_71439_g.func_184614_ca().func_77973_b() instanceof ItemBlock && ((ItemBlock)Offhand.mc.field_71439_g.func_184614_ca().func_77973_b()).field_150939_a == Blocks.field_150343_Z;
+                return Offhand.mc.player.getHeldItemMainhand().getItem() instanceof ItemBlock && ((ItemBlock)Offhand.mc.player.getHeldItemMainhand().getItem()).block == Blocks.OBSIDIAN;
             }
             case WEBS: {
-                return Offhand.mc.field_71439_g.func_184614_ca().func_77973_b() instanceof ItemBlock && ((ItemBlock)Offhand.mc.field_71439_g.func_184614_ca().func_77973_b()).field_150939_a == Blocks.field_150321_G;
+                return Offhand.mc.player.getHeldItemMainhand().getItem() instanceof ItemBlock && ((ItemBlock)Offhand.mc.player.getHeldItemMainhand().getItem()).block == Blocks.WEB;
             }
         }
         return false;
@@ -590,14 +590,14 @@ extends Module {
         if (this.isHeldInMainHand() || this.isSwapToTotem()) {
             return true;
         }
-        if (this.holeCheck.getValue().booleanValue() && EntityUtil.isInHole((Entity)Offhand.mc.field_71439_g)) {
-            return Offhand.mc.field_71439_g.func_110143_aJ() + Offhand.mc.field_71439_g.func_110139_bj() <= this.getHoleHealth() || Offhand.mc.field_71439_g.func_184582_a(EntityEquipmentSlot.CHEST).func_77973_b() == Items.field_185160_cR || Offhand.mc.field_71439_g.field_70143_R >= 3.0f || this.noNearbyPlayers() || this.crystalCheck.getValue() != false && this.isCrystalsAABBEmpty();
+        if (this.holeCheck.getValue().booleanValue() && EntityUtil.isInHole((Entity)Offhand.mc.player)) {
+            return Offhand.mc.player.getHealth() + Offhand.mc.player.getAbsorptionAmount() <= this.getHoleHealth() || Offhand.mc.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() == Items.ELYTRA || Offhand.mc.player.fallDistance >= 3.0f || this.noNearbyPlayers() || this.crystalCheck.getValue() != false && this.isCrystalsAABBEmpty();
         }
-        return Offhand.mc.field_71439_g.func_110143_aJ() + Offhand.mc.field_71439_g.func_110139_bj() <= this.getHealth() || Offhand.mc.field_71439_g.func_184582_a(EntityEquipmentSlot.CHEST).func_77973_b() == Items.field_185160_cR || Offhand.mc.field_71439_g.field_70143_R >= 3.0f || this.noNearbyPlayers() || this.crystalCheck.getValue() != false && this.isCrystalsAABBEmpty();
+        return Offhand.mc.player.getHealth() + Offhand.mc.player.getAbsorptionAmount() <= this.getHealth() || Offhand.mc.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() == Items.ELYTRA || Offhand.mc.player.fallDistance >= 3.0f || this.noNearbyPlayers() || this.crystalCheck.getValue() != false && this.isCrystalsAABBEmpty();
     }
 
     private boolean isNotEmpty(BlockPos pos) {
-        return Offhand.mc.field_71441_e.func_72839_b(null, new AxisAlignedBB(pos)).stream().anyMatch(e -> e instanceof EntityEnderCrystal);
+        return Offhand.mc.world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos)).stream().anyMatch(e -> e instanceof EntityEnderCrystal);
     }
 
     private float getHealth() {
@@ -631,30 +631,30 @@ extends Module {
     }
 
     private boolean isCrystalsAABBEmpty() {
-        return this.isNotEmpty(Offhand.mc.field_71439_g.func_180425_c().func_177982_a(1, 0, 0)) || this.isNotEmpty(Offhand.mc.field_71439_g.func_180425_c().func_177982_a(-1, 0, 0)) || this.isNotEmpty(Offhand.mc.field_71439_g.func_180425_c().func_177982_a(0, 0, 1)) || this.isNotEmpty(Offhand.mc.field_71439_g.func_180425_c().func_177982_a(0, 0, -1)) || this.isNotEmpty(Offhand.mc.field_71439_g.func_180425_c());
+        return this.isNotEmpty(Offhand.mc.player.getPosition().add(1, 0, 0)) || this.isNotEmpty(Offhand.mc.player.getPosition().add(-1, 0, 0)) || this.isNotEmpty(Offhand.mc.player.getPosition().add(0, 0, 1)) || this.isNotEmpty(Offhand.mc.player.getPosition().add(0, 0, -1)) || this.isNotEmpty(Offhand.mc.player.getPosition());
     }
 
     int getStackSize() {
         int size = 0;
         if (this.shouldTotem()) {
             for (int i = 45; i > 0; --i) {
-                if (Offhand.mc.field_71439_g.field_71071_by.func_70301_a(i).func_77973_b() != Items.field_190929_cY) continue;
-                size += Offhand.mc.field_71439_g.field_71071_by.func_70301_a(i).func_190916_E();
+                if (Offhand.mc.player.inventory.getStackInSlot(i).getItem() != Items.TOTEM_OF_UNDYING) continue;
+                size += Offhand.mc.player.inventory.getStackInSlot(i).getCount();
             }
         } else if (this.mode == Mode.OBSIDIAN) {
             for (int i = 45; i > 0; --i) {
-                if (!(Offhand.mc.field_71439_g.field_71071_by.func_70301_a(i).func_77973_b() instanceof ItemBlock) || ((ItemBlock)Offhand.mc.field_71439_g.field_71071_by.func_70301_a((int)i).func_77973_b()).field_150939_a != Blocks.field_150343_Z) continue;
-                size += Offhand.mc.field_71439_g.field_71071_by.func_70301_a(i).func_190916_E();
+                if (!(Offhand.mc.player.inventory.getStackInSlot(i).getItem() instanceof ItemBlock) || ((ItemBlock)Offhand.mc.player.inventory.getStackInSlot((int)i).getItem()).block != Blocks.OBSIDIAN) continue;
+                size += Offhand.mc.player.inventory.getStackInSlot(i).getCount();
             }
         } else if (this.mode == Mode.WEBS) {
             for (int i = 45; i > 0; --i) {
-                if (!(Offhand.mc.field_71439_g.field_71071_by.func_70301_a(i).func_77973_b() instanceof ItemBlock) || ((ItemBlock)Offhand.mc.field_71439_g.field_71071_by.func_70301_a((int)i).func_77973_b()).field_150939_a != Blocks.field_150321_G) continue;
-                size += Offhand.mc.field_71439_g.field_71071_by.func_70301_a(i).func_190916_E();
+                if (!(Offhand.mc.player.inventory.getStackInSlot(i).getItem() instanceof ItemBlock) || ((ItemBlock)Offhand.mc.player.inventory.getStackInSlot((int)i).getItem()).block != Blocks.WEB) continue;
+                size += Offhand.mc.player.inventory.getStackInSlot(i).getCount();
             }
         } else {
             for (int i = 45; i > 0; --i) {
-                if (Offhand.mc.field_71439_g.field_71071_by.func_70301_a(i).func_77973_b() != (this.mode == Mode.CRYSTALS ? Items.field_185158_cP : Items.field_151153_ao)) continue;
-                size += Offhand.mc.field_71439_g.field_71071_by.func_70301_a(i).func_190916_E();
+                if (Offhand.mc.player.inventory.getStackInSlot(i).getItem() != (this.mode == Mode.CRYSTALS ? Items.END_CRYSTAL : Items.GOLDEN_APPLE)) continue;
+                size += Offhand.mc.player.inventory.getStackInSlot(i).getCount();
             }
         }
         return size;
@@ -664,19 +664,19 @@ extends Module {
         int slot = -1;
         if (m == Mode.OBSIDIAN) {
             for (int i = 45; i > 0; --i) {
-                if (!(Offhand.mc.field_71439_g.field_71071_by.func_70301_a(i).func_77973_b() instanceof ItemBlock) || ((ItemBlock)Offhand.mc.field_71439_g.field_71071_by.func_70301_a((int)i).func_77973_b()).field_150939_a != Blocks.field_150343_Z) continue;
+                if (!(Offhand.mc.player.inventory.getStackInSlot(i).getItem() instanceof ItemBlock) || ((ItemBlock)Offhand.mc.player.inventory.getStackInSlot((int)i).getItem()).block != Blocks.OBSIDIAN) continue;
                 slot = i;
                 break;
             }
         } else if (m == Mode.WEBS) {
             for (int i = 45; i > 0; --i) {
-                if (!(Offhand.mc.field_71439_g.field_71071_by.func_70301_a(i).func_77973_b() instanceof ItemBlock) || ((ItemBlock)Offhand.mc.field_71439_g.field_71071_by.func_70301_a((int)i).func_77973_b()).field_150939_a != Blocks.field_150321_G) continue;
+                if (!(Offhand.mc.player.inventory.getStackInSlot(i).getItem() instanceof ItemBlock) || ((ItemBlock)Offhand.mc.player.inventory.getStackInSlot((int)i).getItem()).block != Blocks.WEB) continue;
                 slot = i;
                 break;
             }
         } else {
             for (int i = 45; i > 0; --i) {
-                if (Offhand.mc.field_71439_g.field_71071_by.func_70301_a(i).func_77973_b() != (m == Mode.CRYSTALS ? Items.field_185158_cP : Items.field_151153_ao)) continue;
+                if (Offhand.mc.player.inventory.getStackInSlot(i).getItem() != (m == Mode.CRYSTALS ? Items.END_CRYSTAL : Items.GOLDEN_APPLE)) continue;
                 slot = i;
                 break;
             }
@@ -687,7 +687,7 @@ extends Module {
     int getTotemSlot() {
         int totemSlot = -1;
         for (int i = 45; i > 0; --i) {
-            if (Offhand.mc.field_71439_g.field_71071_by.func_70301_a(i).func_77973_b() != Items.field_190929_cY) continue;
+            if (Offhand.mc.player.inventory.getStackInSlot(i).getItem() != Items.TOTEM_OF_UNDYING) continue;
             totemSlot = i;
             break;
         }

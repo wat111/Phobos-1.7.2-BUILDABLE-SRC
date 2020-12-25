@@ -15,7 +15,7 @@ extends Module {
     @Override
     public void onTick() {
         if (AutoCrystal.getInstance().isEnabled()) {
-            AutoCrystal.target = SelfCrystal.mc.field_71439_g;
+            AutoCrystal.target = SelfCrystal.mc.player;
         }
     }
 }

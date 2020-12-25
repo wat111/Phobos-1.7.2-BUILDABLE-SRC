@@ -88,15 +88,15 @@ extends Module {
 
     private void doKillaura() {
         int wait;
-        if (this.onlySharp.getValue().booleanValue() && !EntityUtil.holdingWeapon((EntityPlayer)Killaura.mc.field_71439_g)) {
+        if (this.onlySharp.getValue().booleanValue() && !EntityUtil.holdingWeapon((EntityPlayer)Killaura.mc.player)) {
             target = null;
             return;
         }
-        int n = this.delay.getValue() == false || EntityUtil.holding32k((EntityPlayer)Killaura.mc.field_71439_g) && this.teekaydelay.getValue() == false ? 0 : (wait = (int)((float)DamageUtil.getCooldownByWeapon((EntityPlayer)Killaura.mc.field_71439_g) * (this.tps.getValue() != false ? Phobos.serverManager.getTpsFactor() : 1.0f)));
-        if (!this.timer.passedMs(wait) || !this.eating.getValue().booleanValue() && Killaura.mc.field_71439_g.func_184587_cr() && (!Killaura.mc.field_71439_g.func_184592_cb().func_77973_b().equals((Object)Items.field_185159_cQ) || Killaura.mc.field_71439_g.func_184600_cs() != EnumHand.OFF_HAND)) {
+        int n = this.delay.getValue() == false || EntityUtil.holding32k((EntityPlayer)Killaura.mc.player) && this.teekaydelay.getValue() == false ? 0 : (wait = (int)((float)DamageUtil.getCooldownByWeapon((EntityPlayer)Killaura.mc.player) * (this.tps.getValue() != false ? Phobos.serverManager.getTpsFactor() : 1.0f)));
+        if (!this.timer.passedMs(wait) || !this.eating.getValue().booleanValue() && Killaura.mc.player.isHandActive() && (!Killaura.mc.player.getHeldItemOffhand().getItem().equals((Object)Items.SHIELD) || Killaura.mc.player.getActiveHand() != EnumHand.OFF_HAND)) {
             return;
         }
-        if (!(this.targetMode.getValue() == TargetMode.FOCUS && target != null && (Killaura.mc.field_71439_g.func_70068_e(target) < MathUtil.square(this.range.getValue().floatValue()) || this.teleport.getValue().booleanValue() && Killaura.mc.field_71439_g.func_70068_e(target) < MathUtil.square(this.teleportRange.getValue().floatValue())) && (Killaura.mc.field_71439_g.func_70685_l(target) || EntityUtil.canEntityFeetBeSeen(target) || Killaura.mc.field_71439_g.func_70068_e(target) < MathUtil.square(this.raytrace.getValue().floatValue()) || this.teleport.getValue().booleanValue()))) {
+        if (!(this.targetMode.getValue() == TargetMode.FOCUS && target != null && (Killaura.mc.player.getDistanceSq(target) < MathUtil.square(this.range.getValue().floatValue()) || this.teleport.getValue().booleanValue() && Killaura.mc.player.getDistanceSq(target) < MathUtil.square(this.teleportRange.getValue().floatValue())) && (Killaura.mc.player.canEntityBeSeen(target) || EntityUtil.canEntityFeetBeSeen(target) || Killaura.mc.player.getDistanceSq(target) < MathUtil.square(this.raytrace.getValue().floatValue()) || this.teleport.getValue().booleanValue()))) {
             target = this.getTarget();
         }
         if (target == null) {
@@ -106,11 +106,11 @@ extends Module {
             Phobos.rotationManager.lookAtEntity(target);
         }
         if (this.teleport.getValue().booleanValue()) {
-            Phobos.positionManager.setPositionPacket(Killaura.target.field_70165_t, EntityUtil.canEntityFeetBeSeen(target) ? Killaura.target.field_70163_u : Killaura.target.field_70163_u + (double)target.func_70047_e(), Killaura.target.field_70161_v, true, true, this.lagBack.getValue() == false);
+            Phobos.positionManager.setPositionPacket(Killaura.target.posX, EntityUtil.canEntityFeetBeSeen(target) ? Killaura.target.posY : Killaura.target.posY + (double)target.getEyeHeight(), Killaura.target.posZ, true, true, this.lagBack.getValue() == false);
         }
-        if (EntityUtil.holding32k((EntityPlayer)Killaura.mc.field_71439_g) && !this.teekaydelay.getValue().booleanValue()) {
+        if (EntityUtil.holding32k((EntityPlayer)Killaura.mc.player) && !this.teekaydelay.getValue().booleanValue()) {
             if (this.multi32k.getValue().booleanValue()) {
-                for (EntityPlayer player : Killaura.mc.field_71441_e.field_73010_i) {
+                for (EntityPlayer player : Killaura.mc.world.playerEntities) {
                     if (!EntityUtil.isValid((Entity)player, this.range.getValue().floatValue())) continue;
                     this.teekayAttack((Entity)player);
                 }
@@ -121,28 +121,28 @@ extends Module {
             return;
         }
         if (this.armorBreak.getValue().booleanValue()) {
-            Killaura.mc.field_71442_b.func_187098_a(Killaura.mc.field_71439_g.field_71069_bz.field_75152_c, 9, Killaura.mc.field_71439_g.field_71071_by.field_70461_c, ClickType.SWAP, (EntityPlayer)Killaura.mc.field_71439_g);
+            Killaura.mc.playerController.windowClick(Killaura.mc.player.inventoryContainer.windowId, 9, Killaura.mc.player.inventory.currentItem, ClickType.SWAP, (EntityPlayer)Killaura.mc.player);
             EntityUtil.attackEntity(target, this.packet.getValue(), this.swing.getValue());
-            Killaura.mc.field_71442_b.func_187098_a(Killaura.mc.field_71439_g.field_71069_bz.field_75152_c, 9, Killaura.mc.field_71439_g.field_71071_by.field_70461_c, ClickType.SWAP, (EntityPlayer)Killaura.mc.field_71439_g);
+            Killaura.mc.playerController.windowClick(Killaura.mc.player.inventoryContainer.windowId, 9, Killaura.mc.player.inventory.currentItem, ClickType.SWAP, (EntityPlayer)Killaura.mc.player);
             EntityUtil.attackEntity(target, this.packet.getValue(), this.swing.getValue());
         } else {
-            boolean sneaking = Killaura.mc.field_71439_g.func_70093_af();
-            boolean sprint = Killaura.mc.field_71439_g.func_70051_ag();
+            boolean sneaking = Killaura.mc.player.isSneaking();
+            boolean sprint = Killaura.mc.player.isSprinting();
             if (this.sneak.getValue().booleanValue()) {
                 if (sneaking) {
-                    Killaura.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketEntityAction((Entity)Killaura.mc.field_71439_g, CPacketEntityAction.Action.STOP_SNEAKING));
+                    Killaura.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)Killaura.mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
                 }
                 if (sprint) {
-                    Killaura.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketEntityAction((Entity)Killaura.mc.field_71439_g, CPacketEntityAction.Action.STOP_SPRINTING));
+                    Killaura.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)Killaura.mc.player, CPacketEntityAction.Action.STOP_SPRINTING));
                 }
             }
             EntityUtil.attackEntity(target, this.packet.getValue(), this.swing.getValue());
             if (this.sneak.getValue().booleanValue()) {
                 if (sprint) {
-                    Killaura.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketEntityAction((Entity)Killaura.mc.field_71439_g, CPacketEntityAction.Action.START_SPRINTING));
+                    Killaura.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)Killaura.mc.player, CPacketEntityAction.Action.START_SPRINTING));
                 }
                 if (sneaking) {
-                    Killaura.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketEntityAction((Entity)Killaura.mc.field_71439_g, CPacketEntityAction.Action.START_SNEAKING));
+                    Killaura.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)Killaura.mc.player, CPacketEntityAction.Action.START_SNEAKING));
                 }
             }
         }
@@ -173,11 +173,11 @@ extends Module {
         Entity target = null;
         double distance = this.teleport.getValue() != false ? (double)this.teleportRange.getValue().floatValue() : (double)this.range.getValue().floatValue();
         double maxHealth = 36.0;
-        for (Entity entity : Killaura.mc.field_71441_e.field_72996_f) {
-            if (!(this.players.getValue() != false && entity instanceof EntityPlayer || this.animals.getValue() != false && EntityUtil.isPassive(entity) || this.mobs.getValue() != false && EntityUtil.isMobAggressive(entity) || this.vehicles.getValue() != false && EntityUtil.isVehicle(entity)) && (!this.projectiles.getValue().booleanValue() || !EntityUtil.isProjectile(entity)) || entity instanceof EntityLivingBase && EntityUtil.isntValid(entity, distance) || !this.teleport.getValue().booleanValue() && !Killaura.mc.field_71439_g.func_70685_l(entity) && !EntityUtil.canEntityFeetBeSeen(entity) && Killaura.mc.field_71439_g.func_70068_e(entity) > MathUtil.square(this.raytrace.getValue().floatValue())) continue;
+        for (Entity entity : Killaura.mc.world.loadedEntityList) {
+            if (!(this.players.getValue() != false && entity instanceof EntityPlayer || this.animals.getValue() != false && EntityUtil.isPassive(entity) || this.mobs.getValue() != false && EntityUtil.isMobAggressive(entity) || this.vehicles.getValue() != false && EntityUtil.isVehicle(entity)) && (!this.projectiles.getValue().booleanValue() || !EntityUtil.isProjectile(entity)) || entity instanceof EntityLivingBase && EntityUtil.isntValid(entity, distance) || !this.teleport.getValue().booleanValue() && !Killaura.mc.player.canEntityBeSeen(entity) && !EntityUtil.canEntityFeetBeSeen(entity) && Killaura.mc.player.getDistanceSq(entity) > MathUtil.square(this.raytrace.getValue().floatValue())) continue;
             if (target == null) {
                 target = entity;
-                distance = Killaura.mc.field_71439_g.func_70068_e(entity);
+                distance = Killaura.mc.player.getDistanceSq(entity);
                 maxHealth = EntityUtil.getHealth(entity);
                 continue;
             }
@@ -189,14 +189,14 @@ extends Module {
                 target = entity;
                 break;
             }
-            if (this.targetMode.getValue() != TargetMode.HEALTH && Killaura.mc.field_71439_g.func_70068_e(entity) < distance) {
+            if (this.targetMode.getValue() != TargetMode.HEALTH && Killaura.mc.player.getDistanceSq(entity) < distance) {
                 target = entity;
-                distance = Killaura.mc.field_71439_g.func_70068_e(entity);
+                distance = Killaura.mc.player.getDistanceSq(entity);
                 maxHealth = EntityUtil.getHealth(entity);
             }
             if (this.targetMode.getValue() != TargetMode.HEALTH || !((double)EntityUtil.getHealth(entity) < maxHealth)) continue;
             target = entity;
-            distance = Killaura.mc.field_71439_g.func_70068_e(entity);
+            distance = Killaura.mc.player.getDistanceSq(entity);
             maxHealth = EntityUtil.getHealth(entity);
         }
         return target;
@@ -205,7 +205,7 @@ extends Module {
     @Override
     public String getDisplayInfo() {
         if (this.info.getValue().booleanValue() && target instanceof EntityPlayer) {
-            return target.func_70005_c_();
+            return target.getName();
         }
         return null;
     }

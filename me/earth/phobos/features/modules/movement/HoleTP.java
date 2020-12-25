@@ -49,23 +49,23 @@ extends Module {
     @SubscribeEvent
     public void onUpdateWalkingPlayer(UpdateWalkingPlayerEvent event) {
         if (event.getStage() == 1 && (Speed.getInstance().isOff() || Speed.getInstance().mode.getValue() == Speed.Mode.INSTANT) && Strafe.getInstance().isOff() && LagBlock.getInstance().isOff()) {
-            if (!HoleTP.mc.field_71439_g.field_70122_E) {
-                if (HoleTP.mc.field_71474_y.field_74314_A.func_151470_d()) {
+            if (!HoleTP.mc.player.onGround) {
+                if (HoleTP.mc.gameSettings.keyBindJump.isKeyDown()) {
                     this.jumped = true;
                 }
             } else {
                 this.jumped = false;
             }
-            if (!this.jumped && (double)HoleTP.mc.field_71439_g.field_70143_R < 0.5 && BlockUtil.isInHole() && HoleTP.mc.field_71439_g.field_70163_u - BlockUtil.getNearestBlockBelow() <= 1.125 && HoleTP.mc.field_71439_g.field_70163_u - BlockUtil.getNearestBlockBelow() <= 0.95 && !EntityUtil.isOnLiquid() && !EntityUtil.isInLiquid()) {
-                if (!HoleTP.mc.field_71439_g.field_70122_E) {
+            if (!this.jumped && (double)HoleTP.mc.player.fallDistance < 0.5 && BlockUtil.isInHole() && HoleTP.mc.player.posY - BlockUtil.getNearestBlockBelow() <= 1.125 && HoleTP.mc.player.posY - BlockUtil.getNearestBlockBelow() <= 0.95 && !EntityUtil.isOnLiquid() && !EntityUtil.isInLiquid()) {
+                if (!HoleTP.mc.player.onGround) {
                     ++this.packets;
                 }
-                if (!(HoleTP.mc.field_71439_g.field_70122_E || HoleTP.mc.field_71439_g.func_70055_a(Material.field_151586_h) || HoleTP.mc.field_71439_g.func_70055_a(Material.field_151587_i) || HoleTP.mc.field_71474_y.field_74314_A.func_151470_d() || HoleTP.mc.field_71439_g.func_70617_f_() || this.packets <= 0)) {
-                    BlockPos blockPos = new BlockPos(HoleTP.mc.field_71439_g.field_70165_t, HoleTP.mc.field_71439_g.field_70163_u, HoleTP.mc.field_71439_g.field_70161_v);
+                if (!(HoleTP.mc.player.onGround || HoleTP.mc.player.isInsideOfMaterial(Material.WATER) || HoleTP.mc.player.isInsideOfMaterial(Material.LAVA) || HoleTP.mc.gameSettings.keyBindJump.isKeyDown() || HoleTP.mc.player.isOnLadder() || this.packets <= 0)) {
+                    BlockPos blockPos = new BlockPos(HoleTP.mc.player.posX, HoleTP.mc.player.posY, HoleTP.mc.player.posZ);
                     for (double position : this.oneblockPositions) {
-                        HoleTP.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.Position((double)((float)blockPos.func_177958_n() + 0.5f), HoleTP.mc.field_71439_g.field_70163_u - position, (double)((float)blockPos.func_177952_p() + 0.5f), true));
+                        HoleTP.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Position((double)((float)blockPos.getX() + 0.5f), HoleTP.mc.player.posY - position, (double)((float)blockPos.getZ() + 0.5f), true));
                     }
-                    HoleTP.mc.field_71439_g.func_70107_b((double)((float)blockPos.func_177958_n() + 0.5f), BlockUtil.getNearestBlockBelow() + 0.1, (double)((float)blockPos.func_177952_p() + 0.5f));
+                    HoleTP.mc.player.setPosition((double)((float)blockPos.getX() + 0.5f), BlockUtil.getNearestBlockBelow() + 0.1, (double)((float)blockPos.getZ() + 0.5f));
                     this.packets = 0;
                 }
             }

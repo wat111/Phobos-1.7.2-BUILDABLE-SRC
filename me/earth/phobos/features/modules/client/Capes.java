@@ -43,13 +43,13 @@ extends Module {
     public static ResourceLocation getCapeResource(AbstractClientPlayer player) {
         for (String name : UUIDs.keySet()) {
             for (String uuid : UUIDs.get(name)) {
-                if (name.equalsIgnoreCase("3vt") && player.func_110124_au().toString().equals(uuid)) {
+                if (name.equalsIgnoreCase("3vt") && player.getUniqueID().toString().equals(uuid)) {
                     return THREEVT_CAPE;
                 }
-                if (name.equalsIgnoreCase("Megyn") && player.func_110124_au().toString().equals(uuid)) {
+                if (name.equalsIgnoreCase("Megyn") && player.getUniqueID().toString().equals(uuid)) {
                     return THREEVT_CAPE;
                 }
-                if (!name.equalsIgnoreCase("oHare") || !player.func_110124_au().toString().equals(uuid)) continue;
+                if (!name.equalsIgnoreCase("oHare") || !player.getUniqueID().toString().equals(uuid)) continue;
                 return OHARE_CAPE;
             }
         }

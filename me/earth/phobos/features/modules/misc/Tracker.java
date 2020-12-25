@@ -63,12 +63,12 @@ extends Module {
     public void onPacketReceive(PacketEvent.Receive event) {
         if (!Tracker.fullNullCheck() && (this.autoEnable.getValue().booleanValue() || this.autoDisable.getValue().booleanValue()) && event.getPacket() instanceof SPacketChat) {
             SPacketChat packet = (SPacketChat)event.getPacket();
-            String message = packet.func_148915_c().func_150254_d();
+            String message = packet.getChatComponent().getFormattedText();
             if (this.autoEnable.getValue().booleanValue() && (message.contains("has accepted your duel request") || message.contains("Accepted the duel request from")) && !message.contains("<")) {
                 Command.sendMessage("Tracker will enable in 5 seconds.");
                 this.timer.reset();
                 this.shouldEnable = true;
-            } else if (this.autoDisable.getValue().booleanValue() && message.contains("has defeated") && message.contains(Tracker.mc.field_71439_g.func_70005_c_()) && !message.contains("<")) {
+            } else if (this.autoDisable.getValue().booleanValue() && message.contains("has defeated") && message.contains(Tracker.mc.player.getName()) && !message.contains("<")) {
                 this.disable();
             }
         }
@@ -78,8 +78,8 @@ extends Module {
     public void onPacketSend(PacketEvent.Send event) {
         if (!Tracker.fullNullCheck() && this.isOn() && event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock) {
             CPacketPlayerTryUseItemOnBlock packet = (CPacketPlayerTryUseItemOnBlock)event.getPacket();
-            if (Tracker.mc.field_71439_g.func_184586_b(packet.field_187027_c).func_77973_b() == Items.field_185158_cP && !AntiTrap.placedPos.contains((Object)packet.field_179725_b) && !AutoCrystal.placedPos.contains((Object)packet.field_179725_b)) {
-                this.manuallyPlaced.add(packet.field_179725_b);
+            if (Tracker.mc.player.getHeldItem(packet.hand).getItem() == Items.END_CRYSTAL && !AntiTrap.placedPos.contains((Object)packet.position) && !AutoCrystal.placedPos.contains((Object)packet.position)) {
+                this.manuallyPlaced.add(packet.position);
             }
         }
     }
@@ -101,11 +101,11 @@ extends Module {
         } else {
             if (this.usedStacks != this.usedExp / 64) {
                 this.usedStacks = this.usedExp / 64;
-                Command.sendMessage(TextUtil.coloredString(this.trackedPlayer.func_70005_c_() + " used: " + this.usedStacks + " Stacks of EXP.", this.color.getValue()));
+                Command.sendMessage(TextUtil.coloredString(this.trackedPlayer.getName() + " used: " + this.usedStacks + " Stacks of EXP.", this.color.getValue()));
             }
             if (this.usedCStacks != this.usedCrystals / 64) {
                 this.usedCStacks = this.usedCrystals / 64;
-                Command.sendMessage(TextUtil.coloredString(this.trackedPlayer.func_70005_c_() + " used: " + this.usedCStacks + " Stacks of Crystals.", this.color.getValue()));
+                Command.sendMessage(TextUtil.coloredString(this.trackedPlayer.getName() + " used: " + this.usedCStacks + " Stacks of Crystals.", this.color.getValue()));
             }
         }
     }
@@ -114,15 +114,15 @@ extends Module {
         if (this.isOff()) {
             return;
         }
-        if (entity instanceof EntityExpBottle && Objects.equals((Object)Tracker.mc.field_71441_e.func_72890_a(entity, 3.0), (Object)this.trackedPlayer)) {
+        if (entity instanceof EntityExpBottle && Objects.equals((Object)Tracker.mc.world.getClosestPlayerToEntity(entity, 3.0), (Object)this.trackedPlayer)) {
             ++this.usedExp;
         }
         if (entity instanceof EntityEnderCrystal) {
-            if (AntiTrap.placedPos.contains((Object)entity.func_180425_c().func_177977_b())) {
-                AntiTrap.placedPos.remove((Object)entity.func_180425_c().func_177977_b());
-            } else if (this.manuallyPlaced.contains((Object)entity.func_180425_c().func_177977_b())) {
-                this.manuallyPlaced.remove((Object)entity.func_180425_c().func_177977_b());
-            } else if (!AutoCrystal.placedPos.contains((Object)entity.func_180425_c().func_177977_b())) {
+            if (AntiTrap.placedPos.contains((Object)entity.getPosition().down())) {
+                AntiTrap.placedPos.remove((Object)entity.getPosition().down());
+            } else if (this.manuallyPlaced.contains((Object)entity.getPosition().down())) {
+                this.manuallyPlaced.remove((Object)entity.getPosition().down());
+            } else if (!AutoCrystal.placedPos.contains((Object)entity.getPosition().down())) {
                 ++this.usedCrystals;
             }
         }
@@ -134,7 +134,7 @@ extends Module {
             return;
         }
         String name = event.getName();
-        if (this.trackedPlayer != null && name != null && name.equals(this.trackedPlayer.func_70005_c_()) && this.autoDisable.getValue().booleanValue()) {
+        if (this.trackedPlayer != null && name != null && name.equals(this.trackedPlayer.getName()) && this.autoDisable.getValue().booleanValue()) {
             Command.sendMessage(name + " logged, Tracker disableing.");
             this.disable();
         }
@@ -161,7 +161,7 @@ extends Module {
 
     @SubscribeEvent
     public void onDeath(DeathEvent event) {
-        if (this.isOn() && (event.player.equals((Object)this.trackedPlayer) || event.player.equals((Object)Tracker.mc.field_71439_g))) {
+        if (this.isOn() && (event.player.equals((Object)this.trackedPlayer) || event.player.equals((Object)Tracker.mc.player))) {
             this.usedExp = 0;
             this.usedStacks = 0;
             this.usedCrystals = 0;
@@ -175,7 +175,7 @@ extends Module {
     @Override
     public String getDisplayInfo() {
         if (this.trackedPlayer != null) {
-            return this.trackedPlayer.func_70005_c_();
+            return this.trackedPlayer.getName();
         }
         return null;
     }

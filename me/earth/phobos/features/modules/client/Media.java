@@ -27,11 +27,11 @@ extends Module {
 
     public static String getPlayerName() {
         if (Media.fullNullCheck() || !ServerModule.getInstance().isConnected()) {
-            return mc.func_110432_I().func_111285_a();
+            return mc.getSession().getUsername();
         }
         String name = ServerModule.getInstance().getPlayerName();
         if (name == null || name.isEmpty()) {
-            return mc.func_110432_I().func_111285_a();
+            return mc.getSession().getUsername();
         }
         return name;
     }

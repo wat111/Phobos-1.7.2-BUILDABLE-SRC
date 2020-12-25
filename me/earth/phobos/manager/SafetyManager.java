@@ -49,15 +49,15 @@ implements Runnable {
                 this.SAFE.set(true);
                 return;
             }
-            ArrayList crystals = new ArrayList(SafetyManager.mc.field_71441_e.field_72996_f);
+            ArrayList crystals = new ArrayList(SafetyManager.mc.world.loadedEntityList);
             for (Entity crystal : crystals) {
-                if (!(crystal instanceof EntityEnderCrystal) || !((double)DamageUtil.calculateDamage(crystal, (Entity)SafetyManager.mc.field_71439_g) > 4.0) || closest != null && !(closest.func_70068_e(crystal) < 40.0)) continue;
+                if (!(crystal instanceof EntityEnderCrystal) || !((double)DamageUtil.calculateDamage(crystal, (Entity)SafetyManager.mc.player) > 4.0) || closest != null && !(closest.getDistanceSq(crystal) < 40.0)) continue;
                 safe = false;
                 break;
             }
             if (safe) {
                 for (BlockPos pos : BlockUtil.possiblePlacePositions(4.0f, false, Managers.getInstance().oneDot15.getValue())) {
-                    if (!((double)DamageUtil.calculateDamage(pos, (Entity)SafetyManager.mc.field_71439_g) > 4.0) || closest != null && !(closest.func_174818_b(pos) < 40.0)) continue;
+                    if (!((double)DamageUtil.calculateDamage(pos, (Entity)SafetyManager.mc.player) > 4.0) || closest != null && !(closest.getDistanceSq(pos) < 40.0)) continue;
                     safe = false;
                     break;
                 }

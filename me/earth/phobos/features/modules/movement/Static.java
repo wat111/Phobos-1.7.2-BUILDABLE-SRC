@@ -39,37 +39,37 @@ extends Module {
         }
         switch (this.mode.getValue()) {
             case STATIC: {
-                Static.mc.field_71439_g.field_71075_bZ.field_75100_b = false;
-                Static.mc.field_71439_g.field_70159_w = 0.0;
-                Static.mc.field_71439_g.field_70181_x = 0.0;
-                Static.mc.field_71439_g.field_70179_y = 0.0;
+                Static.mc.player.capabilities.isFlying = false;
+                Static.mc.player.motionX = 0.0;
+                Static.mc.player.motionY = 0.0;
+                Static.mc.player.motionZ = 0.0;
                 if (!this.ySpeed.getValue().booleanValue()) break;
-                Static.mc.field_71439_g.field_70747_aH = this.speed.getValue().floatValue();
-                if (Static.mc.field_71474_y.field_74314_A.func_151470_d()) {
-                    Static.mc.field_71439_g.field_70181_x += (double)this.speed.getValue().floatValue();
+                Static.mc.player.jumpMovementFactor = this.speed.getValue().floatValue();
+                if (Static.mc.gameSettings.keyBindJump.isKeyDown()) {
+                    Static.mc.player.motionY += (double)this.speed.getValue().floatValue();
                 }
-                if (!Static.mc.field_71474_y.field_74311_E.func_151470_d()) break;
-                Static.mc.field_71439_g.field_70181_x -= (double)this.speed.getValue().floatValue();
+                if (!Static.mc.gameSettings.keyBindSneak.isKeyDown()) break;
+                Static.mc.player.motionY -= (double)this.speed.getValue().floatValue();
                 break;
             }
             case ROOF: {
-                Static.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.Position(Static.mc.field_71439_g.field_70165_t, 10000.0, Static.mc.field_71439_g.field_70161_v, Static.mc.field_71439_g.field_70122_E));
+                Static.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Position(Static.mc.player.posX, 10000.0, Static.mc.player.posZ, Static.mc.player.onGround));
                 if (!this.disabler.getValue().booleanValue()) break;
                 this.disable();
                 break;
             }
             case NOVOID: {
-                if (Static.mc.field_71439_g.field_70145_X || !(Static.mc.field_71439_g.field_70163_u <= (double)this.height.getValue().floatValue())) break;
-                RayTraceResult trace = Static.mc.field_71441_e.func_147447_a(Static.mc.field_71439_g.func_174791_d(), new Vec3d(Static.mc.field_71439_g.field_70165_t, 0.0, Static.mc.field_71439_g.field_70161_v), false, false, false);
-                if (trace != null && trace.field_72313_a == RayTraceResult.Type.BLOCK) {
+                if (Static.mc.player.noClip || !(Static.mc.player.posY <= (double)this.height.getValue().floatValue())) break;
+                RayTraceResult trace = Static.mc.world.rayTraceBlocks(Static.mc.player.getPositionVector(), new Vec3d(Static.mc.player.posX, 0.0, Static.mc.player.posZ), false, false, false);
+                if (trace != null && trace.typeOfHit == RayTraceResult.Type.BLOCK) {
                     return;
                 }
                 if (Phobos.moduleManager.isModuleEnabled(Phase.class) || Phobos.moduleManager.isModuleEnabled(Flight.class)) {
                     return;
                 }
-                Static.mc.field_71439_g.func_70016_h(0.0, 0.0, 0.0);
-                if (Static.mc.field_71439_g.func_184187_bx() == null) break;
-                Static.mc.field_71439_g.func_184187_bx().func_70016_h(0.0, 0.0, 0.0);
+                Static.mc.player.setVelocity(0.0, 0.0, 0.0);
+                if (Static.mc.player.getRidingEntity() == null) break;
+                Static.mc.player.getRidingEntity().setVelocity(0.0, 0.0, 0.0);
             }
         }
     }

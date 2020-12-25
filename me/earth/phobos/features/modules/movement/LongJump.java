@@ -103,7 +103,7 @@ extends Module {
             return;
         }
         if (this.step.getValue().booleanValue()) {
-            LongJump.mc.field_71439_g.field_70138_W = 0.6f;
+            LongJump.mc.player.stepHeight = 0.6f;
         }
         this.doVirtue(event);
     }
@@ -137,15 +137,15 @@ extends Module {
     }
 
     private void doNormal(UpdateWalkingPlayerEvent event) {
-        if (this.autoOff.getValue().booleanValue() && this.beganJump && LongJump.mc.field_71439_g.field_70122_E) {
+        if (this.autoOff.getValue().booleanValue() && this.beganJump && LongJump.mc.player.onGround) {
             this.disable();
             return;
         }
         switch (this.mode.getValue()) {
             case VIRTUE: {
-                if (LongJump.mc.field_71439_g.field_191988_bg != 0.0f || LongJump.mc.field_71439_g.field_70702_br != 0.0f) {
-                    double xDist = LongJump.mc.field_71439_g.field_70165_t - LongJump.mc.field_71439_g.field_70169_q;
-                    double zDist = LongJump.mc.field_71439_g.field_70161_v - LongJump.mc.field_71439_g.field_70166_s;
+                if (LongJump.mc.player.moveForward != 0.0f || LongJump.mc.player.moveStrafing != 0.0f) {
+                    double xDist = LongJump.mc.player.posX - LongJump.mc.player.prevPosX;
+                    double zDist = LongJump.mc.player.posZ - LongJump.mc.player.prevPosZ;
                     this.lastDist = Math.sqrt(xDist * xDist + zDist * zDist);
                     break;
                 }
@@ -159,98 +159,98 @@ extends Module {
             }
             case DIRECT: {
                 if (EntityUtil.isInLiquid() || EntityUtil.isOnLiquid()) break;
-                if (LongJump.mc.field_71439_g.field_70122_E) {
+                if (LongJump.mc.player.onGround) {
                     this.lastHDistance = 0;
                 }
-                float direction = LongJump.mc.field_71439_g.field_70177_z + (float)(LongJump.mc.field_71439_g.field_191988_bg < 0.0f ? 180 : 0) + (LongJump.mc.field_71439_g.field_70702_br > 0.0f ? -90.0f * (LongJump.mc.field_71439_g.field_191988_bg < 0.0f ? -0.5f : (LongJump.mc.field_71439_g.field_191988_bg > 0.0f ? 0.5f : 1.0f)) : 0.0f) - (LongJump.mc.field_71439_g.field_70702_br < 0.0f ? -90.0f * (LongJump.mc.field_71439_g.field_191988_bg < 0.0f ? -0.5f : (LongJump.mc.field_71439_g.field_191988_bg > 0.0f ? 0.5f : 1.0f)) : 0.0f);
+                float direction = LongJump.mc.player.rotationYaw + (float)(LongJump.mc.player.moveForward < 0.0f ? 180 : 0) + (LongJump.mc.player.moveStrafing > 0.0f ? -90.0f * (LongJump.mc.player.moveForward < 0.0f ? -0.5f : (LongJump.mc.player.moveForward > 0.0f ? 0.5f : 1.0f)) : 0.0f) - (LongJump.mc.player.moveStrafing < 0.0f ? -90.0f * (LongJump.mc.player.moveForward < 0.0f ? -0.5f : (LongJump.mc.player.moveForward > 0.0f ? 0.5f : 1.0f)) : 0.0f);
                 float xDir = (float)Math.cos((double)(direction + 90.0f) * Math.PI / 180.0);
                 float zDir = (float)Math.sin((double)(direction + 90.0f) * Math.PI / 180.0);
-                if (!LongJump.mc.field_71439_g.field_70124_G) {
+                if (!LongJump.mc.player.collidedVertically) {
                     ++this.airTicks;
                     this.isSpeeding = true;
-                    if (LongJump.mc.field_71474_y.field_74311_E.func_151470_d()) {
-                        LongJump.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.Position(0.0, 2.147483647E9, 0.0, false));
+                    if (LongJump.mc.gameSettings.keyBindSneak.isKeyDown()) {
+                        LongJump.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Position(0.0, 2.147483647E9, 0.0, false));
                     }
                     this.groundTicks = 0;
-                    if (!LongJump.mc.field_71439_g.field_70124_G) {
-                        if (LongJump.mc.field_71439_g.field_70181_x == -0.07190068807140403) {
-                            LongJump.mc.field_71439_g.field_70181_x *= (double)0.35f;
-                        } else if (LongJump.mc.field_71439_g.field_70181_x == -0.10306193759436909) {
-                            LongJump.mc.field_71439_g.field_70181_x *= (double)0.55f;
-                        } else if (LongJump.mc.field_71439_g.field_70181_x == -0.13395038817442878) {
-                            LongJump.mc.field_71439_g.field_70181_x *= (double)0.67f;
-                        } else if (LongJump.mc.field_71439_g.field_70181_x == -0.16635183030382) {
-                            LongJump.mc.field_71439_g.field_70181_x *= (double)0.69f;
-                        } else if (LongJump.mc.field_71439_g.field_70181_x == -0.19088711097794803) {
-                            LongJump.mc.field_71439_g.field_70181_x *= (double)0.71f;
-                        } else if (LongJump.mc.field_71439_g.field_70181_x == -0.21121925191528862) {
-                            LongJump.mc.field_71439_g.field_70181_x *= (double)0.2f;
-                        } else if (LongJump.mc.field_71439_g.field_70181_x == -0.11979897632390576) {
-                            LongJump.mc.field_71439_g.field_70181_x *= (double)0.93f;
-                        } else if (LongJump.mc.field_71439_g.field_70181_x == -0.18758479151225355) {
-                            LongJump.mc.field_71439_g.field_70181_x *= (double)0.72f;
-                        } else if (LongJump.mc.field_71439_g.field_70181_x == -0.21075983825251726) {
-                            LongJump.mc.field_71439_g.field_70181_x *= (double)0.76f;
+                    if (!LongJump.mc.player.collidedVertically) {
+                        if (LongJump.mc.player.motionY == -0.07190068807140403) {
+                            LongJump.mc.player.motionY *= (double)0.35f;
+                        } else if (LongJump.mc.player.motionY == -0.10306193759436909) {
+                            LongJump.mc.player.motionY *= (double)0.55f;
+                        } else if (LongJump.mc.player.motionY == -0.13395038817442878) {
+                            LongJump.mc.player.motionY *= (double)0.67f;
+                        } else if (LongJump.mc.player.motionY == -0.16635183030382) {
+                            LongJump.mc.player.motionY *= (double)0.69f;
+                        } else if (LongJump.mc.player.motionY == -0.19088711097794803) {
+                            LongJump.mc.player.motionY *= (double)0.71f;
+                        } else if (LongJump.mc.player.motionY == -0.21121925191528862) {
+                            LongJump.mc.player.motionY *= (double)0.2f;
+                        } else if (LongJump.mc.player.motionY == -0.11979897632390576) {
+                            LongJump.mc.player.motionY *= (double)0.93f;
+                        } else if (LongJump.mc.player.motionY == -0.18758479151225355) {
+                            LongJump.mc.player.motionY *= (double)0.72f;
+                        } else if (LongJump.mc.player.motionY == -0.21075983825251726) {
+                            LongJump.mc.player.motionY *= (double)0.76f;
                         }
-                        if (LongJump.mc.field_71439_g.field_70181_x < -0.2 && LongJump.mc.field_71439_g.field_70181_x > -0.24) {
-                            LongJump.mc.field_71439_g.field_70181_x *= 0.7;
+                        if (LongJump.mc.player.motionY < -0.2 && LongJump.mc.player.motionY > -0.24) {
+                            LongJump.mc.player.motionY *= 0.7;
                         }
-                        if (LongJump.mc.field_71439_g.field_70181_x < -0.25 && LongJump.mc.field_71439_g.field_70181_x > -0.32) {
-                            LongJump.mc.field_71439_g.field_70181_x *= 0.8;
+                        if (LongJump.mc.player.motionY < -0.25 && LongJump.mc.player.motionY > -0.32) {
+                            LongJump.mc.player.motionY *= 0.8;
                         }
-                        if (LongJump.mc.field_71439_g.field_70181_x < -0.35 && LongJump.mc.field_71439_g.field_70181_x > -0.8) {
-                            LongJump.mc.field_71439_g.field_70181_x *= 0.98;
+                        if (LongJump.mc.player.motionY < -0.35 && LongJump.mc.player.motionY > -0.8) {
+                            LongJump.mc.player.motionY *= 0.98;
                         }
-                        if (LongJump.mc.field_71439_g.field_70181_x < -0.8 && LongJump.mc.field_71439_g.field_70181_x > -1.6) {
-                            LongJump.mc.field_71439_g.field_70181_x *= 0.99;
+                        if (LongJump.mc.player.motionY < -0.8 && LongJump.mc.player.motionY > -1.6) {
+                            LongJump.mc.player.motionY *= 0.99;
                         }
                     }
                     Phobos.timerManager.setTimer(0.85f);
                     double[] speedVals = new double[]{0.420606, 0.417924, 0.415258, 0.412609, 0.409977, 0.407361, 0.404761, 0.402178, 0.399611, 0.39706, 0.394525, 0.392, 0.3894, 0.38644, 0.383655, 0.381105, 0.37867, 0.37625, 0.37384, 0.37145, 0.369, 0.3666, 0.3642, 0.3618, 0.35945, 0.357, 0.354, 0.351, 0.348, 0.345, 0.342, 0.339, 0.336, 0.333, 0.33, 0.327, 0.324, 0.321, 0.318, 0.315, 0.312, 0.309, 0.307, 0.305, 0.303, 0.3, 0.297, 0.295, 0.293, 0.291, 0.289, 0.287, 0.285, 0.283, 0.281, 0.279, 0.277, 0.275, 0.273, 0.271, 0.269, 0.267, 0.265, 0.263, 0.261, 0.259, 0.257, 0.255, 0.253, 0.251, 0.249, 0.247, 0.245, 0.243, 0.241, 0.239, 0.237};
-                    if (LongJump.mc.field_71474_y.field_74351_w.field_74513_e) {
+                    if (LongJump.mc.gameSettings.keyBindForward.pressed) {
                         try {
-                            LongJump.mc.field_71439_g.field_70159_w = (double)xDir * speedVals[this.airTicks - 1] * 3.0;
-                            LongJump.mc.field_71439_g.field_70179_y = (double)zDir * speedVals[this.airTicks - 1] * 3.0;
+                            LongJump.mc.player.motionX = (double)xDir * speedVals[this.airTicks - 1] * 3.0;
+                            LongJump.mc.player.motionZ = (double)zDir * speedVals[this.airTicks - 1] * 3.0;
                             break;
                         }
                         catch (ArrayIndexOutOfBoundsException e) {
                             return;
                         }
                     }
-                    LongJump.mc.field_71439_g.field_70159_w = 0.0;
-                    LongJump.mc.field_71439_g.field_70179_y = 0.0;
+                    LongJump.mc.player.motionX = 0.0;
+                    LongJump.mc.player.motionZ = 0.0;
                     break;
                 }
                 Phobos.timerManager.setTimer(1.0f);
                 this.airTicks = 0;
                 ++this.groundTicks;
                 --this.headStart;
-                LongJump.mc.field_71439_g.field_70159_w /= 13.0;
-                LongJump.mc.field_71439_g.field_70179_y /= 13.0;
+                LongJump.mc.player.motionX /= 13.0;
+                LongJump.mc.player.motionZ /= 13.0;
                 if (this.groundTicks == 1) {
-                    this.updatePosition(LongJump.mc.field_71439_g.field_70165_t, LongJump.mc.field_71439_g.field_70163_u, LongJump.mc.field_71439_g.field_70161_v);
-                    this.updatePosition(LongJump.mc.field_71439_g.field_70165_t + 0.0624, LongJump.mc.field_71439_g.field_70163_u, LongJump.mc.field_71439_g.field_70161_v);
-                    this.updatePosition(LongJump.mc.field_71439_g.field_70165_t, LongJump.mc.field_71439_g.field_70163_u + 0.419, LongJump.mc.field_71439_g.field_70161_v);
-                    this.updatePosition(LongJump.mc.field_71439_g.field_70165_t + 0.0624, LongJump.mc.field_71439_g.field_70163_u, LongJump.mc.field_71439_g.field_70161_v);
-                    this.updatePosition(LongJump.mc.field_71439_g.field_70165_t, LongJump.mc.field_71439_g.field_70163_u + 0.419, LongJump.mc.field_71439_g.field_70161_v);
+                    this.updatePosition(LongJump.mc.player.posX, LongJump.mc.player.posY, LongJump.mc.player.posZ);
+                    this.updatePosition(LongJump.mc.player.posX + 0.0624, LongJump.mc.player.posY, LongJump.mc.player.posZ);
+                    this.updatePosition(LongJump.mc.player.posX, LongJump.mc.player.posY + 0.419, LongJump.mc.player.posZ);
+                    this.updatePosition(LongJump.mc.player.posX + 0.0624, LongJump.mc.player.posY, LongJump.mc.player.posZ);
+                    this.updatePosition(LongJump.mc.player.posX, LongJump.mc.player.posY + 0.419, LongJump.mc.player.posZ);
                     break;
                 }
                 if (this.groundTicks <= 2) break;
                 this.groundTicks = 0;
-                LongJump.mc.field_71439_g.field_70159_w = (double)xDir * 0.3;
-                LongJump.mc.field_71439_g.field_70179_y = (double)zDir * 0.3;
-                LongJump.mc.field_71439_g.field_70181_x = 0.424f;
+                LongJump.mc.player.motionX = (double)xDir * 0.3;
+                LongJump.mc.player.motionZ = (double)zDir * 0.3;
+                LongJump.mc.player.motionY = 0.424f;
                 this.beganJump = true;
             }
         }
     }
 
     private void doVirtue(MoveEvent event) {
-        if (this.mode.getValue() == Mode.VIRTUE && (LongJump.mc.field_71439_g.field_191988_bg != 0.0f || LongJump.mc.field_71439_g.field_70702_br != 0.0f && !EntityUtil.isOnLiquid() && !EntityUtil.isInLiquid())) {
+        if (this.mode.getValue() == Mode.VIRTUE && (LongJump.mc.player.moveForward != 0.0f || LongJump.mc.player.moveStrafing != 0.0f && !EntityUtil.isOnLiquid() && !EntityUtil.isInLiquid())) {
             if (this.stage == 0) {
                 this.moveSpeed = (double)this.boost.getValue().floatValue() * this.getBaseMoveSpeed();
             } else if (this.stage == 1) {
-                LongJump.mc.field_71439_g.field_70181_x = 0.42;
+                LongJump.mc.player.motionY = 0.42;
                 event.setY(0.42);
                 this.moveSpeed *= 2.149;
             } else if (this.stage == 2) {
@@ -261,10 +261,10 @@ extends Module {
             }
             this.moveSpeed = Math.max(this.getBaseMoveSpeed(), this.moveSpeed);
             this.setMoveSpeed(event, this.moveSpeed);
-            List collidingList = LongJump.mc.field_71441_e.func_184144_a((Entity)LongJump.mc.field_71439_g, LongJump.mc.field_71439_g.func_174813_aQ().func_72317_d(0.0, LongJump.mc.field_71439_g.field_70181_x, 0.0));
-            List collidingList2 = LongJump.mc.field_71441_e.func_184144_a((Entity)LongJump.mc.field_71439_g, LongJump.mc.field_71439_g.func_174813_aQ().func_72317_d(0.0, -0.4, 0.0));
-            if (!(LongJump.mc.field_71439_g.field_70124_G || collidingList.size() <= 0 && collidingList2.size() <= 0)) {
-                LongJump.mc.field_71439_g.field_70181_x = -0.001;
+            List collidingList = LongJump.mc.world.getCollisionBoxes((Entity)LongJump.mc.player, LongJump.mc.player.getEntityBoundingBox().offset(0.0, LongJump.mc.player.motionY, 0.0));
+            List collidingList2 = LongJump.mc.world.getCollisionBoxes((Entity)LongJump.mc.player, LongJump.mc.player.getEntityBoundingBox().offset(0.0, -0.4, 0.0));
+            if (!(LongJump.mc.player.collidedVertically || collidingList.size() <= 0 && collidingList2.size() <= 0)) {
+                LongJump.mc.player.motionY = -0.001;
                 event.setY(-0.001);
             }
             ++this.stage;
@@ -278,31 +278,31 @@ extends Module {
     }
 
     private void updatePosition(double x, double y, double z) {
-        LongJump.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayer.Position(x, y, z, LongJump.mc.field_71439_g.field_70122_E));
+        LongJump.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Position(x, y, z, LongJump.mc.player.onGround));
     }
 
     private Block getBlock(BlockPos pos) {
-        return LongJump.mc.field_71441_e.func_180495_p(pos).func_177230_c();
+        return LongJump.mc.world.getBlockState(pos).getBlock();
     }
 
     private double getDistance(EntityPlayer player, double distance) {
-        List boundingBoxes = player.field_70170_p.func_184144_a((Entity)player, player.func_174813_aQ().func_72317_d(0.0, -distance, 0.0));
+        List boundingBoxes = player.world.getCollisionBoxes((Entity)player, player.getEntityBoundingBox().offset(0.0, -distance, 0.0));
         if (boundingBoxes.isEmpty()) {
             return 0.0;
         }
         double y = 0.0;
         for (AxisAlignedBB boundingBox : boundingBoxes) {
-            if (!(boundingBox.field_72337_e > y)) continue;
-            y = boundingBox.field_72337_e;
+            if (!(boundingBox.maxY > y)) continue;
+            y = boundingBox.maxY;
         }
-        return player.field_70163_u - y;
+        return player.posY - y;
     }
 
     private void setMoveSpeed(MoveEvent event, double speed) {
-        MovementInput movementInput = LongJump.mc.field_71439_g.field_71158_b;
-        double forward = movementInput.field_192832_b;
-        double strafe = movementInput.field_78902_a;
-        float yaw = LongJump.mc.field_71439_g.field_70177_z;
+        MovementInput movementInput = LongJump.mc.player.movementInput;
+        double forward = movementInput.moveForward;
+        double strafe = movementInput.moveStrafe;
+        float yaw = LongJump.mc.player.rotationYaw;
         if (forward == 0.0 && strafe == 0.0) {
             event.setX(0.0);
             event.setZ(0.0);
@@ -327,8 +327,8 @@ extends Module {
 
     private double getBaseMoveSpeed() {
         double baseSpeed = 0.2873;
-        if (LongJump.mc.field_71439_g != null && LongJump.mc.field_71439_g.func_70644_a(MobEffects.field_76424_c)) {
-            int amplifier = Objects.requireNonNull(LongJump.mc.field_71439_g.func_70660_b(MobEffects.field_76424_c)).func_76458_c();
+        if (LongJump.mc.player != null && LongJump.mc.player.isPotionActive(MobEffects.SPEED)) {
+            int amplifier = Objects.requireNonNull(LongJump.mc.player.getActivePotionEffect(MobEffects.SPEED)).getAmplifier();
             baseSpeed *= 1.0 + 0.2 * (double)(amplifier + 1);
         }
         return baseSpeed;

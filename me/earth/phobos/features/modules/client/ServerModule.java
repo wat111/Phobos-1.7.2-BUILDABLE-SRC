@@ -80,13 +80,13 @@ extends Module {
 
     @Override
     public void onTick() {
-        if (mc.func_147114_u() != null && this.isConnected()) {
+        if (mc.getConnection() != null && this.isConnected()) {
             if (this.getName.getValue().booleanValue()) {
-                mc.func_147114_u().func_147297_a((Packet)new CPacketChatMessage("@Servername"));
+                mc.getConnection().sendPacket((Packet)new CPacketChatMessage("@Servername"));
                 this.getName.setValue(false);
             }
             if (this.pingTimer.passedMs(this.delay.getValue() * 1000)) {
-                mc.func_147114_u().func_147297_a((Packet)new CPacketKeepAlive(100L));
+                mc.getConnection().sendPacket((Packet)new CPacketKeepAlive(100L));
                 this.pingTimer.reset();
             }
             if (this.clear.getValue().booleanValue()) {
@@ -100,12 +100,12 @@ extends Module {
         SPacketKeepAlive alive;
         if (event.getPacket() instanceof SPacketChat) {
             SPacketChat packetChat = (SPacketChat)event.getPacket();
-            if (packetChat.func_148915_c().func_150254_d().startsWith("@Client")) {
-                this.name = new StringBuffer(TextUtil.stripColor(packetChat.func_148915_c().func_150254_d().replace("@Client", "")));
+            if (packetChat.getChatComponent().getFormattedText().startsWith("@Client")) {
+                this.name = new StringBuffer(TextUtil.stripColor(packetChat.getChatComponent().getFormattedText().replace("@Client", "")));
                 event.setCanceled(true);
             }
-        } else if (event.getPacket() instanceof SPacketKeepAlive && (alive = (SPacketKeepAlive)event.getPacket()).func_149134_c() != 0L && alive.func_149134_c() < 1000L) {
-            this.serverPing = alive.func_149134_c();
+        } else if (event.getPacket() instanceof SPacketKeepAlive && (alive = (SPacketKeepAlive)event.getPacket()).getId() != 0L && alive.getId() < 1000L) {
+            this.serverPing = alive.getId();
             this.currentPing = this.oneWay.getValue() != false ? this.pingTimer.getPassedTimeMs() / 2L : this.pingTimer.getPassedTimeMs();
             this.pingList.add(this.currentPing);
             this.averagePing = this.getAveragePing();

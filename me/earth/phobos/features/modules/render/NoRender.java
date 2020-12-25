@@ -93,18 +93,18 @@ extends Module {
     @Override
     public void onUpdate() {
         if (this.items.getValue().booleanValue()) {
-            NoRender.mc.field_71441_e.field_72996_f.stream().filter(EntityItem.class::isInstance).map(EntityItem.class::cast).forEach(Entity::func_70106_y);
+            NoRender.mc.world.loadedEntityList.stream().filter(EntityItem.class::isInstance).map(EntityItem.class::cast).forEach(Entity::setDead);
         }
-        if (this.noWeather.getValue().booleanValue() && NoRender.mc.field_71441_e.func_72896_J()) {
-            NoRender.mc.field_71441_e.func_72894_k(0.0f);
+        if (this.noWeather.getValue().booleanValue() && NoRender.mc.world.isRaining()) {
+            NoRender.mc.world.setRainStrength(0.0f);
         }
     }
 
     public void doVoidFogParticles(int posX, int posY, int posZ) {
         int i = 32;
         Random random = new Random();
-        ItemStack itemstack = NoRender.mc.field_71439_g.func_184614_ca();
-        boolean flag = this.barriers.getValue() == false || NoRender.mc.field_71442_b.func_178889_l() == GameType.CREATIVE && !itemstack.func_190926_b() && itemstack.func_77973_b() == Item.func_150898_a((Block)Blocks.field_180401_cv);
+        ItemStack itemstack = NoRender.mc.player.getHeldItemMainhand();
+        boolean flag = this.barriers.getValue() == false || NoRender.mc.playerController.getCurrentGameType() == GameType.CREATIVE && !itemstack.isEmpty() && itemstack.getItem() == Item.getItemFromBlock((Block)Blocks.BARRIER);
         BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
         for (int j = 0; j < 667; ++j) {
             this.showBarrierParticles(posX, posY, posZ, 16, random, flag, blockpos$mutableblockpos);
@@ -113,14 +113,14 @@ extends Module {
     }
 
     public void showBarrierParticles(int x, int y, int z, int offset, Random random, boolean holdingBarrier, BlockPos.MutableBlockPos pos) {
-        int i = x + NoRender.mc.field_71441_e.field_73012_v.nextInt(offset) - NoRender.mc.field_71441_e.field_73012_v.nextInt(offset);
-        int j = y + NoRender.mc.field_71441_e.field_73012_v.nextInt(offset) - NoRender.mc.field_71441_e.field_73012_v.nextInt(offset);
-        int k = z + NoRender.mc.field_71441_e.field_73012_v.nextInt(offset) - NoRender.mc.field_71441_e.field_73012_v.nextInt(offset);
-        pos.func_181079_c(i, j, k);
-        IBlockState iblockstate = NoRender.mc.field_71441_e.func_180495_p((BlockPos)pos);
-        iblockstate.func_177230_c().func_180655_c(iblockstate, (World)NoRender.mc.field_71441_e, (BlockPos)pos, random);
-        if (!holdingBarrier && iblockstate.func_177230_c() == Blocks.field_180401_cv) {
-            NoRender.mc.field_71441_e.func_175688_a(EnumParticleTypes.BARRIER, (double)((float)i + 0.5f), (double)((float)j + 0.5f), (double)((float)k + 0.5f), 0.0, 0.0, 0.0, new int[0]);
+        int i = x + NoRender.mc.world.rand.nextInt(offset) - NoRender.mc.world.rand.nextInt(offset);
+        int j = y + NoRender.mc.world.rand.nextInt(offset) - NoRender.mc.world.rand.nextInt(offset);
+        int k = z + NoRender.mc.world.rand.nextInt(offset) - NoRender.mc.world.rand.nextInt(offset);
+        pos.setPos(i, j, k);
+        IBlockState iblockstate = NoRender.mc.world.getBlockState((BlockPos)pos);
+        iblockstate.getBlock().randomDisplayTick(iblockstate, (World)NoRender.mc.world, (BlockPos)pos, random);
+        if (!holdingBarrier && iblockstate.getBlock() == Blocks.BARRIER) {
+            NoRender.mc.world.spawnParticle(EnumParticleTypes.BARRIER, (double)((float)i + 0.5f), (double)((float)j + 0.5f), (double)((float)k + 0.5f), 0.0, 0.0, 0.0, new int[0]);
         }
     }
 
@@ -137,35 +137,35 @@ extends Module {
             block8: {
                 if (event.getType() != RenderGameOverlayEvent.ElementType.BOSSINFO || this.boss.getValue() == Boss.NONE) break block7;
                 if (this.boss.getValue() != Boss.MINIMIZE) break block8;
-                Map map = NoRender.mc.field_71456_v.func_184046_j().field_184060_g;
+                Map map = NoRender.mc.ingameGUI.getBossOverlay().mapBossInfos;
                 if (map == null) {
                     return;
                 }
                 ScaledResolution scaledresolution = new ScaledResolution(mc);
-                int i = scaledresolution.func_78326_a();
+                int i = scaledresolution.getScaledWidth();
                 int j = 12;
                 for (Map.Entry entry : map.entrySet()) {
                     BossInfoClient info = (BossInfoClient)entry.getValue();
-                    String text = info.func_186744_e().func_150254_d();
+                    String text = info.getName().getFormattedText();
                     int k = (int)((float)i / this.scale.getValue().floatValue() / 2.0f - 91.0f);
                     GL11.glScaled((double)this.scale.getValue().floatValue(), (double)this.scale.getValue().floatValue(), (double)1.0);
                     if (!event.isCanceled()) {
-                        GlStateManager.func_179131_c((float)1.0f, (float)1.0f, (float)1.0f, (float)1.0f);
-                        mc.func_110434_K().func_110577_a(GuiBossOverlay.field_184058_a);
-                        NoRender.mc.field_71456_v.func_184046_j().func_184052_a(k, j, (BossInfo)info);
-                        NoRender.mc.field_71466_p.func_175063_a(text, (float)i / this.scale.getValue().floatValue() / 2.0f - (float)(NoRender.mc.field_71466_p.func_78256_a(text) / 2), (float)(j - 9), 0xFFFFFF);
+                        GlStateManager.color((float)1.0f, (float)1.0f, (float)1.0f, (float)1.0f);
+                        mc.getTextureManager().bindTexture(GuiBossOverlay.GUI_BARS_TEXTURES);
+                        NoRender.mc.ingameGUI.getBossOverlay().render(k, j, (BossInfo)info);
+                        NoRender.mc.fontRenderer.drawStringWithShadow(text, (float)i / this.scale.getValue().floatValue() / 2.0f - (float)(NoRender.mc.fontRenderer.getStringWidth(text) / 2), (float)(j - 9), 0xFFFFFF);
                     }
                     GL11.glScaled((double)(1.0 / (double)this.scale.getValue().floatValue()), (double)(1.0 / (double)this.scale.getValue().floatValue()), (double)1.0);
-                    j += 10 + NoRender.mc.field_71466_p.field_78288_b;
+                    j += 10 + NoRender.mc.fontRenderer.FONT_HEIGHT;
                 }
                 break block7;
             }
             if (this.boss.getValue() != Boss.STACK) break block7;
-            Map map = NoRender.mc.field_71456_v.func_184046_j().field_184060_g;
+            Map map = NoRender.mc.ingameGUI.getBossOverlay().mapBossInfos;
             HashMap to = new HashMap();
             for (Map.Entry entry : map.entrySet()) {
                 Pair p;
-                String s = ((BossInfoClient)entry.getValue()).func_186744_e().func_150254_d();
+                String s = ((BossInfoClient)entry.getValue()).getName().getFormattedText();
                 if (to.containsKey(s)) {
                     p = (Pair)to.get(s);
                     p = new Pair(p.getKey(), p.getValue() + 1);
@@ -176,7 +176,7 @@ extends Module {
                 to.put(s, p);
             }
             ScaledResolution scaledresolution = new ScaledResolution(mc);
-            int i = scaledresolution.func_78326_a();
+            int i = scaledresolution.getScaledWidth();
             int j = 12;
             for (Map.Entry entry : to.entrySet()) {
                 String text = (String)entry.getKey();
@@ -186,13 +186,13 @@ extends Module {
                 int k = (int)((float)i / this.scale.getValue().floatValue() / 2.0f - 91.0f);
                 GL11.glScaled((double)this.scale.getValue().floatValue(), (double)this.scale.getValue().floatValue(), (double)1.0);
                 if (!event.isCanceled()) {
-                    GlStateManager.func_179131_c((float)1.0f, (float)1.0f, (float)1.0f, (float)1.0f);
-                    mc.func_110434_K().func_110577_a(GuiBossOverlay.field_184058_a);
-                    NoRender.mc.field_71456_v.func_184046_j().func_184052_a(k, j, (BossInfo)info);
-                    NoRender.mc.field_71466_p.func_175063_a(text, (float)i / this.scale.getValue().floatValue() / 2.0f - (float)(NoRender.mc.field_71466_p.func_78256_a(text) / 2), (float)(j - 9), 0xFFFFFF);
+                    GlStateManager.color((float)1.0f, (float)1.0f, (float)1.0f, (float)1.0f);
+                    mc.getTextureManager().bindTexture(GuiBossOverlay.GUI_BARS_TEXTURES);
+                    NoRender.mc.ingameGUI.getBossOverlay().render(k, j, (BossInfo)info);
+                    NoRender.mc.fontRenderer.drawStringWithShadow(text, (float)i / this.scale.getValue().floatValue() / 2.0f - (float)(NoRender.mc.fontRenderer.getStringWidth(text) / 2), (float)(j - 9), 0xFFFFFF);
                 }
                 GL11.glScaled((double)(1.0 / (double)this.scale.getValue().floatValue()), (double)(1.0 / (double)this.scale.getValue().floatValue()), (double)1.0);
-                j += 10 + NoRender.mc.field_71466_p.field_78288_b;
+                j += 10 + NoRender.mc.fontRenderer.FONT_HEIGHT;
             }
         }
     }
@@ -206,7 +206,7 @@ extends Module {
 
     @SubscribeEvent
     public void onPlaySound(PlaySoundAtEntityEvent event) {
-        if (this.bats.getValue().booleanValue() && event.getSound().equals((Object)SoundEvents.field_187740_w) || event.getSound().equals((Object)SoundEvents.field_187742_x) || event.getSound().equals((Object)SoundEvents.field_187743_y) || event.getSound().equals((Object)SoundEvents.field_189108_z) || event.getSound().equals((Object)SoundEvents.field_187744_z)) {
+        if (this.bats.getValue().booleanValue() && event.getSound().equals((Object)SoundEvents.ENTITY_BAT_AMBIENT) || event.getSound().equals((Object)SoundEvents.ENTITY_BAT_DEATH) || event.getSound().equals((Object)SoundEvents.ENTITY_BAT_HURT) || event.getSound().equals((Object)SoundEvents.ENTITY_BAT_LOOP) || event.getSound().equals((Object)SoundEvents.ENTITY_BAT_TAKEOFF)) {
             event.setVolume(0.0f);
             event.setPitch(0.0f);
             event.setCanceled(true);

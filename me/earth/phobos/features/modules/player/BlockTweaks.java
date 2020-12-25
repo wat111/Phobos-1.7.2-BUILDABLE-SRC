@@ -99,8 +99,8 @@ extends Module {
         if (BlockTweaks.fullNullCheck() || !this.noGhost.getValue().booleanValue() || !this.destroy.getValue().booleanValue()) {
             return;
         }
-        if (!(BlockTweaks.mc.field_71439_g.func_184614_ca().func_77973_b() instanceof ItemBlock)) {
-            BlockPos pos = BlockTweaks.mc.field_71439_g.func_180425_c();
+        if (!(BlockTweaks.mc.player.getHeldItemMainhand().getItem() instanceof ItemBlock)) {
+            BlockPos pos = BlockTweaks.mc.player.getPosition();
             this.removeGlitchBlocks(pos);
         }
     }
@@ -108,7 +108,7 @@ extends Module {
     @SubscribeEvent
     public void onBlockInteract(PlayerInteractEvent.LeftClickBlock event) {
         if (this.autoTool.getValue().booleanValue() && (Speedmine.getInstance().mode.getValue() != Speedmine.Mode.PACKET || Speedmine.getInstance().isOff() || !Speedmine.getInstance().tweaks.getValue().booleanValue()) && !BlockTweaks.fullNullCheck() && event.getPos() != null) {
-            this.equipBestTool(BlockTweaks.mc.field_71441_e.func_180495_p(event.getPos()));
+            this.equipBestTool(BlockTweaks.mc.world.getBlockState(event.getPos()));
         }
     }
 
@@ -126,7 +126,7 @@ extends Module {
         if (BlockTweaks.fullNullCheck()) {
             return;
         }
-        if (this.noFriendAttack.getValue().booleanValue() && event.getPacket() instanceof CPacketUseEntity && (entity = (packet = (CPacketUseEntity)event.getPacket()).func_149564_a((World)BlockTweaks.mc.field_71441_e)) != null && Phobos.friendManager.isFriend(entity.func_70005_c_())) {
+        if (this.noFriendAttack.getValue().booleanValue() && event.getPacket() instanceof CPacketUseEntity && (entity = (packet = (CPacketUseEntity)event.getPacket()).getEntityFromWorld((World)BlockTweaks.mc.world)) != null && Phobos.friendManager.isFriend(entity.getName())) {
             event.setCanceled(true);
         }
     }
@@ -134,10 +134,10 @@ extends Module {
     @Override
     public void onUpdate() {
         if (!BlockTweaks.fullNullCheck()) {
-            if (BlockTweaks.mc.field_71439_g.field_71071_by.field_70461_c != this.lastHotbarSlot && BlockTweaks.mc.field_71439_g.field_71071_by.field_70461_c != this.currentTargetSlot) {
-                this.lastHotbarSlot = BlockTweaks.mc.field_71439_g.field_71071_by.field_70461_c;
+            if (BlockTweaks.mc.player.inventory.currentItem != this.lastHotbarSlot && BlockTweaks.mc.player.inventory.currentItem != this.currentTargetSlot) {
+                this.lastHotbarSlot = BlockTweaks.mc.player.inventory.currentItem;
             }
-            if (!BlockTweaks.mc.field_71474_y.field_74312_F.func_151470_d() && this.switched) {
+            if (!BlockTweaks.mc.gameSettings.keyBindAttack.isKeyDown() && this.switched) {
                 this.equip(this.lastHotbarSlot, false);
             }
         }
@@ -147,9 +147,9 @@ extends Module {
         for (int dx = -4; dx <= 4; ++dx) {
             for (int dy = -4; dy <= 4; ++dy) {
                 for (int dz = -4; dz <= 4; ++dz) {
-                    BlockPos blockPos = new BlockPos(pos.func_177958_n() + dx, pos.func_177956_o() + dy, pos.func_177952_p() + dz);
-                    if (!BlockTweaks.mc.field_71441_e.func_180495_p(blockPos).func_177230_c().equals((Object)Blocks.field_150350_a)) continue;
-                    BlockTweaks.mc.field_71442_b.func_187099_a(BlockTweaks.mc.field_71439_g, BlockTweaks.mc.field_71441_e, blockPos, EnumFacing.DOWN, new Vec3d(0.5, 0.5, 0.5), EnumHand.MAIN_HAND);
+                    BlockPos blockPos = new BlockPos(pos.getX() + dx, pos.getY() + dy, pos.getZ() + dz);
+                    if (!BlockTweaks.mc.world.getBlockState(blockPos).getBlock().equals((Object)Blocks.AIR)) continue;
+                    BlockTweaks.mc.playerController.processRightClickBlock(BlockTweaks.mc.player, BlockTweaks.mc.world, blockPos, EnumFacing.DOWN, new Vec3d(0.5, 0.5, 0.5), EnumHand.MAIN_HAND);
                 }
             }
         }
@@ -161,8 +161,8 @@ extends Module {
         for (int i = 0; i < 9; ++i) {
             int eff;
             float speed;
-            ItemStack stack = BlockTweaks.mc.field_71439_g.field_71071_by.func_70301_a(i);
-            if (stack.field_190928_g || !((speed = stack.func_150997_a(blockState)) > 1.0f) || !((double)(speed = (float)((double)speed + ((eff = EnchantmentHelper.func_77506_a((Enchantment)Enchantments.field_185305_q, (ItemStack)stack)) > 0 ? Math.pow(eff, 2.0) + 1.0 : 0.0))) > max)) continue;
+            ItemStack stack = BlockTweaks.mc.player.inventory.getStackInSlot(i);
+            if (stack.isEmpty || !((speed = stack.getDestroySpeed(blockState)) > 1.0f) || !((double)(speed = (float)((double)speed + ((eff = EnchantmentHelper.getEnchantmentLevel((Enchantment)Enchantments.EFFICIENCY, (ItemStack)stack)) > 0 ? Math.pow(eff, 2.0) + 1.0 : 0.0))) > max)) continue;
             max = speed;
             bestSlot = i;
         }
@@ -175,20 +175,20 @@ extends Module {
         EnumCreatureAttribute creatureAttribute = EnumCreatureAttribute.UNDEFINED;
         if (EntityUtil.isLiving(entity)) {
             EntityLivingBase base = (EntityLivingBase)entity;
-            creatureAttribute = base.func_70668_bt();
+            creatureAttribute = base.getCreatureAttribute();
         }
         for (int i = 0; i < 9; ++i) {
             double damage;
-            ItemStack stack = BlockTweaks.mc.field_71439_g.field_71071_by.func_70301_a(i);
-            if (stack.field_190928_g) continue;
-            if (stack.func_77973_b() instanceof ItemTool) {
-                damage = (double)((ItemTool)stack.func_77973_b()).field_77865_bY + (double)EnchantmentHelper.func_152377_a((ItemStack)stack, (EnumCreatureAttribute)creatureAttribute);
+            ItemStack stack = BlockTweaks.mc.player.inventory.getStackInSlot(i);
+            if (stack.isEmpty) continue;
+            if (stack.getItem() instanceof ItemTool) {
+                damage = (double)((ItemTool)stack.getItem()).attackDamage + (double)EnchantmentHelper.getModifierForCreature((ItemStack)stack, (EnumCreatureAttribute)creatureAttribute);
                 if (!(damage > maxDamage)) continue;
                 maxDamage = damage;
                 bestSlot = i;
                 continue;
             }
-            if (!(stack.func_77973_b() instanceof ItemSword) || !((damage = (double)((ItemSword)stack.func_77973_b()).func_150931_i() + (double)EnchantmentHelper.func_152377_a((ItemStack)stack, (EnumCreatureAttribute)creatureAttribute)) > maxDamage)) continue;
+            if (!(stack.getItem() instanceof ItemSword) || !((damage = (double)((ItemSword)stack.getItem()).getAttackDamage() + (double)EnchantmentHelper.getModifierForCreature((ItemStack)stack, (EnumCreatureAttribute)creatureAttribute)) > maxDamage)) continue;
             maxDamage = damage;
             bestSlot = i;
         }
@@ -197,12 +197,12 @@ extends Module {
 
     private void equip(int slot, boolean equipTool) {
         if (slot != -1) {
-            if (slot != BlockTweaks.mc.field_71439_g.field_71071_by.field_70461_c) {
-                this.lastHotbarSlot = BlockTweaks.mc.field_71439_g.field_71071_by.field_70461_c;
+            if (slot != BlockTweaks.mc.player.inventory.currentItem) {
+                this.lastHotbarSlot = BlockTweaks.mc.player.inventory.currentItem;
             }
             this.currentTargetSlot = slot;
-            BlockTweaks.mc.field_71439_g.field_71071_by.field_70461_c = slot;
-            BlockTweaks.mc.field_71442_b.func_78750_j();
+            BlockTweaks.mc.player.inventory.currentItem = slot;
+            BlockTweaks.mc.playerController.syncCurrentPlayItem();
             this.switched = equipTool;
         }
     }

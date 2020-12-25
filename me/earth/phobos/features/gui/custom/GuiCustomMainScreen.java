@@ -43,44 +43,44 @@ extends GuiScreen {
     private float xOffset;
     private float yOffset;
 
-    public void func_73866_w_() {
-        this.field_146292_n.clear();
-        this.x = this.field_146294_l / 2;
-        this.y = this.field_146295_m / 4 + 48;
-        this.field_146292_n.add(new TextButton(0, this.x, this.y + 20, "Singleplayer"));
-        this.field_146292_n.add(new TextButton(1, this.x, this.y + 44, "Multiplayer"));
-        this.field_146292_n.add(new TextButton(2, this.x, this.y + 66, "Settings"));
-        this.field_146292_n.add(new TextButton(2, this.x, this.y + 88, "Exit"));
+    public void initGui() {
+        this.buttonList.clear();
+        this.x = this.width / 2;
+        this.y = this.height / 4 + 48;
+        this.buttonList.add(new TextButton(0, this.x, this.y + 20, "Singleplayer"));
+        this.buttonList.add(new TextButton(1, this.x, this.y + 44, "Multiplayer"));
+        this.buttonList.add(new TextButton(2, this.x, this.y + 66, "Settings"));
+        this.buttonList.add(new TextButton(2, this.x, this.y + 88, "Exit"));
     }
 
-    protected void func_146284_a(GuiButton button) {
+    protected void actionPerformed(GuiButton button) {
     }
 
-    public void func_73864_a(int mouseX, int mouseY, int mouseButton) {
+    public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (GuiCustomMainScreen.isHovered(this.x - Phobos.textManager.getStringWidth("Singleplayer") / 2, this.y + 20, Phobos.textManager.getStringWidth("Singleplayer"), Phobos.textManager.getFontHeight(), mouseX, mouseY)) {
-            this.field_146297_k.func_147108_a((GuiScreen)new GuiWorldSelection((GuiScreen)this));
+            this.mc.displayGuiScreen((GuiScreen)new GuiWorldSelection((GuiScreen)this));
         } else if (GuiCustomMainScreen.isHovered(this.x - Phobos.textManager.getStringWidth("Multiplayer") / 2, this.y + 44, Phobos.textManager.getStringWidth("Multiplayer"), Phobos.textManager.getFontHeight(), mouseX, mouseY)) {
-            this.field_146297_k.func_147108_a((GuiScreen)new GuiMultiplayer((GuiScreen)this));
+            this.mc.displayGuiScreen((GuiScreen)new GuiMultiplayer((GuiScreen)this));
         } else if (GuiCustomMainScreen.isHovered(this.x - Phobos.textManager.getStringWidth("Settings") / 2, this.y + 66, Phobos.textManager.getStringWidth("Settings"), Phobos.textManager.getFontHeight(), mouseX, mouseY)) {
-            this.field_146297_k.func_147108_a((GuiScreen)new GuiOptions((GuiScreen)this, this.field_146297_k.field_71474_y));
+            this.mc.displayGuiScreen((GuiScreen)new GuiOptions((GuiScreen)this, this.mc.gameSettings));
         } else if (GuiCustomMainScreen.isHovered(this.x - Phobos.textManager.getStringWidth("Exit") / 2, this.y + 88, Phobos.textManager.getStringWidth("Exit"), Phobos.textManager.getFontHeight(), mouseX, mouseY)) {
-            this.field_146297_k.func_71400_g();
+            this.mc.shutdown();
         }
     }
 
-    public void func_73863_a(int mouseX, int mouseY, float partialTicks) {
-        this.xOffset = -1.0f * (((float)mouseX - (float)this.field_146294_l / 2.0f) / ((float)this.field_146294_l / 32.0f));
-        this.yOffset = -1.0f * (((float)mouseY - (float)this.field_146295_m / 2.0f) / ((float)this.field_146295_m / 18.0f));
-        this.x = this.field_146294_l / 2;
-        this.y = this.field_146295_m / 4 + 48;
-        GlStateManager.func_179098_w();
-        GlStateManager.func_179084_k();
-        this.field_146297_k.func_110434_K().func_110577_a(this.resourceLocation);
-        GuiCustomMainScreen.drawCompleteImage(-16.0f + this.xOffset, -9.0f + this.yOffset, this.field_146294_l + 32, this.field_146295_m + 18);
-        this.field_146297_k.func_110434_K().func_147645_c(this.resourceLocation);
-        GlStateManager.func_179147_l();
-        GlStateManager.func_179090_x();
-        super.func_73863_a(mouseX, mouseY, partialTicks);
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        this.xOffset = -1.0f * (((float)mouseX - (float)this.width / 2.0f) / ((float)this.width / 32.0f));
+        this.yOffset = -1.0f * (((float)mouseY - (float)this.height / 2.0f) / ((float)this.height / 18.0f));
+        this.x = this.width / 2;
+        this.y = this.height / 4 + 48;
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        this.mc.getTextureManager().bindTexture(this.resourceLocation);
+        GuiCustomMainScreen.drawCompleteImage(-16.0f + this.xOffset, -9.0f + this.yOffset, this.width + 32, this.height + 18);
+        this.mc.getTextureManager().deleteTexture(this.resourceLocation);
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
     public static void drawCompleteImage(float posX, float posY, float width, float height) {
@@ -123,19 +123,19 @@ extends GuiScreen {
             super(buttonId, x, y, Phobos.textManager.getStringWidth(buttonText), Phobos.textManager.getFontHeight(), buttonText);
         }
 
-        public void func_191745_a(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
-            if (this.field_146125_m) {
-                this.field_146124_l = true;
-                this.field_146123_n = (float)mouseX >= (float)this.field_146128_h - (float)Phobos.textManager.getStringWidth(this.field_146126_j) / 2.0f && mouseY >= this.field_146129_i && mouseX < this.field_146128_h + this.field_146120_f && mouseY < this.field_146129_i + this.field_146121_g;
-                Phobos.textManager.drawStringWithShadow(this.field_146126_j, (float)this.field_146128_h - (float)Phobos.textManager.getStringWidth(this.field_146126_j) / 2.0f, this.field_146129_i, Color.WHITE.getRGB());
-                if (this.field_146123_n) {
-                    RenderUtil.drawLine((float)(this.field_146128_h - 1) - (float)Phobos.textManager.getStringWidth(this.field_146126_j) / 2.0f, this.field_146129_i + 2 + Phobos.textManager.getFontHeight(), (float)this.field_146128_h + (float)Phobos.textManager.getStringWidth(this.field_146126_j) / 2.0f + 1.0f, this.field_146129_i + 2 + Phobos.textManager.getFontHeight(), 1.0f, Color.WHITE.getRGB());
+        public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+            if (this.visible) {
+                this.enabled = true;
+                this.hovered = (float)mouseX >= (float)this.x - (float)Phobos.textManager.getStringWidth(this.displayString) / 2.0f && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+                Phobos.textManager.drawStringWithShadow(this.displayString, (float)this.x - (float)Phobos.textManager.getStringWidth(this.displayString) / 2.0f, this.y, Color.WHITE.getRGB());
+                if (this.hovered) {
+                    RenderUtil.drawLine((float)(this.x - 1) - (float)Phobos.textManager.getStringWidth(this.displayString) / 2.0f, this.y + 2 + Phobos.textManager.getFontHeight(), (float)this.x + (float)Phobos.textManager.getStringWidth(this.displayString) / 2.0f + 1.0f, this.y + 2 + Phobos.textManager.getFontHeight(), 1.0f, Color.WHITE.getRGB());
                 }
             }
         }
 
-        public boolean func_146116_c(Minecraft mc, int mouseX, int mouseY) {
-            return this.field_146124_l && this.field_146125_m && (float)mouseX >= (float)this.field_146128_h - (float)Phobos.textManager.getStringWidth(this.field_146126_j) / 2.0f && mouseY >= this.field_146129_i && mouseX < this.field_146128_h + this.field_146120_f && mouseY < this.field_146129_i + this.field_146121_g;
+        public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
+            return this.enabled && this.visible && (float)mouseX >= (float)this.x - (float)Phobos.textManager.getStringWidth(this.displayString) / 2.0f && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
         }
     }
 }

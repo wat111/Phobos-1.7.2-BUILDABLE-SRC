@@ -102,14 +102,14 @@ extends Module {
         if (HoleFiller.fullNullCheck()) {
             this.disable();
         }
-        this.lastHotbarSlot = HoleFiller.mc.field_71439_g.field_71071_by.field_70461_c;
+        this.lastHotbarSlot = HoleFiller.mc.player.inventory.currentItem;
         if (!this.accessedViaBind) {
             this.currentMode = this.mode.getValue();
         }
         Offhand module = Phobos.moduleManager.getModuleByClass(Offhand.class);
         this.offhandMode = module.mode;
         this.offhandMode2 = module.currentMode;
-        if (this.offhand.getValue().booleanValue() && (EntityUtil.isSafe((Entity)HoleFiller.mc.field_71439_g) || !this.onlySafe.getValue().booleanValue())) {
+        if (this.offhand.getValue().booleanValue() && (EntityUtil.isSafe((Entity)HoleFiller.mc.player) || !this.onlySafe.getValue().booleanValue())) {
             if (module.type.getValue() == Offhand.Type.NEW) {
                 if (this.currentMode == Mode.WEBS) {
                     module.setSwapToTotem(false);
@@ -186,7 +186,7 @@ extends Module {
             return;
         }
         if (this.placeHighWeb) {
-            BlockPos pos = new BlockPos(HoleFiller.mc.field_71439_g.field_70165_t, HoleFiller.mc.field_71439_g.field_70163_u + 1.0, HoleFiller.mc.field_71439_g.field_70161_v);
+            BlockPos pos = new BlockPos(HoleFiller.mc.player.posX, HoleFiller.mc.player.posY + 1.0, HoleFiller.mc.player.posZ);
             this.placeBlock(pos);
             this.placeHighWeb = false;
         }
@@ -202,8 +202,8 @@ extends Module {
         }
         for (BlockPos position : targets) {
             int placeability;
-            if (HoleFiller.mc.field_71439_g.func_174818_b(position) > MathUtil.square(this.range.getValue()) || this.placeMode.getValue() == PlaceMode.SMART && !this.isPlayerInRange(position)) continue;
-            if (position.equals((Object)new BlockPos(HoleFiller.mc.field_71439_g.func_174791_d()))) {
+            if (HoleFiller.mc.player.getDistanceSq(position) > MathUtil.square(this.range.getValue()) || this.placeMode.getValue() == PlaceMode.SMART && !this.isPlayerInRange(position)) continue;
+            if (position.equals((Object)new BlockPos(HoleFiller.mc.player.getPositionVector()))) {
                 if (this.currentMode != Mode.WEBS || !this.webSelf.getValue().booleanValue()) continue;
                 if (this.highWeb.getValue().booleanValue()) {
                     this.placeHighWeb = true;
@@ -231,7 +231,7 @@ extends Module {
     }
 
     private boolean isPlayerInRange(BlockPos pos) {
-        for (EntityPlayer player : HoleFiller.mc.field_71441_e.field_73010_i) {
+        for (EntityPlayer player : HoleFiller.mc.world.playerEntities) {
             if (EntityUtil.isntValid((Entity)player, this.smartRange.getValue())) continue;
             return true;
         }
@@ -243,8 +243,8 @@ extends Module {
             this.disable();
             return true;
         }
-        if (HoleFiller.mc.field_71439_g.field_71071_by.field_70461_c != this.lastHotbarSlot && HoleFiller.mc.field_71439_g.field_71071_by.field_70461_c != InventoryUtil.findHotbarBlock(this.currentMode == Mode.WEBS ? BlockWeb.class : BlockObsidian.class)) {
-            this.lastHotbarSlot = HoleFiller.mc.field_71439_g.field_71071_by.field_70461_c;
+        if (HoleFiller.mc.player.inventory.currentItem != this.lastHotbarSlot && HoleFiller.mc.player.inventory.currentItem != InventoryUtil.findHotbarBlock(this.currentMode == Mode.WEBS ? BlockWeb.class : BlockObsidian.class)) {
+            this.lastHotbarSlot = HoleFiller.mc.player.inventory.currentItem;
         }
         this.switchItem(true);
         if (!this.freecam.getValue().booleanValue() && Phobos.moduleManager.isModuleEnabled(Freecam.class)) {
@@ -258,21 +258,21 @@ extends Module {
         }
         switch (this.currentMode) {
             case WEBS: {
-                this.hasOffhand = InventoryUtil.isBlock(HoleFiller.mc.field_71439_g.func_184592_cb().func_77973_b(), BlockWeb.class);
+                this.hasOffhand = InventoryUtil.isBlock(HoleFiller.mc.player.getHeldItemOffhand().getItem(), BlockWeb.class);
                 this.targetSlot = InventoryUtil.findHotbarBlock(BlockWeb.class);
                 break;
             }
             case OBSIDIAN: {
-                this.hasOffhand = InventoryUtil.isBlock(HoleFiller.mc.field_71439_g.func_184592_cb().func_77973_b(), BlockObsidian.class);
+                this.hasOffhand = InventoryUtil.isBlock(HoleFiller.mc.player.getHeldItemOffhand().getItem(), BlockObsidian.class);
                 this.targetSlot = InventoryUtil.findHotbarBlock(BlockObsidian.class);
                 break;
             }
         }
-        if (this.onlySafe.getValue().booleanValue() && !EntityUtil.isSafe((Entity)HoleFiller.mc.field_71439_g)) {
+        if (this.onlySafe.getValue().booleanValue() && !EntityUtil.isSafe((Entity)HoleFiller.mc.player)) {
             this.disable();
             return true;
         }
-        if (!this.hasOffhand && this.targetSlot == -1 && (!this.offhand.getValue().booleanValue() || !EntityUtil.isSafe((Entity)HoleFiller.mc.field_71439_g) && this.onlySafe.getValue().booleanValue())) {
+        if (!this.hasOffhand && this.targetSlot == -1 && (!this.offhand.getValue().booleanValue() || !EntityUtil.isSafe((Entity)HoleFiller.mc.player) && this.onlySafe.getValue().booleanValue())) {
             return true;
         }
         if (this.offhand.getValue().booleanValue() && !this.hasOffhand) {

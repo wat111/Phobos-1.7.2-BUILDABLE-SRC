@@ -102,7 +102,7 @@ extends Module {
     private Map<Potion, Color> potionColorMap = new HashMap<Potion, Color>();
     public Map<Module, Float> moduleProgressMap = new HashMap<Module, Float>();
     private static final ResourceLocation box = new ResourceLocation("textures/gui/container/shulker_box.png");
-    private static final ItemStack totem = new ItemStack(Items.field_190929_cY);
+    private static final ItemStack totem = new ItemStack(Items.TOTEM_OF_UNDYING);
     private int color;
     private boolean shouldIncrement;
     private int hitMarkerTimer;
@@ -117,33 +117,33 @@ extends Module {
     public HUD() {
         super("HUD", "HUD Elements rendered on your screen", Module.Category.CLIENT, true, false, false);
         this.setInstance();
-        this.potionColorMap.put(MobEffects.field_76424_c, new Color(124, 175, 198));
-        this.potionColorMap.put(MobEffects.field_76421_d, new Color(90, 108, 129));
-        this.potionColorMap.put(MobEffects.field_76422_e, new Color(217, 192, 67));
-        this.potionColorMap.put(MobEffects.field_76419_f, new Color(74, 66, 23));
-        this.potionColorMap.put(MobEffects.field_76420_g, new Color(147, 36, 35));
-        this.potionColorMap.put(MobEffects.field_76432_h, new Color(67, 10, 9));
-        this.potionColorMap.put(MobEffects.field_76433_i, new Color(67, 10, 9));
-        this.potionColorMap.put(MobEffects.field_76430_j, new Color(34, 255, 76));
-        this.potionColorMap.put(MobEffects.field_76431_k, new Color(85, 29, 74));
-        this.potionColorMap.put(MobEffects.field_76428_l, new Color(205, 92, 171));
-        this.potionColorMap.put(MobEffects.field_76429_m, new Color(153, 69, 58));
-        this.potionColorMap.put(MobEffects.field_76426_n, new Color(228, 154, 58));
-        this.potionColorMap.put(MobEffects.field_76427_o, new Color(46, 82, 153));
-        this.potionColorMap.put(MobEffects.field_76441_p, new Color(127, 131, 146));
-        this.potionColorMap.put(MobEffects.field_76440_q, new Color(31, 31, 35));
-        this.potionColorMap.put(MobEffects.field_76439_r, new Color(31, 31, 161));
-        this.potionColorMap.put(MobEffects.field_76438_s, new Color(88, 118, 83));
-        this.potionColorMap.put(MobEffects.field_76437_t, new Color(72, 77, 72));
-        this.potionColorMap.put(MobEffects.field_76436_u, new Color(78, 147, 49));
-        this.potionColorMap.put(MobEffects.field_82731_v, new Color(53, 42, 39));
-        this.potionColorMap.put(MobEffects.field_180152_w, new Color(248, 125, 35));
-        this.potionColorMap.put(MobEffects.field_76444_x, new Color(37, 82, 165));
-        this.potionColorMap.put(MobEffects.field_76443_y, new Color(248, 36, 35));
-        this.potionColorMap.put(MobEffects.field_188423_x, new Color(148, 160, 97));
-        this.potionColorMap.put(MobEffects.field_188424_y, new Color(206, 255, 255));
-        this.potionColorMap.put(MobEffects.field_188425_z, new Color(51, 153, 0));
-        this.potionColorMap.put(MobEffects.field_189112_A, new Color(192, 164, 77));
+        this.potionColorMap.put(MobEffects.SPEED, new Color(124, 175, 198));
+        this.potionColorMap.put(MobEffects.SLOWNESS, new Color(90, 108, 129));
+        this.potionColorMap.put(MobEffects.HASTE, new Color(217, 192, 67));
+        this.potionColorMap.put(MobEffects.MINING_FATIGUE, new Color(74, 66, 23));
+        this.potionColorMap.put(MobEffects.STRENGTH, new Color(147, 36, 35));
+        this.potionColorMap.put(MobEffects.INSTANT_HEALTH, new Color(67, 10, 9));
+        this.potionColorMap.put(MobEffects.INSTANT_DAMAGE, new Color(67, 10, 9));
+        this.potionColorMap.put(MobEffects.JUMP_BOOST, new Color(34, 255, 76));
+        this.potionColorMap.put(MobEffects.NAUSEA, new Color(85, 29, 74));
+        this.potionColorMap.put(MobEffects.REGENERATION, new Color(205, 92, 171));
+        this.potionColorMap.put(MobEffects.RESISTANCE, new Color(153, 69, 58));
+        this.potionColorMap.put(MobEffects.FIRE_RESISTANCE, new Color(228, 154, 58));
+        this.potionColorMap.put(MobEffects.WATER_BREATHING, new Color(46, 82, 153));
+        this.potionColorMap.put(MobEffects.INVISIBILITY, new Color(127, 131, 146));
+        this.potionColorMap.put(MobEffects.BLINDNESS, new Color(31, 31, 35));
+        this.potionColorMap.put(MobEffects.NIGHT_VISION, new Color(31, 31, 161));
+        this.potionColorMap.put(MobEffects.HUNGER, new Color(88, 118, 83));
+        this.potionColorMap.put(MobEffects.WEAKNESS, new Color(72, 77, 72));
+        this.potionColorMap.put(MobEffects.POISON, new Color(78, 147, 49));
+        this.potionColorMap.put(MobEffects.WITHER, new Color(53, 42, 39));
+        this.potionColorMap.put(MobEffects.HEALTH_BOOST, new Color(248, 125, 35));
+        this.potionColorMap.put(MobEffects.ABSORPTION, new Color(37, 82, 165));
+        this.potionColorMap.put(MobEffects.SATURATION, new Color(248, 36, 35));
+        this.potionColorMap.put(MobEffects.GLOWING, new Color(148, 160, 97));
+        this.potionColorMap.put(MobEffects.LEVITATION, new Color(206, 255, 255));
+        this.potionColorMap.put(MobEffects.LUCK, new Color(51, 153, 0));
+        this.potionColorMap.put(MobEffects.UNLUCK, new Color(192, 164, 77));
     }
 
     private void setInstance() {
@@ -246,7 +246,7 @@ extends Module {
         if (this.textRadar.getValue().booleanValue()) {
             this.drawTextRadar(ToolTips.getInstance().isOff() || ToolTips.getInstance().shulkerSpy.getValue() == false || ToolTips.getInstance().render.getValue() == false ? 0 : ToolTips.getInstance().getTextRadarY());
         }
-        int n = this.renderingUp.getValue() != false ? 0 : (j = HUD.mc.field_71462_r instanceof GuiChat ? 14 : 0);
+        int n = this.renderingUp.getValue() != false ? 0 : (j = HUD.mc.currentScreen instanceof GuiChat ? 14 : 0);
         if (this.arrayList.getValue().booleanValue()) {
             Color moduleColor;
             Module module;
@@ -267,7 +267,7 @@ extends Module {
                 }
             }
         }
-        int n2 = this.renderingUp.getValue() == false ? 0 : (i = HUD.mc.field_71462_r instanceof GuiChat ? 0 : 0);
+        int n2 = this.renderingUp.getValue() == false ? 0 : (i = HUD.mc.currentScreen instanceof GuiChat ? 0 : 0);
         if (this.renderingUp.getValue().booleanValue()) {
             int itemDamage;
             if (this.serverBrand.getValue().booleanValue()) {
@@ -277,7 +277,7 @@ extends Module {
             if (this.potions.getValue().booleanValue()) {
                 for (PotionEffect effect : Phobos.potionManager.getOwnPotions()) {
                     text = this.altPotionsColors.getValue() != false ? Phobos.potionManager.getPotionString(effect) : Phobos.potionManager.getColoredPotionString(effect);
-                    this.renderer.drawString(text, width - (this.renderer.getStringWidth(text) + 2), height - 2 - (i += 10), this.rolling.getValue() != false && this.rainbow.getValue() != false ? this.colorMap.get(height - i) : (this.altPotionsColors.getValue() != false ? this.potionColorMap.get((Object)effect.func_188419_a()).getRGB() : this.color), true);
+                    this.renderer.drawString(text, width - (this.renderer.getStringWidth(text) + 2), height - 2 - (i += 10), this.rolling.getValue() != false && this.rainbow.getValue() != false ? this.colorMap.get(height - i) : (this.altPotionsColors.getValue() != false ? this.potionColorMap.get((Object)effect.getPotion()).getRGB() : this.color), true);
                 }
             }
             if (this.speed.getValue().booleanValue()) {
@@ -288,7 +288,7 @@ extends Module {
                 text2 = grayString + "Time " + "\u00a7f" + new SimpleDateFormat("h:mm a").format(new Date());
                 this.renderer.drawString((String)text2, width - (this.renderer.getStringWidth((String)text2) + 2), height - 2 - (i += 10), this.rolling.getValue() != false && this.rainbow.getValue() != false ? this.colorMap.get(height - i) : this.color, true);
             }
-            if (this.durability.getValue().booleanValue() && (itemDamage = HUD.mc.field_71439_g.func_184614_ca().func_77958_k() - HUD.mc.field_71439_g.func_184614_ca().func_77952_i()) > 0) {
+            if (this.durability.getValue().booleanValue() && (itemDamage = HUD.mc.player.getHeldItemMainhand().getMaxDamage() - HUD.mc.player.getHeldItemMainhand().getItemDamage()) > 0) {
                 text3 = grayString + "Durability " + "\u00a7a" + itemDamage;
                 this.renderer.drawString(text3, width - (this.renderer.getStringWidth(text3) + 2), height - 2 - (i += 10), this.rolling.getValue() != false && this.rainbow.getValue() != false ? this.colorMap.get(height - i) : this.color, true);
             }
@@ -296,7 +296,7 @@ extends Module {
                 String text4 = grayString + "TPS " + "\u00a7f" + Phobos.serverManager.getTPS();
                 this.renderer.drawString(text4, width - (this.renderer.getStringWidth(text4) + 2), height - 2 - (i += 10), this.rolling.getValue() != false && this.rainbow.getValue() != false ? this.colorMap.get(height - i) : this.color, true);
             }
-            fpsText = grayString + "FPS " + "\u00a7f" + Minecraft.field_71470_ab;
+            fpsText = grayString + "FPS " + "\u00a7f" + Minecraft.debugFPS;
             text3 = grayString + "Ping " + "\u00a7f" + (ServerModule.getInstance().isConnected() ? ServerModule.getInstance().getServerPing() : (long)Phobos.serverManager.getPing()) + (this.MS.getValue() != false ? "ms" : "");
             if (this.renderer.getStringWidth(text3) > this.renderer.getStringWidth(fpsText)) {
                 if (this.ping.getValue().booleanValue()) {
@@ -322,7 +322,7 @@ extends Module {
             if (this.potions.getValue().booleanValue()) {
                 for (PotionEffect effect : Phobos.potionManager.getOwnPotions()) {
                     text = this.altPotionsColors.getValue() != false ? Phobos.potionManager.getPotionString(effect) : Phobos.potionManager.getColoredPotionString(effect);
-                    this.renderer.drawString(text, width - (this.renderer.getStringWidth(text) + 2), 2 + i++ * 10, this.rolling.getValue() != false && this.rainbow.getValue() != false ? this.colorMap.get(2 + i * 10) : (this.altPotionsColors.getValue() != false ? this.potionColorMap.get((Object)effect.func_188419_a()).getRGB() : this.color), true);
+                    this.renderer.drawString(text, width - (this.renderer.getStringWidth(text) + 2), 2 + i++ * 10, this.rolling.getValue() != false && this.rainbow.getValue() != false ? this.colorMap.get(2 + i * 10) : (this.altPotionsColors.getValue() != false ? this.potionColorMap.get((Object)effect.getPotion()).getRGB() : this.color), true);
                 }
             }
             if (this.speed.getValue().booleanValue()) {
@@ -333,7 +333,7 @@ extends Module {
                 text2 = grayString + "Time " + "\u00a7f" + new SimpleDateFormat("h:mm a").format(new Date());
                 this.renderer.drawString((String)text2, width - (this.renderer.getStringWidth((String)text2) + 2), 2 + i++ * 10, this.rolling.getValue() != false && this.rainbow.getValue() != false ? this.colorMap.get(2 + i * 10) : this.color, true);
             }
-            if (this.durability.getValue().booleanValue() && (itemDamage = HUD.mc.field_71439_g.func_184614_ca().func_77958_k() - HUD.mc.field_71439_g.func_184614_ca().func_77952_i()) > 0) {
+            if (this.durability.getValue().booleanValue() && (itemDamage = HUD.mc.player.getHeldItemMainhand().getMaxDamage() - HUD.mc.player.getHeldItemMainhand().getItemDamage()) > 0) {
                 text3 = grayString + "Durability " + "\u00a7a" + itemDamage;
                 this.renderer.drawString(text3, width - (this.renderer.getStringWidth(text3) + 2), 2 + i++ * 10, this.rolling.getValue() != false && this.rainbow.getValue() != false ? this.colorMap.get(2 + i * 10) : this.color, true);
             }
@@ -341,7 +341,7 @@ extends Module {
                 String text5 = grayString + "TPS " + "\u00a7f" + Phobos.serverManager.getTPS();
                 this.renderer.drawString(text5, width - (this.renderer.getStringWidth(text5) + 2), 2 + i++ * 10, this.rolling.getValue() != false && this.rainbow.getValue() != false ? this.colorMap.get(2 + i * 10) : this.color, true);
             }
-            fpsText = grayString + "FPS " + "\u00a7f" + Minecraft.field_71470_ab;
+            fpsText = grayString + "FPS " + "\u00a7f" + Minecraft.debugFPS;
             text3 = grayString + "Ping " + "\u00a7f" + Phobos.serverManager.getPing();
             if (this.renderer.getStringWidth(text3) > this.renderer.getStringWidth(fpsText)) {
                 if (this.ping.getValue().booleanValue()) {
@@ -359,19 +359,19 @@ extends Module {
                 }
             }
         }
-        boolean inHell = HUD.mc.field_71441_e.func_180494_b(HUD.mc.field_71439_g.func_180425_c()).func_185359_l().equals("Hell");
-        int posX = (int)HUD.mc.field_71439_g.field_70165_t;
-        int posY = (int)HUD.mc.field_71439_g.field_70163_u;
-        int posZ = (int)HUD.mc.field_71439_g.field_70161_v;
+        boolean inHell = HUD.mc.world.getBiome(HUD.mc.player.getPosition()).getBiomeName().equals("Hell");
+        int posX = (int)HUD.mc.player.posX;
+        int posY = (int)HUD.mc.player.posY;
+        int posZ = (int)HUD.mc.player.posZ;
         float nether = !inHell ? 0.125f : 8.0f;
-        int hposX = (int)(HUD.mc.field_71439_g.field_70165_t * (double)nether);
-        int hposZ = (int)(HUD.mc.field_71439_g.field_70161_v * (double)nether);
+        int hposX = (int)(HUD.mc.player.posX * (double)nether);
+        int hposZ = (int)(HUD.mc.player.posZ * (double)nether);
         if (this.renderingUp.getValue().booleanValue()) {
             Phobos.notificationManager.handleNotifications(height - (i + 16));
         } else {
             Phobos.notificationManager.handleNotifications(height - (j + 16));
         }
-        i = HUD.mc.field_71462_r instanceof GuiChat ? 14 : 0;
+        i = HUD.mc.currentScreen instanceof GuiChat ? 14 : 0;
         String coordinates = grayString + "XYZ " + "\u00a7f" + posX + ", " + posY + ", " + posZ + " " + grayString + "[" + "\u00a7f" + hposX + ", " + hposZ + grayString + "]";
         String text6 = (this.direction.getValue() != false ? Phobos.rotationManager.getDirection4D(false) + " " : "") + (this.coords.getValue() != false ? coordinates : "") + "";
         this.renderer.drawString(text6, 2.0f, height - (i += 10), this.rolling.getValue() != false && this.rainbow.getValue() != false ? this.colorMap.get(height - (i += 10)) : this.color, true);
@@ -401,11 +401,11 @@ extends Module {
         String text = "";
         switch (this.greeter.getValue()) {
             case TIME: {
-                text = text + MathUtil.getTimeOfDay() + HUD.mc.field_71439_g.getDisplayNameString();
+                text = text + MathUtil.getTimeOfDay() + HUD.mc.player.getDisplayNameString();
                 break;
             }
             case LONG: {
-                text = text + "Welcome to Phobos.eu " + HUD.mc.field_71439_g.getDisplayNameString() + " :^)";
+                text = text + "Welcome to Phobos.eu " + HUD.mc.player.getDisplayNameString() + " :^)";
                 break;
             }
             case CUSTOM: {
@@ -413,7 +413,7 @@ extends Module {
                 break;
             }
             default: {
-                text = text + "Welcome " + HUD.mc.field_71439_g.getDisplayNameString();
+                text = text + "Welcome " + HUD.mc.player.getDisplayNameString();
             }
         }
         this.renderer.drawString(text, (float)width / 2.0f - (float)this.renderer.getStringWidth(text) / 2.0f + 2.0f, 2.0f, this.rolling.getValue() != false && this.rainbow.getValue() != false ? this.colorMap.get(2) : this.color, true);
@@ -433,69 +433,69 @@ extends Module {
     public void renderTotemHUD() {
         int width = this.renderer.scaledWidth;
         int height = this.renderer.scaledHeight;
-        int totems = HUD.mc.field_71439_g.field_71071_by.field_70462_a.stream().filter(itemStack -> itemStack.func_77973_b() == Items.field_190929_cY).mapToInt(ItemStack::func_190916_E).sum();
-        if (HUD.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_190929_cY) {
-            totems += HUD.mc.field_71439_g.func_184592_cb().func_190916_E();
+        int totems = HUD.mc.player.inventory.mainInventory.stream().filter(itemStack -> itemStack.getItem() == Items.TOTEM_OF_UNDYING).mapToInt(ItemStack::getCount).sum();
+        if (HUD.mc.player.getHeldItemOffhand().getItem() == Items.TOTEM_OF_UNDYING) {
+            totems += HUD.mc.player.getHeldItemOffhand().getCount();
         }
         if (totems > 0) {
-            GlStateManager.func_179098_w();
+            GlStateManager.enableTexture2D();
             int i = width / 2;
             boolean iteration = false;
-            int y = height - 55 - (HUD.mc.field_71439_g.func_70090_H() && HUD.mc.field_71442_b.func_78763_f() ? 10 : 0);
+            int y = height - 55 - (HUD.mc.player.isInWater() && HUD.mc.playerController.gameIsSurvivalOrAdventure() ? 10 : 0);
             int x = i - 189 + 180 + 2;
-            GlStateManager.func_179126_j();
-            RenderUtil.itemRender.field_77023_b = 200.0f;
-            RenderUtil.itemRender.func_180450_b(totem, x, y);
-            RenderUtil.itemRender.func_180453_a(HUD.mc.field_71466_p, totem, x, y, "");
-            RenderUtil.itemRender.field_77023_b = 0.0f;
-            GlStateManager.func_179098_w();
-            GlStateManager.func_179140_f();
-            GlStateManager.func_179097_i();
+            GlStateManager.enableDepth();
+            RenderUtil.itemRender.zLevel = 200.0f;
+            RenderUtil.itemRender.renderItemAndEffectIntoGUI(totem, x, y);
+            RenderUtil.itemRender.renderItemOverlayIntoGUI(HUD.mc.fontRenderer, totem, x, y, "");
+            RenderUtil.itemRender.zLevel = 0.0f;
+            GlStateManager.enableTexture2D();
+            GlStateManager.disableLighting();
+            GlStateManager.disableDepth();
             this.renderer.drawStringWithShadow(totems + "", x + 19 - 2 - this.renderer.getStringWidth(totems + ""), y + 9, 0xFFFFFF);
-            GlStateManager.func_179126_j();
-            GlStateManager.func_179140_f();
+            GlStateManager.enableDepth();
+            GlStateManager.disableLighting();
         }
     }
 
     public void renderArmorHUD(boolean percent) {
         int width = this.renderer.scaledWidth;
         int height = this.renderer.scaledHeight;
-        GlStateManager.func_179098_w();
+        GlStateManager.enableTexture2D();
         int i = width / 2;
         int iteration = 0;
-        int y = height - 55 - (HUD.mc.field_71439_g.func_70090_H() && HUD.mc.field_71442_b.func_78763_f() ? 10 : 0);
-        for (ItemStack is : HUD.mc.field_71439_g.field_71071_by.field_70460_b) {
+        int y = height - 55 - (HUD.mc.player.isInWater() && HUD.mc.playerController.gameIsSurvivalOrAdventure() ? 10 : 0);
+        for (ItemStack is : HUD.mc.player.inventory.armorInventory) {
             ++iteration;
-            if (is.func_190926_b()) continue;
+            if (is.isEmpty()) continue;
             int x = i - 90 + (9 - iteration) * 20 + 2;
-            GlStateManager.func_179126_j();
-            RenderUtil.itemRender.field_77023_b = 200.0f;
-            RenderUtil.itemRender.func_180450_b(is, x, y);
-            RenderUtil.itemRender.func_180453_a(HUD.mc.field_71466_p, is, x, y, "");
-            RenderUtil.itemRender.field_77023_b = 0.0f;
-            GlStateManager.func_179098_w();
-            GlStateManager.func_179140_f();
-            GlStateManager.func_179097_i();
-            String s = is.func_190916_E() > 1 ? is.func_190916_E() + "" : "";
+            GlStateManager.enableDepth();
+            RenderUtil.itemRender.zLevel = 200.0f;
+            RenderUtil.itemRender.renderItemAndEffectIntoGUI(is, x, y);
+            RenderUtil.itemRender.renderItemOverlayIntoGUI(HUD.mc.fontRenderer, is, x, y, "");
+            RenderUtil.itemRender.zLevel = 0.0f;
+            GlStateManager.enableTexture2D();
+            GlStateManager.disableLighting();
+            GlStateManager.disableDepth();
+            String s = is.getCount() > 1 ? is.getCount() + "" : "";
             this.renderer.drawStringWithShadow(s, x + 19 - 2 - this.renderer.getStringWidth(s), y + 9, 0xFFFFFF);
             if (!percent) continue;
             int dmg = 0;
-            int itemDurability = is.func_77958_k() - is.func_77952_i();
-            float green = ((float)is.func_77958_k() - (float)is.func_77952_i()) / (float)is.func_77958_k();
+            int itemDurability = is.getMaxDamage() - is.getItemDamage();
+            float green = ((float)is.getMaxDamage() - (float)is.getItemDamage()) / (float)is.getMaxDamage();
             float red = 1.0f - green;
             dmg = percent ? 100 - (int)(red * 100.0f) : itemDurability;
             this.renderer.drawStringWithShadow(dmg + "", x + 8 - this.renderer.getStringWidth(dmg + "") / 2, y - 11, ColorUtil.toRGBA((int)(red * 255.0f), (int)(green * 255.0f), 0));
         }
-        GlStateManager.func_179126_j();
-        GlStateManager.func_179140_f();
+        GlStateManager.enableDepth();
+        GlStateManager.disableLighting();
     }
 
     public void drawHitMarkers() {
         ScaledResolution resolution = new ScaledResolution(mc);
-        RenderUtil.drawLine((float)resolution.func_78326_a() / 2.0f - 4.0f, (float)resolution.func_78328_b() / 2.0f - 4.0f, (float)resolution.func_78326_a() / 2.0f - 8.0f, (float)resolution.func_78328_b() / 2.0f - 8.0f, 1.0f, ColorUtil.toRGBA(255, 255, 255, 255));
-        RenderUtil.drawLine((float)resolution.func_78326_a() / 2.0f + 4.0f, (float)resolution.func_78328_b() / 2.0f - 4.0f, (float)resolution.func_78326_a() / 2.0f + 8.0f, (float)resolution.func_78328_b() / 2.0f - 8.0f, 1.0f, ColorUtil.toRGBA(255, 255, 255, 255));
-        RenderUtil.drawLine((float)resolution.func_78326_a() / 2.0f - 4.0f, (float)resolution.func_78328_b() / 2.0f + 4.0f, (float)resolution.func_78326_a() / 2.0f - 8.0f, (float)resolution.func_78328_b() / 2.0f + 8.0f, 1.0f, ColorUtil.toRGBA(255, 255, 255, 255));
-        RenderUtil.drawLine((float)resolution.func_78326_a() / 2.0f + 4.0f, (float)resolution.func_78328_b() / 2.0f + 4.0f, (float)resolution.func_78326_a() / 2.0f + 8.0f, (float)resolution.func_78328_b() / 2.0f + 8.0f, 1.0f, ColorUtil.toRGBA(255, 255, 255, 255));
+        RenderUtil.drawLine((float)resolution.getScaledWidth() / 2.0f - 4.0f, (float)resolution.getScaledHeight() / 2.0f - 4.0f, (float)resolution.getScaledWidth() / 2.0f - 8.0f, (float)resolution.getScaledHeight() / 2.0f - 8.0f, 1.0f, ColorUtil.toRGBA(255, 255, 255, 255));
+        RenderUtil.drawLine((float)resolution.getScaledWidth() / 2.0f + 4.0f, (float)resolution.getScaledHeight() / 2.0f - 4.0f, (float)resolution.getScaledWidth() / 2.0f + 8.0f, (float)resolution.getScaledHeight() / 2.0f - 8.0f, 1.0f, ColorUtil.toRGBA(255, 255, 255, 255));
+        RenderUtil.drawLine((float)resolution.getScaledWidth() / 2.0f - 4.0f, (float)resolution.getScaledHeight() / 2.0f + 4.0f, (float)resolution.getScaledWidth() / 2.0f - 8.0f, (float)resolution.getScaledHeight() / 2.0f + 8.0f, 1.0f, ColorUtil.toRGBA(255, 255, 255, 255));
+        RenderUtil.drawLine((float)resolution.getScaledWidth() / 2.0f + 4.0f, (float)resolution.getScaledHeight() / 2.0f + 4.0f, (float)resolution.getScaledWidth() / 2.0f + 8.0f, (float)resolution.getScaledHeight() / 2.0f + 8.0f, 1.0f, ColorUtil.toRGBA(255, 255, 255, 255));
     }
 
     public void drawTextRadar(int yOffset) {

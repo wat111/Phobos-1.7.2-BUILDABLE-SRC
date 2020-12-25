@@ -50,12 +50,12 @@ extends Feature {
         if (Command.nullCheck()) {
             return;
         }
-        Command.mc.field_71439_g.func_145747_a((ITextComponent)new ChatMessage(message));
+        Command.mc.player.sendMessage((ITextComponent)new ChatMessage(message));
     }
 
     public static void sendOverwriteMessage(String message, int id, boolean notification) {
         TextComponentString component = new TextComponentString(message);
-        Command.mc.field_71456_v.func_146158_b().func_146234_a((ITextComponent)component, id);
+        Command.mc.ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion((ITextComponent)component, id);
         if (notification) {
             Phobos.notificationManager.addNotification(message, 3000L);
         }
@@ -90,11 +90,11 @@ extends Feature {
             this.text = stringBuffer.toString();
         }
 
-        public String func_150261_e() {
+        public String getUnformattedComponentText() {
             return this.text;
         }
 
-        public ITextComponent func_150259_f() {
+        public ITextComponent createCopy() {
             return new ChatMessage(this.text);
         }
     }

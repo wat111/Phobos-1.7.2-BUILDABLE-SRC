@@ -24,8 +24,8 @@ extends Command {
     @Override
     public void execute(String[] commands) {
         if (commands.length == 1) {
-            ItemStack stack = PeekCommand.mc.field_71439_g.func_184614_ca();
-            if (stack != null && stack.func_77973_b() instanceof ItemShulkerBox) {
+            ItemStack stack = PeekCommand.mc.player.getHeldItemMainhand();
+            if (stack != null && stack.getItem() instanceof ItemShulkerBox) {
                 ToolTips.displayInv(stack, null);
             } else {
                 Command.sendMessage("\u00a7cYou need to hold a Shulker in your mainhand.");
@@ -35,9 +35,9 @@ extends Command {
         if (commands.length > 1) {
             if (ToolTips.getInstance().isOn() && ToolTips.getInstance().shulkerSpy.getValue().booleanValue()) {
                 for (Map.Entry<EntityPlayer, ItemStack> entry : ToolTips.getInstance().spiedPlayers.entrySet()) {
-                    if (!entry.getKey().func_70005_c_().equalsIgnoreCase(commands[0])) continue;
+                    if (!entry.getKey().getName().equalsIgnoreCase(commands[0])) continue;
                     ItemStack stack = entry.getValue();
-                    ToolTips.displayInv(stack, entry.getKey().func_70005_c_());
+                    ToolTips.displayInv(stack, entry.getKey().getName());
                     break;
                 }
             } else {

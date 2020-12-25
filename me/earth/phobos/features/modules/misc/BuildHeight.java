@@ -26,8 +26,8 @@ extends Module {
     @SubscribeEvent
     public void onPacketSend(PacketEvent.Send event) {
         CPacketPlayerTryUseItemOnBlock packet;
-        if (event.getStage() == 0 && event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock && (packet = (CPacketPlayerTryUseItemOnBlock)event.getPacket()).func_187023_a().func_177956_o() >= this.height.getValue() && packet.func_187024_b() == EnumFacing.UP) {
-            packet.field_149579_d = EnumFacing.DOWN;
+        if (event.getStage() == 0 && event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock && (packet = (CPacketPlayerTryUseItemOnBlock)event.getPacket()).getPos().getY() >= this.height.getValue() && packet.getDirection() == EnumFacing.UP) {
+            packet.placedBlockDirection = EnumFacing.DOWN;
         }
     }
 }

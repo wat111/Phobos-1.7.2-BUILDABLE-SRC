@@ -36,15 +36,15 @@ extends Module {
 
     @SubscribeEvent
     public void onTotemPop(TotemPopEvent event) {
-        if (event.getEntity() == Companion.mc.field_71439_g) {
-            this.narrator.say(this.totemPopMessage.getValue().replaceAll("<player>", Companion.mc.field_71439_g.func_70005_c_()));
+        if (event.getEntity() == Companion.mc.player) {
+            this.narrator.say(this.totemPopMessage.getValue().replaceAll("<player>", Companion.mc.player.getName()));
         }
     }
 
     @SubscribeEvent
     public void onDeath(DeathEvent event) {
-        if (event.player == Companion.mc.field_71439_g) {
-            this.narrator.say(this.deathMessages.getValue().replaceAll("<player>", Companion.mc.field_71439_g.func_70005_c_()));
+        if (event.player == Companion.mc.player) {
+            this.narrator.say(this.deathMessages.getValue().replaceAll("<player>", Companion.mc.player.getName()));
         }
     }
 }

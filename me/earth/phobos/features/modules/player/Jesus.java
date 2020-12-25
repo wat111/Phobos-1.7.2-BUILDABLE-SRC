@@ -52,8 +52,8 @@ extends Module {
         if (Jesus.fullNullCheck() || Freecam.getInstance().isOn()) {
             return;
         }
-        if (!(event.getStage() != 0 || this.mode.getValue() != Mode.BOUNCE && this.mode.getValue() != Mode.VANILLA && this.mode.getValue() != Mode.NORMAL || Jesus.mc.field_71439_g.func_70093_af() || Jesus.mc.field_71439_g.field_70145_X || Jesus.mc.field_71474_y.field_74314_A.func_151470_d() || !EntityUtil.isInLiquid())) {
-            Jesus.mc.field_71439_g.field_70181_x = 0.1f;
+        if (!(event.getStage() != 0 || this.mode.getValue() != Mode.BOUNCE && this.mode.getValue() != Mode.VANILLA && this.mode.getValue() != Mode.NORMAL || Jesus.mc.player.isSneaking() || Jesus.mc.player.noClip || Jesus.mc.gameSettings.keyBindJump.isKeyDown() || !EntityUtil.isInLiquid())) {
+            Jesus.mc.player.motionY = 0.1f;
         }
         if (event.getStage() == 0 && this.mode.getValue() == Mode.TRAMPOLINE && (this.eventMode.getValue() == EventMode.ALL || this.eventMode.getValue() == EventMode.PRE)) {
             this.doTrampoline();
@@ -64,10 +64,10 @@ extends Module {
 
     @SubscribeEvent
     public void sendPacket(PacketEvent.Send event) {
-        if (event.getPacket() instanceof CPacketPlayer && Freecam.getInstance().isOff() && (this.mode.getValue() == Mode.BOUNCE || this.mode.getValue() == Mode.NORMAL) && Jesus.mc.field_71439_g.func_184187_bx() == null && !Jesus.mc.field_71474_y.field_74314_A.func_151470_d()) {
+        if (event.getPacket() instanceof CPacketPlayer && Freecam.getInstance().isOff() && (this.mode.getValue() == Mode.BOUNCE || this.mode.getValue() == Mode.NORMAL) && Jesus.mc.player.getRidingEntity() == null && !Jesus.mc.gameSettings.keyBindJump.isKeyDown()) {
             CPacketPlayer packet = (CPacketPlayer)event.getPacket();
-            if (!EntityUtil.isInLiquid() && EntityUtil.isOnLiquid(0.05f) && EntityUtil.checkCollide() && Jesus.mc.field_71439_g.field_70173_aa % 3 == 0) {
-                packet.field_149477_b -= (double)0.05f;
+            if (!EntityUtil.isInLiquid() && EntityUtil.isOnLiquid(0.05f) && EntityUtil.checkCollide() && Jesus.mc.player.ticksExisted % 3 == 0) {
+                packet.y -= (double)0.05f;
             }
         }
     }
@@ -77,11 +77,11 @@ extends Module {
         if (Jesus.fullNullCheck() || Freecam.getInstance().isOn()) {
             return;
         }
-        if (event.getStage() == 0 && (this.mode.getValue() == Mode.BOUNCE || this.mode.getValue() == Mode.VANILLA || this.mode.getValue() == Mode.NORMAL) && Jesus.mc.field_71441_e != null && Jesus.mc.field_71439_g != null && EntityUtil.checkCollide() && !(Jesus.mc.field_71439_g.field_70181_x >= (double)0.1f) && (double)event.getPos().func_177956_o() < Jesus.mc.field_71439_g.field_70163_u - (double)0.05f) {
-            if (Jesus.mc.field_71439_g.func_184187_bx() != null) {
+        if (event.getStage() == 0 && (this.mode.getValue() == Mode.BOUNCE || this.mode.getValue() == Mode.VANILLA || this.mode.getValue() == Mode.NORMAL) && Jesus.mc.world != null && Jesus.mc.player != null && EntityUtil.checkCollide() && !(Jesus.mc.player.motionY >= (double)0.1f) && (double)event.getPos().getY() < Jesus.mc.player.posY - (double)0.05f) {
+            if (Jesus.mc.player.getRidingEntity() != null) {
                 event.setBoundingBox(new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, (double)0.95f, 1.0));
             } else {
-                event.setBoundingBox(Block.field_185505_j);
+                event.setBoundingBox(Block.FULL_BLOCK_AABB);
             }
             event.setCanceled(true);
         }
@@ -103,43 +103,43 @@ extends Module {
     }
 
     private void doTrampoline() {
-        if (Jesus.mc.field_71439_g.func_70093_af()) {
+        if (Jesus.mc.player.isSneaking()) {
             return;
         }
-        if (EntityUtil.isAboveLiquid((Entity)Jesus.mc.field_71439_g) && !Jesus.mc.field_71439_g.func_70093_af() && !Jesus.mc.field_71474_y.field_74314_A.field_74513_e) {
-            Jesus.mc.field_71439_g.field_70181_x = 0.1;
+        if (EntityUtil.isAboveLiquid((Entity)Jesus.mc.player) && !Jesus.mc.player.isSneaking() && !Jesus.mc.gameSettings.keyBindJump.pressed) {
+            Jesus.mc.player.motionY = 0.1;
             return;
         }
-        if (Jesus.mc.field_71439_g.field_70122_E || Jesus.mc.field_71439_g.func_70617_f_()) {
+        if (Jesus.mc.player.onGround || Jesus.mc.player.isOnLadder()) {
             this.grounded = false;
         }
-        if (Jesus.mc.field_71439_g.field_70181_x > 0.0) {
-            if (Jesus.mc.field_71439_g.field_70181_x < 0.03 && this.grounded) {
-                Jesus.mc.field_71439_g.field_70181_x += 0.06713;
-            } else if (Jesus.mc.field_71439_g.field_70181_x <= 0.05 && this.grounded) {
-                Jesus.mc.field_71439_g.field_70181_x *= 1.20000000999;
-                Jesus.mc.field_71439_g.field_70181_x += 0.06;
-            } else if (Jesus.mc.field_71439_g.field_70181_x <= 0.08 && this.grounded) {
-                Jesus.mc.field_71439_g.field_70181_x *= 1.20000003;
-                Jesus.mc.field_71439_g.field_70181_x += 0.055;
-            } else if (Jesus.mc.field_71439_g.field_70181_x <= 0.112 && this.grounded) {
-                Jesus.mc.field_71439_g.field_70181_x += 0.0535;
+        if (Jesus.mc.player.motionY > 0.0) {
+            if (Jesus.mc.player.motionY < 0.03 && this.grounded) {
+                Jesus.mc.player.motionY += 0.06713;
+            } else if (Jesus.mc.player.motionY <= 0.05 && this.grounded) {
+                Jesus.mc.player.motionY *= 1.20000000999;
+                Jesus.mc.player.motionY += 0.06;
+            } else if (Jesus.mc.player.motionY <= 0.08 && this.grounded) {
+                Jesus.mc.player.motionY *= 1.20000003;
+                Jesus.mc.player.motionY += 0.055;
+            } else if (Jesus.mc.player.motionY <= 0.112 && this.grounded) {
+                Jesus.mc.player.motionY += 0.0535;
             } else if (this.grounded) {
-                Jesus.mc.field_71439_g.field_70181_x *= 1.000000000002;
-                Jesus.mc.field_71439_g.field_70181_x += 0.0517;
+                Jesus.mc.player.motionY *= 1.000000000002;
+                Jesus.mc.player.motionY += 0.0517;
             }
         }
-        if (this.grounded && Jesus.mc.field_71439_g.field_70181_x < 0.0 && Jesus.mc.field_71439_g.field_70181_x > -0.3) {
-            Jesus.mc.field_71439_g.field_70181_x += 0.045835;
+        if (this.grounded && Jesus.mc.player.motionY < 0.0 && Jesus.mc.player.motionY > -0.3) {
+            Jesus.mc.player.motionY += 0.045835;
         }
         if (!this.fall.getValue().booleanValue()) {
-            Jesus.mc.field_71439_g.field_70143_R = 0.0f;
+            Jesus.mc.player.fallDistance = 0.0f;
         }
-        if (!EntityUtil.checkForLiquid((Entity)Jesus.mc.field_71439_g, true)) {
+        if (!EntityUtil.checkForLiquid((Entity)Jesus.mc.player, true)) {
             return;
         }
-        if (EntityUtil.checkForLiquid((Entity)Jesus.mc.field_71439_g, true)) {
-            Jesus.mc.field_71439_g.field_70181_x = 0.5;
+        if (EntityUtil.checkForLiquid((Entity)Jesus.mc.player, true)) {
+            Jesus.mc.player.motionY = 0.5;
         }
         this.grounded = true;
     }

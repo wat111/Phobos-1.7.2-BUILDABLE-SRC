@@ -56,10 +56,10 @@ extends Module {
     public void onUpdateWalkingPlayer(UpdateWalkingPlayerEvent event) {
         if (event.getStage() == 0 && this.feetExp.getValue().booleanValue()) {
             boolean offHand;
-            boolean mainHand = FastPlace.mc.field_71439_g.func_184614_ca().func_77973_b() == Items.field_151062_by;
-            boolean bl = offHand = FastPlace.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_151062_by;
-            if (FastPlace.mc.field_71474_y.field_74313_G.func_151470_d() && (FastPlace.mc.field_71439_g.func_184600_cs() == EnumHand.MAIN_HAND && mainHand || FastPlace.mc.field_71439_g.func_184600_cs() == EnumHand.OFF_HAND && offHand)) {
-                Phobos.rotationManager.lookAtVec3d(FastPlace.mc.field_71439_g.func_174791_d());
+            boolean mainHand = FastPlace.mc.player.getHeldItemMainhand().getItem() == Items.EXPERIENCE_BOTTLE;
+            boolean bl = offHand = FastPlace.mc.player.getHeldItemOffhand().getItem() == Items.EXPERIENCE_BOTTLE;
+            if (FastPlace.mc.gameSettings.keyBindUseItem.isKeyDown() && (FastPlace.mc.player.getActiveHand() == EnumHand.MAIN_HAND && mainHand || FastPlace.mc.player.getActiveHand() == EnumHand.OFF_HAND && offHand)) {
+                Phobos.rotationManager.lookAtVec3d(FastPlace.mc.player.getPositionVector());
             }
         }
     }
@@ -70,41 +70,41 @@ extends Module {
             return;
         }
         if (InventoryUtil.holdingItem(ItemExpBottle.class) && this.exp.getValue().booleanValue()) {
-            FastPlace.mc.field_71467_ac = 0;
+            FastPlace.mc.rightClickDelayTimer = 0;
         }
         if (InventoryUtil.holdingItem(BlockObsidian.class) && this.obby.getValue().booleanValue()) {
-            FastPlace.mc.field_71467_ac = 0;
+            FastPlace.mc.rightClickDelayTimer = 0;
         }
         if (InventoryUtil.holdingItem(BlockEnderChest.class) && this.enderChests.getValue().booleanValue()) {
-            FastPlace.mc.field_71467_ac = 0;
+            FastPlace.mc.rightClickDelayTimer = 0;
         }
         if (this.all.getValue().booleanValue()) {
-            FastPlace.mc.field_71467_ac = 0;
+            FastPlace.mc.rightClickDelayTimer = 0;
         }
         if (InventoryUtil.holdingItem(ItemEndCrystal.class) && (this.crystals.getValue().booleanValue() || this.all.getValue().booleanValue())) {
-            FastPlace.mc.field_71467_ac = 0;
+            FastPlace.mc.rightClickDelayTimer = 0;
         }
-        if (this.fastCrystal.getValue().booleanValue() && FastPlace.mc.field_71474_y.field_74313_G.func_151470_d()) {
+        if (this.fastCrystal.getValue().booleanValue() && FastPlace.mc.gameSettings.keyBindUseItem.isKeyDown()) {
             boolean offhand;
-            boolean bl = offhand = FastPlace.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_185158_cP;
-            if (offhand || FastPlace.mc.field_71439_g.func_184614_ca().func_77973_b() == Items.field_185158_cP) {
-                RayTraceResult result = FastPlace.mc.field_71476_x;
+            boolean bl = offhand = FastPlace.mc.player.getHeldItemOffhand().getItem() == Items.END_CRYSTAL;
+            if (offhand || FastPlace.mc.player.getHeldItemMainhand().getItem() == Items.END_CRYSTAL) {
+                RayTraceResult result = FastPlace.mc.objectMouseOver;
                 if (result == null) {
                     return;
                 }
-                switch (result.field_72313_a) {
+                switch (result.typeOfHit) {
                     case MISS: {
                         this.mousePos = null;
                         break;
                     }
                     case BLOCK: {
-                        this.mousePos = FastPlace.mc.field_71476_x.func_178782_a();
+                        this.mousePos = FastPlace.mc.objectMouseOver.getBlockPos();
                         break;
                     }
                     case ENTITY: {
                         Entity entity;
-                        if (this.mousePos == null || (entity = result.field_72308_g) == null || !this.mousePos.equals((Object)new BlockPos(entity.field_70165_t, entity.field_70163_u - 1.0, entity.field_70161_v))) break;
-                        FastPlace.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayerTryUseItemOnBlock(this.mousePos, EnumFacing.DOWN, offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0.0f, 0.0f, 0.0f));
+                        if (this.mousePos == null || (entity = result.entityHit) == null || !this.mousePos.equals((Object)new BlockPos(entity.posX, entity.posY - 1.0, entity.posZ))) break;
+                        FastPlace.mc.player.connection.sendPacket((Packet)new CPacketPlayerTryUseItemOnBlock(this.mousePos, EnumFacing.DOWN, offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0.0f, 0.0f, 0.0f));
                     }
                 }
             }

@@ -70,13 +70,13 @@ extends Module {
     @Override
     public void onEnable() {
         if (!Blink.fullNullCheck()) {
-            this.entity = new EntityOtherPlayerMP((World)Blink.mc.field_71441_e, Blink.mc.field_71449_j.func_148256_e());
-            this.entity.func_82149_j((Entity)Blink.mc.field_71439_g);
-            this.entity.field_70177_z = Blink.mc.field_71439_g.field_70177_z;
-            this.entity.field_70759_as = Blink.mc.field_71439_g.field_70759_as;
-            this.entity.field_71071_by.func_70455_b(Blink.mc.field_71439_g.field_71071_by);
-            Blink.mc.field_71441_e.func_73027_a(6942069, (Entity)this.entity);
-            this.startPos = Blink.mc.field_71439_g.func_180425_c();
+            this.entity = new EntityOtherPlayerMP((World)Blink.mc.world, Blink.mc.session.getProfile());
+            this.entity.copyLocationAndAnglesFrom((Entity)Blink.mc.player);
+            this.entity.rotationYaw = Blink.mc.player.rotationYaw;
+            this.entity.rotationYawHead = Blink.mc.player.rotationYawHead;
+            this.entity.inventory.copyInventory(Blink.mc.player.inventory);
+            Blink.mc.world.addEntityToWorld(6942069, (Entity)this.entity);
+            this.startPos = Blink.mc.player.getPosition();
         } else {
             this.disable();
         }
@@ -86,7 +86,7 @@ extends Module {
 
     @Override
     public void onUpdate() {
-        if (Blink.nullCheck() || this.autoOff.getValue() == Mode.TIME && this.timer.passedS(this.timeLimit.getValue().intValue()) || this.autoOff.getValue() == Mode.DISTANCE && this.startPos != null && Blink.mc.field_71439_g.func_174818_b(this.startPos) >= MathUtil.square(this.distance.getValue().floatValue()) || this.autoOff.getValue() == Mode.PACKETS && this.packetsCanceled >= this.packetLimit.getValue()) {
+        if (Blink.nullCheck() || this.autoOff.getValue() == Mode.TIME && this.timer.passedS(this.timeLimit.getValue().intValue()) || this.autoOff.getValue() == Mode.DISTANCE && this.startPos != null && Blink.mc.player.getDistanceSq(this.startPos) >= MathUtil.square(this.distance.getValue().floatValue()) || this.autoOff.getValue() == Mode.PACKETS && this.packetsCanceled >= this.packetLimit.getValue()) {
             this.disable();
         }
     }
@@ -100,7 +100,7 @@ extends Module {
 
     @SubscribeEvent
     public void onSendPacket(PacketEvent.Send event) {
-        if (event.getStage() == 0 && Blink.mc.field_71441_e != null && !mc.func_71356_B()) {
+        if (event.getStage() == 0 && Blink.mc.world != null && !mc.isSingleplayer()) {
             Object packet = event.getPacket();
             if (this.cPacketPlayer.getValue().booleanValue() && packet instanceof CPacketPlayer) {
                 event.setCanceled(true);
@@ -121,9 +121,9 @@ extends Module {
     @Override
     public void onDisable() {
         if (!Blink.fullNullCheck()) {
-            Blink.mc.field_71441_e.func_72900_e((Entity)this.entity);
+            Blink.mc.world.removeEntity((Entity)this.entity);
             while (!this.packets.isEmpty()) {
-                Blink.mc.field_71439_g.field_71174_a.func_147297_a(this.packets.poll());
+                Blink.mc.player.connection.sendPacket(this.packets.poll());
             }
         }
         this.startPos = null;

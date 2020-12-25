@@ -73,8 +73,8 @@ extends Module {
         if (Webaura.fullNullCheck()) {
             return;
         }
-        this.startPos = EntityUtil.getRoundedBlockPos((Entity)Webaura.mc.field_71439_g);
-        this.lastHotbarSlot = Webaura.mc.field_71439_g.field_71071_by.field_70461_c;
+        this.startPos = EntityUtil.getRoundedBlockPos((Entity)Webaura.mc.player);
+        this.lastHotbarSlot = Webaura.mc.player.inventory.currentItem;
     }
 
     @Override
@@ -104,7 +104,7 @@ extends Module {
     @Override
     public String getDisplayInfo() {
         if (this.info.getValue().booleanValue() && this.target != null) {
-            return this.target.func_70005_c_();
+            return this.target.getName();
         }
         return null;
     }
@@ -133,26 +133,26 @@ extends Module {
 
     private List<Vec3d> getPlacements() {
         ArrayList<Vec3d> list = new ArrayList<Vec3d>();
-        Vec3d baseVec = this.target.func_174791_d();
+        Vec3d baseVec = this.target.getPositionVector();
         if (this.ylower.getValue().booleanValue()) {
-            list.add(baseVec.func_72441_c(0.0, -1.0, 0.0));
+            list.add(baseVec.addVector(0.0, -1.0, 0.0));
         }
         if (this.lowerbody.getValue().booleanValue()) {
             list.add(baseVec);
         }
         if (this.upperBody.getValue().booleanValue()) {
-            list.add(baseVec.func_72441_c(0.0, 1.0, 0.0));
+            list.add(baseVec.addVector(0.0, 1.0, 0.0));
         }
         return list;
     }
 
     private void placeList(List<Vec3d> list) {
-        list.sort((vec3d, vec3d2) -> Double.compare(Webaura.mc.field_71439_g.func_70092_e(vec3d2.field_72450_a, vec3d2.field_72448_b, vec3d2.field_72449_c), Webaura.mc.field_71439_g.func_70092_e(vec3d.field_72450_a, vec3d.field_72448_b, vec3d.field_72449_c)));
-        list.sort(Comparator.comparingDouble(vec3d -> vec3d.field_72448_b));
+        list.sort((vec3d, vec3d2) -> Double.compare(Webaura.mc.player.getDistanceSq(vec3d2.x, vec3d2.y, vec3d2.z), Webaura.mc.player.getDistanceSq(vec3d.x, vec3d.y, vec3d.z)));
+        list.sort(Comparator.comparingDouble(vec3d -> vec3d.y));
         for (Vec3d vec3d3 : list) {
             BlockPos position = new BlockPos(vec3d3);
             int placeability = BlockUtil.isPositionPlaceable(position, this.raytrace.getValue());
-            if (placeability != 3 && placeability != 1 || this.antiSelf.getValue().booleanValue() && MathUtil.areVec3dsAligned(Webaura.mc.field_71439_g.func_174791_d(), vec3d3)) continue;
+            if (placeability != 3 && placeability != 1 || this.antiSelf.getValue().booleanValue() && MathUtil.areVec3dsAligned(Webaura.mc.player.getPositionVector(), vec3d3)) continue;
             this.placeBlock(position);
         }
     }
@@ -165,7 +165,7 @@ extends Module {
         if (this.isOff()) {
             return true;
         }
-        if (this.disable.getValue().booleanValue() && !this.startPos.equals((Object)EntityUtil.getRoundedBlockPos((Entity)Webaura.mc.field_71439_g))) {
+        if (this.disable.getValue().booleanValue() && !this.startPos.equals((Object)EntityUtil.getRoundedBlockPos((Entity)Webaura.mc.player))) {
             this.disable();
             return true;
         }
@@ -178,34 +178,34 @@ extends Module {
             }
             return true;
         }
-        if (Webaura.mc.field_71439_g.field_71071_by.field_70461_c != this.lastHotbarSlot && Webaura.mc.field_71439_g.field_71071_by.field_70461_c != obbySlot) {
-            this.lastHotbarSlot = Webaura.mc.field_71439_g.field_71071_by.field_70461_c;
+        if (Webaura.mc.player.inventory.currentItem != this.lastHotbarSlot && Webaura.mc.player.inventory.currentItem != obbySlot) {
+            this.lastHotbarSlot = Webaura.mc.player.inventory.currentItem;
         }
         this.switchItem(true);
         this.isSneaking = EntityUtil.stopSneaking(this.isSneaking);
         this.target = this.getTarget(this.targetRange.getValue(), this.targetMode.getValue() == TargetMode.UNTRAPPED);
-        return this.target == null || Phobos.moduleManager.isModuleEnabled("Freecam") && this.freecam.getValue() == false || !this.timer.passedMs(this.delay.getValue().intValue()) || this.switchMode.getValue() == InventoryUtil.Switch.NONE && Webaura.mc.field_71439_g.field_71071_by.field_70461_c != InventoryUtil.findHotbarBlock(BlockWeb.class);
+        return this.target == null || Phobos.moduleManager.isModuleEnabled("Freecam") && this.freecam.getValue() == false || !this.timer.passedMs(this.delay.getValue().intValue()) || this.switchMode.getValue() == InventoryUtil.Switch.NONE && Webaura.mc.player.inventory.currentItem != InventoryUtil.findHotbarBlock(BlockWeb.class);
     }
 
     private EntityPlayer getTarget(double range, boolean trapped) {
         EntityPlayer target = null;
         double distance = Math.pow(range, 2.0) + 1.0;
-        for (EntityPlayer player : Webaura.mc.field_71441_e.field_73010_i) {
-            if (EntityUtil.isntValid((Entity)player, range) || trapped && player.field_70134_J || EntityUtil.getRoundedBlockPos((Entity)Webaura.mc.field_71439_g).equals((Object)EntityUtil.getRoundedBlockPos((Entity)player)) && this.antiSelf.getValue().booleanValue() || Phobos.speedManager.getPlayerSpeed(player) > this.speed.getValue()) continue;
+        for (EntityPlayer player : Webaura.mc.world.playerEntities) {
+            if (EntityUtil.isntValid((Entity)player, range) || trapped && player.isInWeb || EntityUtil.getRoundedBlockPos((Entity)Webaura.mc.player).equals((Object)EntityUtil.getRoundedBlockPos((Entity)player)) && this.antiSelf.getValue().booleanValue() || Phobos.speedManager.getPlayerSpeed(player) > this.speed.getValue()) continue;
             if (target == null) {
                 target = player;
-                distance = Webaura.mc.field_71439_g.func_70068_e((Entity)player);
+                distance = Webaura.mc.player.getDistanceSq((Entity)player);
                 continue;
             }
-            if (!(Webaura.mc.field_71439_g.func_70068_e((Entity)player) < distance)) continue;
+            if (!(Webaura.mc.player.getDistanceSq((Entity)player) < distance)) continue;
             target = player;
-            distance = Webaura.mc.field_71439_g.func_70068_e((Entity)player);
+            distance = Webaura.mc.player.getDistanceSq((Entity)player);
         }
         return target;
     }
 
     private void placeBlock(BlockPos pos) {
-        if (this.placements < this.blocksPerPlace.getValue() && Webaura.mc.field_71439_g.func_174818_b(pos) <= MathUtil.square(this.range.getValue()) && this.switchItem(false)) {
+        if (this.placements < this.blocksPerPlace.getValue() && Webaura.mc.player.getDistanceSq(pos) <= MathUtil.square(this.range.getValue()) && this.switchItem(false)) {
             isPlacing = true;
             this.isSneaking = this.smartRotate ? BlockUtil.placeBlockSmartRotate(pos, EnumHand.MAIN_HAND, true, this.packet.getValue(), this.isSneaking) : BlockUtil.placeBlock(pos, EnumHand.MAIN_HAND, this.rotate.getValue(), this.packet.getValue(), this.isSneaking);
             this.didPlace = true;

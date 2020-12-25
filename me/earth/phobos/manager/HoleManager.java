@@ -132,24 +132,24 @@ implements Runnable {
     }
 
     public List<BlockPos> getSortedHoles() {
-        this.holes.sort(Comparator.comparingDouble(hole -> HoleManager.mc.field_71439_g.func_174818_b(hole)));
+        this.holes.sort(Comparator.comparingDouble(hole -> HoleManager.mc.player.getDistanceSq(hole)));
         return this.getHoles();
     }
 
     public List<BlockPos> calcHoles() {
         ArrayList<BlockPos> safeSpots = new ArrayList<BlockPos>();
         this.midSafety.clear();
-        List<BlockPos> positions = BlockUtil.getSphere(EntityUtil.getPlayerPos((EntityPlayer)HoleManager.mc.field_71439_g), Managers.getInstance().holeRange.getValue().floatValue(), Managers.getInstance().holeRange.getValue().intValue(), false, true, 0);
+        List<BlockPos> positions = BlockUtil.getSphere(EntityUtil.getPlayerPos((EntityPlayer)HoleManager.mc.player), Managers.getInstance().holeRange.getValue().floatValue(), Managers.getInstance().holeRange.getValue().intValue(), false, true, 0);
         for (BlockPos pos : positions) {
-            if (!HoleManager.mc.field_71441_e.func_180495_p(pos).func_177230_c().equals((Object)Blocks.field_150350_a) || !HoleManager.mc.field_71441_e.func_180495_p(pos.func_177982_a(0, 1, 0)).func_177230_c().equals((Object)Blocks.field_150350_a) || !HoleManager.mc.field_71441_e.func_180495_p(pos.func_177982_a(0, 2, 0)).func_177230_c().equals((Object)Blocks.field_150350_a)) continue;
+            if (!HoleManager.mc.world.getBlockState(pos).getBlock().equals((Object)Blocks.AIR) || !HoleManager.mc.world.getBlockState(pos.add(0, 1, 0)).getBlock().equals((Object)Blocks.AIR) || !HoleManager.mc.world.getBlockState(pos.add(0, 2, 0)).getBlock().equals((Object)Blocks.AIR)) continue;
             boolean isSafe = true;
             boolean midSafe = true;
             for (BlockPos offset : surroundOffset) {
-                Block block = HoleManager.mc.field_71441_e.func_180495_p(pos.func_177971_a((Vec3i)offset)).func_177230_c();
+                Block block = HoleManager.mc.world.getBlockState(pos.add((Vec3i)offset)).getBlock();
                 if (BlockUtil.isBlockUnSolid(block)) {
                     midSafe = false;
                 }
-                if (block == Blocks.field_150357_h || block == Blocks.field_150343_Z || block == Blocks.field_150477_bB || block == Blocks.field_150467_bQ) continue;
+                if (block == Blocks.BEDROCK || block == Blocks.OBSIDIAN || block == Blocks.ENDER_CHEST || block == Blocks.ANVIL) continue;
                 isSafe = false;
             }
             if (isSafe) {
@@ -164,8 +164,8 @@ implements Runnable {
     public boolean isSafe(BlockPos pos) {
         boolean isSafe = true;
         for (BlockPos offset : surroundOffset) {
-            Block block = HoleManager.mc.field_71441_e.func_180495_p(pos.func_177971_a((Vec3i)offset)).func_177230_c();
-            if (block == Blocks.field_150357_h) continue;
+            Block block = HoleManager.mc.world.getBlockState(pos.add((Vec3i)offset)).getBlock();
+            if (block == Blocks.BEDROCK) continue;
             isSafe = false;
             break;
         }

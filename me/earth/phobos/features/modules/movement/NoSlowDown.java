@@ -54,7 +54,7 @@ extends Module {
     public final Setting<Double> webHorizontalFactor = this.register(new Setting<Double>("WebHSpeed", 2.0, 0.0, 100.0));
     public final Setting<Double> webVerticalFactor = this.register(new Setting<Double>("WebVSpeed", 2.0, 0.0, 100.0));
     private static NoSlowDown INSTANCE = new NoSlowDown();
-    private static KeyBinding[] keys = new KeyBinding[]{NoSlowDown.mc.field_71474_y.field_74351_w, NoSlowDown.mc.field_71474_y.field_74368_y, NoSlowDown.mc.field_71474_y.field_74370_x, NoSlowDown.mc.field_71474_y.field_74366_z, NoSlowDown.mc.field_71474_y.field_74314_A, NoSlowDown.mc.field_71474_y.field_151444_V};
+    private static KeyBinding[] keys = new KeyBinding[]{NoSlowDown.mc.gameSettings.keyBindForward, NoSlowDown.mc.gameSettings.keyBindBack, NoSlowDown.mc.gameSettings.keyBindLeft, NoSlowDown.mc.gameSettings.keyBindRight, NoSlowDown.mc.gameSettings.keyBindJump, NoSlowDown.mc.gameSettings.keyBindSprint};
 
     public NoSlowDown() {
         super("NoSlowDown", "Prevents you from getting slowed down.", Module.Category.MOVEMENT, true, false, false);
@@ -75,43 +75,43 @@ extends Module {
     @Override
     public void onUpdate() {
         if (this.guiMove.getValue().booleanValue()) {
-            if (NoSlowDown.mc.field_71462_r instanceof GuiOptions || NoSlowDown.mc.field_71462_r instanceof GuiVideoSettings || NoSlowDown.mc.field_71462_r instanceof GuiScreenOptionsSounds || NoSlowDown.mc.field_71462_r instanceof GuiContainer || NoSlowDown.mc.field_71462_r instanceof GuiIngameMenu) {
+            if (NoSlowDown.mc.currentScreen instanceof GuiOptions || NoSlowDown.mc.currentScreen instanceof GuiVideoSettings || NoSlowDown.mc.currentScreen instanceof GuiScreenOptionsSounds || NoSlowDown.mc.currentScreen instanceof GuiContainer || NoSlowDown.mc.currentScreen instanceof GuiIngameMenu) {
                 for (KeyBinding bind : keys) {
-                    KeyBinding.func_74510_a((int)bind.func_151463_i(), (boolean)Keyboard.isKeyDown((int)bind.func_151463_i()));
+                    KeyBinding.setKeyBindState((int)bind.getKeyCode(), (boolean)Keyboard.isKeyDown((int)bind.getKeyCode()));
                 }
-            } else if (NoSlowDown.mc.field_71462_r == null) {
+            } else if (NoSlowDown.mc.currentScreen == null) {
                 for (KeyBinding bind : keys) {
-                    if (Keyboard.isKeyDown((int)bind.func_151463_i())) continue;
-                    KeyBinding.func_74510_a((int)bind.func_151463_i(), (boolean)false);
+                    if (Keyboard.isKeyDown((int)bind.getKeyCode())) continue;
+                    KeyBinding.setKeyBindState((int)bind.getKeyCode(), (boolean)false);
                 }
             }
         }
-        if (this.webs.getValue().booleanValue() && Phobos.moduleManager.getModuleByClass(Flight.class).isDisabled() && Phobos.moduleManager.getModuleByClass(Phase.class).isDisabled() && NoSlowDown.mc.field_71439_g.field_70134_J) {
-            NoSlowDown.mc.field_71439_g.field_70159_w *= this.webHorizontalFactor.getValue().doubleValue();
-            NoSlowDown.mc.field_71439_g.field_70179_y *= this.webHorizontalFactor.getValue().doubleValue();
-            NoSlowDown.mc.field_71439_g.field_70181_x *= this.webVerticalFactor.getValue().doubleValue();
+        if (this.webs.getValue().booleanValue() && Phobos.moduleManager.getModuleByClass(Flight.class).isDisabled() && Phobos.moduleManager.getModuleByClass(Phase.class).isDisabled() && NoSlowDown.mc.player.isInWeb) {
+            NoSlowDown.mc.player.motionX *= this.webHorizontalFactor.getValue().doubleValue();
+            NoSlowDown.mc.player.motionZ *= this.webHorizontalFactor.getValue().doubleValue();
+            NoSlowDown.mc.player.motionY *= this.webVerticalFactor.getValue().doubleValue();
         }
     }
 
     @SubscribeEvent
     public void onInput(InputUpdateEvent event) {
-        if (this.noSlow.getValue().booleanValue() && NoSlowDown.mc.field_71439_g.func_184587_cr() && !NoSlowDown.mc.field_71439_g.func_184218_aH()) {
-            event.getMovementInput().field_78902_a *= 5.0f;
-            event.getMovementInput().field_192832_b *= 5.0f;
+        if (this.noSlow.getValue().booleanValue() && NoSlowDown.mc.player.isHandActive() && !NoSlowDown.mc.player.isRiding()) {
+            event.getMovementInput().moveStrafe *= 5.0f;
+            event.getMovementInput().moveForward *= 5.0f;
         }
     }
 
     @SubscribeEvent
     public void onKeyEvent(KeyEvent event) {
-        if (this.guiMove.getValue().booleanValue() && event.getStage() == 0 && !(NoSlowDown.mc.field_71462_r instanceof GuiChat)) {
+        if (this.guiMove.getValue().booleanValue() && event.getStage() == 0 && !(NoSlowDown.mc.currentScreen instanceof GuiChat)) {
             event.info = event.pressed;
         }
     }
 
     @SubscribeEvent
     public void onPacket(PacketEvent.Send event) {
-        if (event.getPacket() instanceof CPacketPlayer && this.strict.getValue().booleanValue() && this.noSlow.getValue().booleanValue() && NoSlowDown.mc.field_71439_g.func_184587_cr() && !NoSlowDown.mc.field_71439_g.func_184218_aH()) {
-            NoSlowDown.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketPlayerDigging(CPacketPlayerDigging.Action.ABORT_DESTROY_BLOCK, new BlockPos(Math.floor(NoSlowDown.mc.field_71439_g.field_70165_t), Math.floor(NoSlowDown.mc.field_71439_g.field_70163_u), Math.floor(NoSlowDown.mc.field_71439_g.field_70161_v)), EnumFacing.DOWN));
+        if (event.getPacket() instanceof CPacketPlayer && this.strict.getValue().booleanValue() && this.noSlow.getValue().booleanValue() && NoSlowDown.mc.player.isHandActive() && !NoSlowDown.mc.player.isRiding()) {
+            NoSlowDown.mc.player.connection.sendPacket((Packet)new CPacketPlayerDigging(CPacketPlayerDigging.Action.ABORT_DESTROY_BLOCK, new BlockPos(Math.floor(NoSlowDown.mc.player.posX), Math.floor(NoSlowDown.mc.player.posY), Math.floor(NoSlowDown.mc.player.posZ)), EnumFacing.DOWN));
         }
     }
 }

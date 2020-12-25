@@ -61,7 +61,7 @@ extends Module {
     @Override
     public void onUpdate() {
         if (this.customFov.getValue().booleanValue()) {
-            ClickGui.mc.field_71474_y.func_74304_a(GameSettings.Options.FOV, this.fov.getValue().floatValue());
+            ClickGui.mc.gameSettings.setOptionFloatValue(GameSettings.Options.FOV, this.fov.getValue().floatValue());
         }
     }
 
@@ -78,7 +78,7 @@ extends Module {
 
     @Override
     public void onEnable() {
-        mc.func_147108_a((GuiScreen)new PhobosGui());
+        mc.displayGuiScreen((GuiScreen)new PhobosGui());
     }
 
     @Override
@@ -93,15 +93,15 @@ extends Module {
 
     @Override
     public void onTick() {
-        if (!(ClickGui.mc.field_71462_r instanceof PhobosGui)) {
+        if (!(ClickGui.mc.currentScreen instanceof PhobosGui)) {
             this.disable();
         }
     }
 
     @Override
     public void onDisable() {
-        if (ClickGui.mc.field_71462_r instanceof PhobosGui) {
-            mc.func_147108_a(null);
+        if (ClickGui.mc.currentScreen instanceof PhobosGui) {
+            mc.displayGuiScreen(null);
         }
     }
 }

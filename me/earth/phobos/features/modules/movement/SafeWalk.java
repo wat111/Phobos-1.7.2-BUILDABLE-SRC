@@ -26,7 +26,7 @@ extends Module {
             double x = event.getX();
             double y = event.getY();
             double z = event.getZ();
-            if (SafeWalk.mc.field_71439_g.field_70122_E) {
+            if (SafeWalk.mc.player.onGround) {
                 double increment = 0.05;
                 while (x != 0.0 && this.isOffsetBBEmpty(x, -1.0, 0.0)) {
                     if (x < increment && x >= -increment) {
@@ -70,8 +70,8 @@ extends Module {
     }
 
     public boolean isOffsetBBEmpty(double offsetX, double offsetY, double offsetZ) {
-        EntityPlayerSP playerSP = SafeWalk.mc.field_71439_g;
-        return SafeWalk.mc.field_71441_e.func_184144_a((Entity)playerSP, playerSP.func_174813_aQ().func_72317_d(offsetX, offsetY, offsetZ)).isEmpty();
+        EntityPlayerSP playerSP = SafeWalk.mc.player;
+        return SafeWalk.mc.world.getCollisionBoxes((Entity)playerSP, playerSP.getEntityBoundingBox().offset(offsetX, offsetY, offsetZ)).isEmpty();
     }
 }
 

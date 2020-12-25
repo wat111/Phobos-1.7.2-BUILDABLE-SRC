@@ -32,7 +32,7 @@ extends Module {
 
     @SubscribeEvent(receiveCanceled=true)
     public void onPacketSend(PacketEvent.Send event) {
-        if (this.noPing.getValue().booleanValue() && Logger.mc.field_71462_r instanceof GuiMultiplayer) {
+        if (this.noPing.getValue().booleanValue() && Logger.mc.currentScreen instanceof GuiMultiplayer) {
             return;
         }
         if (this.packets.getValue() == Packets.OUTGOING || this.packets.getValue() == Packets.ALL) {
@@ -46,7 +46,7 @@ extends Module {
 
     @SubscribeEvent(receiveCanceled=true)
     public void onPacketReceive(PacketEvent.Receive event) {
-        if (this.noPing.getValue().booleanValue() && Logger.mc.field_71462_r instanceof GuiMultiplayer) {
+        if (this.noPing.getValue().booleanValue() && Logger.mc.currentScreen instanceof GuiMultiplayer) {
             return;
         }
         if (this.packets.getValue() == Packets.INCOMING || this.packets.getValue() == Packets.ALL) {
@@ -68,7 +68,7 @@ extends Module {
                         if (!field.isAccessible()) {
                             field.setAccessible(true);
                         }
-                        System.out.println(StringUtils.func_76338_a((String)("      " + field.getType().getSimpleName() + " " + field.getName() + " : " + field.get(packet))));
+                        System.out.println(StringUtils.stripControlCodes((String)("      " + field.getType().getSimpleName() + " " + field.getName() + " : " + field.get(packet))));
                     }
                 }
             }

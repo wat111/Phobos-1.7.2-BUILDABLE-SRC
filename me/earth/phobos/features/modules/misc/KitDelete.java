@@ -28,10 +28,10 @@ extends Module {
     @Override
     public void onTick() {
         if (this.deleteKey.getValue().getKey() != -1) {
-            if (KitDelete.mc.field_71462_r instanceof GuiContainer && Keyboard.isKeyDown((int)this.deleteKey.getValue().getKey())) {
-                Slot slot = ((GuiContainer)KitDelete.mc.field_71462_r).getSlotUnderMouse();
+            if (KitDelete.mc.currentScreen instanceof GuiContainer && Keyboard.isKeyDown((int)this.deleteKey.getValue().getKey())) {
+                Slot slot = ((GuiContainer)KitDelete.mc.currentScreen).getSlotUnderMouse();
                 if (slot != null && !this.keyDown) {
-                    KitDelete.mc.field_71439_g.func_71165_d("/deleteukit " + TextUtil.stripColor(slot.func_75211_c().func_82833_r()));
+                    KitDelete.mc.player.sendChatMessage("/deleteukit " + TextUtil.stripColor(slot.getStack().getDisplayName()));
                     this.keyDown = true;
                 }
             } else if (this.keyDown) {

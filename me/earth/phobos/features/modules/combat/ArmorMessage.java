@@ -37,35 +37,35 @@ extends Module {
 
     @SubscribeEvent
     public void onUpdate(UpdateWalkingPlayerEvent event) {
-        for (EntityPlayer player : ArmorMessage.mc.field_71441_e.field_73010_i) {
-            if (player.field_70128_L || !Phobos.friendManager.isFriend(player.func_70005_c_())) continue;
-            for (ItemStack stack : player.field_71071_by.field_70460_b) {
-                if (stack == ItemStack.field_190927_a) continue;
+        for (EntityPlayer player : ArmorMessage.mc.world.playerEntities) {
+            if (player.isDead || !Phobos.friendManager.isFriend(player.getName())) continue;
+            for (ItemStack stack : player.inventory.armorInventory) {
+                if (stack == ItemStack.EMPTY) continue;
                 int percent = DamageUtil.getRoundedDamage(stack);
                 if (percent <= this.armorThreshhold.getValue() && !this.entityArmorArraylist.containsKey((Object)player)) {
-                    if (player == ArmorMessage.mc.field_71439_g && this.notifySelf.getValue().booleanValue()) {
-                        Command.sendMessage(player.func_70005_c_() + " watchout your " + this.getArmorPieceName(stack) + " low dura!", this.notification.getValue());
+                    if (player == ArmorMessage.mc.player && this.notifySelf.getValue().booleanValue()) {
+                        Command.sendMessage(player.getName() + " watchout your " + this.getArmorPieceName(stack) + " low dura!", this.notification.getValue());
                     } else {
-                        ArmorMessage.mc.field_71439_g.func_71165_d("/msg " + player.func_70005_c_() + " " + player.func_70005_c_() + " watchout your " + this.getArmorPieceName(stack) + " low dura!");
+                        ArmorMessage.mc.player.sendChatMessage("/msg " + player.getName() + " " + player.getName() + " watchout your " + this.getArmorPieceName(stack) + " low dura!");
                     }
-                    this.entityArmorArraylist.put(player, player.field_71071_by.field_70460_b.indexOf((Object)stack));
+                    this.entityArmorArraylist.put(player, player.inventory.armorInventory.indexOf((Object)stack));
                 }
-                if (!this.entityArmorArraylist.containsKey((Object)player) || this.entityArmorArraylist.get((Object)player).intValue() != player.field_71071_by.field_70460_b.indexOf((Object)stack) || percent <= this.armorThreshhold.getValue()) continue;
+                if (!this.entityArmorArraylist.containsKey((Object)player) || this.entityArmorArraylist.get((Object)player).intValue() != player.inventory.armorInventory.indexOf((Object)stack) || percent <= this.armorThreshhold.getValue()) continue;
                 this.entityArmorArraylist.remove((Object)player);
             }
-            if (!this.entityArmorArraylist.containsKey((Object)player) || player.field_71071_by.field_70460_b.get(this.entityArmorArraylist.get((Object)player).intValue()) != ItemStack.field_190927_a) continue;
+            if (!this.entityArmorArraylist.containsKey((Object)player) || player.inventory.armorInventory.get(this.entityArmorArraylist.get((Object)player).intValue()) != ItemStack.EMPTY) continue;
             this.entityArmorArraylist.remove((Object)player);
         }
     }
 
     private String getArmorPieceName(ItemStack stack) {
-        if (stack.func_77973_b() == Items.field_151161_ac || stack.func_77973_b() == Items.field_151169_ag || stack.func_77973_b() == Items.field_151028_Y || stack.func_77973_b() == Items.field_151020_U || stack.func_77973_b() == Items.field_151024_Q) {
+        if (stack.getItem() == Items.DIAMOND_HELMET || stack.getItem() == Items.GOLDEN_HELMET || stack.getItem() == Items.IRON_HELMET || stack.getItem() == Items.CHAINMAIL_HELMET || stack.getItem() == Items.LEATHER_HELMET) {
             return "helmet is";
         }
-        if (stack.func_77973_b() == Items.field_151163_ad || stack.func_77973_b() == Items.field_151171_ah || stack.func_77973_b() == Items.field_151030_Z || stack.func_77973_b() == Items.field_151023_V || stack.func_77973_b() == Items.field_151027_R) {
+        if (stack.getItem() == Items.DIAMOND_CHESTPLATE || stack.getItem() == Items.GOLDEN_CHESTPLATE || stack.getItem() == Items.IRON_CHESTPLATE || stack.getItem() == Items.CHAINMAIL_CHESTPLATE || stack.getItem() == Items.LEATHER_CHESTPLATE) {
             return "chestplate is";
         }
-        if (stack.func_77973_b() == Items.field_151173_ae || stack.func_77973_b() == Items.field_151149_ai || stack.func_77973_b() == Items.field_151165_aa || stack.func_77973_b() == Items.field_151022_W || stack.func_77973_b() == Items.field_151026_S) {
+        if (stack.getItem() == Items.DIAMOND_LEGGINGS || stack.getItem() == Items.GOLDEN_LEGGINGS || stack.getItem() == Items.IRON_LEGGINGS || stack.getItem() == Items.CHAINMAIL_LEGGINGS || stack.getItem() == Items.LEATHER_LEGGINGS) {
             return "leggings are";
         }
         return "boots are";

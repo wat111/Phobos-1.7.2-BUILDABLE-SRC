@@ -13,8 +13,8 @@ extends Module {
 
     @Override
     public void onUpdate() {
-        if (StairSpeed.mc.field_71439_g.field_70122_E && StairSpeed.mc.field_71439_g.field_70163_u - Math.floor(StairSpeed.mc.field_71439_g.field_70163_u) > 0.0 && StairSpeed.mc.field_71439_g.field_191988_bg != 0.0f) {
-            StairSpeed.mc.field_71439_g.func_70664_aZ();
+        if (StairSpeed.mc.player.onGround && StairSpeed.mc.player.posY - Math.floor(StairSpeed.mc.player.posY) > 0.0 && StairSpeed.mc.player.moveForward != 0.0f) {
+            StairSpeed.mc.player.jump();
         }
     }
 }

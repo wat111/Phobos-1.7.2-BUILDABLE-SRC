@@ -70,9 +70,9 @@ extends Module {
     private Entity getDeadlyCrystal() {
         Entity bestcrystal = null;
         float highestDamage = 0.0f;
-        for (Entity crystal : AntiCrystal.mc.field_71441_e.field_72996_f) {
+        for (Entity crystal : AntiCrystal.mc.world.loadedEntityList) {
             float damage;
-            if (!(crystal instanceof EntityEnderCrystal) || AntiCrystal.mc.field_71439_g.func_70068_e(crystal) > 169.0 || (damage = DamageUtil.calculateDamage(crystal, (Entity)AntiCrystal.mc.field_71439_g)) < this.minDmg.getValue().floatValue()) continue;
+            if (!(crystal instanceof EntityEnderCrystal) || AntiCrystal.mc.player.getDistanceSq(crystal) > 169.0 || (damage = DamageUtil.calculateDamage(crystal, (Entity)AntiCrystal.mc.player)) < this.minDmg.getValue().floatValue()) continue;
             if (bestcrystal == null) {
                 bestcrystal = crystal;
                 highestDamage = damage;
@@ -87,9 +87,9 @@ extends Module {
 
     private int getSafetyCrystals(Entity deadlyCrystal) {
         int count = 0;
-        for (Entity entity : AntiCrystal.mc.field_71441_e.field_72996_f) {
+        for (Entity entity : AntiCrystal.mc.world.loadedEntityList) {
             float damage;
-            if (entity instanceof EntityEnderCrystal || (damage = DamageUtil.calculateDamage(entity, (Entity)AntiCrystal.mc.field_71439_g)) > 2.0f || deadlyCrystal.func_70068_e(entity) > 144.0) continue;
+            if (entity instanceof EntityEnderCrystal || (damage = DamageUtil.calculateDamage(entity, (Entity)AntiCrystal.mc.player)) > 2.0f || deadlyCrystal.getDistanceSq(entity) > 144.0) continue;
             ++count;
         }
         return count;
@@ -99,14 +99,14 @@ extends Module {
         BlockPos closestPos = null;
         float smallestDamage = 10.0f;
         for (BlockPos pos : BlockUtil.possiblePlacePositions(this.range.getValue().floatValue())) {
-            float damage = DamageUtil.calculateDamage(pos, (Entity)AntiCrystal.mc.field_71439_g);
-            if (damage > 2.0f || deadlyCrystal.func_174818_b(pos) > 144.0 || AntiCrystal.mc.field_71439_g.func_174818_b(pos) >= MathUtil.square(this.wallsRange.getValue().floatValue()) && BlockUtil.rayTracePlaceCheck(pos, true, 1.0f)) continue;
+            float damage = DamageUtil.calculateDamage(pos, (Entity)AntiCrystal.mc.player);
+            if (damage > 2.0f || deadlyCrystal.getDistanceSq(pos) > 144.0 || AntiCrystal.mc.player.getDistanceSq(pos) >= MathUtil.square(this.wallsRange.getValue().floatValue()) && BlockUtil.rayTracePlaceCheck(pos, true, 1.0f)) continue;
             if (closestPos == null) {
                 smallestDamage = damage;
                 closestPos = pos;
                 continue;
             }
-            if (!(damage < smallestDamage) && (damage != smallestDamage || !(AntiCrystal.mc.field_71439_g.func_174818_b(pos) < AntiCrystal.mc.field_71439_g.func_174818_b(closestPos)))) continue;
+            if (!(damage < smallestDamage) && (damage != smallestDamage || !(AntiCrystal.mc.player.getDistanceSq(pos) < AntiCrystal.mc.player.getDistanceSq(closestPos)))) continue;
             smallestDamage = damage;
             closestPos = pos;
         }
@@ -118,8 +118,8 @@ extends Module {
         if (event.getStage() == 0 && this.rotate.getValue().booleanValue() && this.rotating) {
             if (event.getPacket() instanceof CPacketPlayer) {
                 CPacketPlayer packet = (CPacketPlayer)event.getPacket();
-                packet.field_149476_e = this.yaw;
-                packet.field_149473_f = this.pitch;
+                packet.yaw = this.yaw;
+                packet.pitch = this.pitch;
             }
             ++this.rotationPacketsSpoofed;
             if (this.rotationPacketsSpoofed >= this.rotations.getValue()) {
@@ -149,15 +149,15 @@ extends Module {
     public Entity getBreakTarget(Entity deadlyCrystal) {
         Entity smallestCrystal = null;
         float smallestDamage = 10.0f;
-        for (Entity entity : AntiCrystal.mc.field_71441_e.field_72996_f) {
+        for (Entity entity : AntiCrystal.mc.world.loadedEntityList) {
             float damage;
-            if (!(entity instanceof EntityEnderCrystal) || (damage = DamageUtil.calculateDamage(entity, (Entity)AntiCrystal.mc.field_71439_g)) > this.selfDmg.getValue().floatValue() || entity.func_70068_e(deadlyCrystal) > 144.0 || AntiCrystal.mc.field_71439_g.func_70068_e(entity) > MathUtil.square(this.wallsRange.getValue().floatValue()) && EntityUtil.rayTraceHitCheck(entity, true)) continue;
+            if (!(entity instanceof EntityEnderCrystal) || (damage = DamageUtil.calculateDamage(entity, (Entity)AntiCrystal.mc.player)) > this.selfDmg.getValue().floatValue() || entity.getDistanceSq(deadlyCrystal) > 144.0 || AntiCrystal.mc.player.getDistanceSq(entity) > MathUtil.square(this.wallsRange.getValue().floatValue()) && EntityUtil.rayTraceHitCheck(entity, true)) continue;
             if (smallestCrystal == null) {
                 smallestCrystal = entity;
                 smallestDamage = damage;
                 continue;
             }
-            if (!(damage < smallestDamage) && (smallestDamage != damage || !(AntiCrystal.mc.field_71439_g.func_70068_e(entity) < AntiCrystal.mc.field_71439_g.func_70068_e(smallestCrystal)))) continue;
+            if (!(damage < smallestDamage) && (smallestDamage != damage || !(AntiCrystal.mc.player.getDistanceSq(entity) < AntiCrystal.mc.player.getDistanceSq(smallestCrystal)))) continue;
             smallestCrystal = entity;
             smallestDamage = damage;
         }
@@ -166,9 +166,9 @@ extends Module {
 
     private void placeCrystal(Entity deadlyCrystal) {
         boolean offhand;
-        boolean bl = offhand = AntiCrystal.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_185158_cP;
-        if (this.timer.passedMs(this.placeDelay.getValue().intValue()) && (this.switcher.getValue().booleanValue() || AntiCrystal.mc.field_71439_g.func_184614_ca().func_77973_b() == Items.field_185158_cP || offhand) && !this.targets.isEmpty() && this.getSafetyCrystals(deadlyCrystal) <= this.wasteAmount.getValue()) {
-            if (this.switcher.getValue().booleanValue() && AntiCrystal.mc.field_71439_g.func_184614_ca().func_77973_b() != Items.field_185158_cP && !offhand) {
+        boolean bl = offhand = AntiCrystal.mc.player.getHeldItemOffhand().getItem() == Items.END_CRYSTAL;
+        if (this.timer.passedMs(this.placeDelay.getValue().intValue()) && (this.switcher.getValue().booleanValue() || AntiCrystal.mc.player.getHeldItemMainhand().getItem() == Items.END_CRYSTAL || offhand) && !this.targets.isEmpty() && this.getSafetyCrystals(deadlyCrystal) <= this.wasteAmount.getValue()) {
+            if (this.switcher.getValue().booleanValue() && AntiCrystal.mc.player.getHeldItemMainhand().getItem() != Items.END_CRYSTAL && !offhand) {
                 this.doSwitch();
             }
             this.rotateToPos(this.targets.get(this.targets.size() - 1));
@@ -179,21 +179,21 @@ extends Module {
 
     private void doSwitch() {
         int crystalSlot;
-        int n = crystalSlot = AntiCrystal.mc.field_71439_g.func_184614_ca().func_77973_b() == Items.field_185158_cP ? AntiCrystal.mc.field_71439_g.field_71071_by.field_70461_c : -1;
+        int n = crystalSlot = AntiCrystal.mc.player.getHeldItemMainhand().getItem() == Items.END_CRYSTAL ? AntiCrystal.mc.player.inventory.currentItem : -1;
         if (crystalSlot == -1) {
             for (int l = 0; l < 9; ++l) {
-                if (AntiCrystal.mc.field_71439_g.field_71071_by.func_70301_a(l).func_77973_b() != Items.field_185158_cP) continue;
+                if (AntiCrystal.mc.player.inventory.getStackInSlot(l).getItem() != Items.END_CRYSTAL) continue;
                 crystalSlot = l;
                 break;
             }
         }
         if (crystalSlot != -1) {
-            AntiCrystal.mc.field_71439_g.field_71071_by.field_70461_c = crystalSlot;
+            AntiCrystal.mc.player.inventory.currentItem = crystalSlot;
         }
     }
 
     private void breakCrystal() {
-        if (this.breakTimer.passedMs(this.breakDelay.getValue().intValue()) && this.breakTarget != null && DamageUtil.canBreakWeakness((EntityPlayer)AntiCrystal.mc.field_71439_g)) {
+        if (this.breakTimer.passedMs(this.breakDelay.getValue().intValue()) && this.breakTarget != null && DamageUtil.canBreakWeakness((EntityPlayer)AntiCrystal.mc.player)) {
             this.rotateTo(this.breakTarget);
             EntityUtil.attackEntity(this.breakTarget, this.packet.getValue(), true);
             this.breakTimer.reset();
@@ -203,7 +203,7 @@ extends Module {
 
     private void rotateTo(Entity entity) {
         if (this.rotate.getValue().booleanValue()) {
-            float[] angle = MathUtil.calcAngle(AntiCrystal.mc.field_71439_g.func_174824_e(mc.func_184121_ak()), entity.func_174791_d());
+            float[] angle = MathUtil.calcAngle(AntiCrystal.mc.player.getPositionEyes(mc.getRenderPartialTicks()), entity.getPositionVector());
             this.yaw = angle[0];
             this.pitch = angle[1];
             this.rotating = true;
@@ -212,7 +212,7 @@ extends Module {
 
     private void rotateToPos(BlockPos pos) {
         if (this.rotate.getValue().booleanValue()) {
-            float[] angle = MathUtil.calcAngle(AntiCrystal.mc.field_71439_g.func_174824_e(mc.func_184121_ak()), new Vec3d((double)((float)pos.func_177958_n() + 0.5f), (double)((float)pos.func_177956_o() - 0.5f), (double)((float)pos.func_177952_p() + 0.5f)));
+            float[] angle = MathUtil.calcAngle(AntiCrystal.mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d((double)((float)pos.getX() + 0.5f), (double)((float)pos.getY() - 0.5f), (double)((float)pos.getZ() + 0.5f)));
             this.yaw = angle[0];
             this.pitch = angle[1];
             this.rotating = true;

@@ -26,11 +26,11 @@ public abstract class MixinEntity {
     }
 
     @Shadow
-    public abstract int func_82145_z();
+    public abstract int getMaxInPortalTime();
 
     @Redirect(method={"onEntityUpdate"}, at=@At(value="INVOKE", target="Lnet/minecraft/entity/Entity;getMaxInPortalTime()I"))
     private int getMaxInPortalTimeHook(Entity entity) {
-        int time = this.func_82145_z();
+        int time = this.getMaxInPortalTime();
         if (BetterPortals.getInstance().isOn() && BetterPortals.getInstance().fastPortal.getValue().booleanValue()) {
             time = BetterPortals.getInstance().time.getValue();
         }
@@ -42,10 +42,10 @@ public abstract class MixinEntity {
         PushEvent event = new PushEvent(entity, x, y, z, true);
         MinecraftForge.EVENT_BUS.post((Event)event);
         if (!event.isCanceled()) {
-            entity.field_70159_w += event.x;
-            entity.field_70181_x += event.y;
-            entity.field_70179_y += event.z;
-            entity.field_70160_al = event.airbone;
+            entity.motionX += event.x;
+            entity.motionY += event.y;
+            entity.motionZ += event.z;
+            entity.isAirBorne = event.airbone;
         }
     }
 }

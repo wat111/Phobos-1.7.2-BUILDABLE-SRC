@@ -29,9 +29,9 @@ extends Module {
         CPacketPlayer packet;
         if (event.getPacket() instanceof CPacketPlayer) {
             packet = (CPacketPlayer)event.getPacket();
-            boolean bl = packet.field_149474_g = NoHunger.mc.field_71439_g.field_70143_R >= 0.0f || NoHunger.mc.field_71442_b.field_78778_j;
+            boolean bl = packet.onGround = NoHunger.mc.player.fallDistance >= 0.0f || NoHunger.mc.playerController.isHittingBlock;
         }
-        if (this.cancelSprint.getValue().booleanValue() && event.getPacket() instanceof CPacketEntityAction && ((packet = (CPacketEntityAction)event.getPacket()).func_180764_b() == CPacketEntityAction.Action.START_SPRINTING || packet.func_180764_b() == CPacketEntityAction.Action.STOP_SPRINTING)) {
+        if (this.cancelSprint.getValue().booleanValue() && event.getPacket() instanceof CPacketEntityAction && ((packet = (CPacketEntityAction)event.getPacket()).getAction() == CPacketEntityAction.Action.START_SPRINTING || packet.getAction() == CPacketEntityAction.Action.STOP_SPRINTING)) {
             event.setCanceled(true);
         }
     }

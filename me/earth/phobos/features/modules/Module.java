@@ -207,12 +207,12 @@ extends Feature {
             this.module.offset = (float)Module.this.renderer.getStringWidth(text) / HUD.getInstance().animationHorizontalTime.getValue().floatValue();
             this.module.vOffset = (float)Module.this.renderer.getFontHeight() / HUD.getInstance().animationVerticalTime.getValue().floatValue();
             if (this.module.isEnabled() && HUD.getInstance().animationHorizontalTime.getValue() != 1) {
-                if (this.module.arrayListOffset > this.module.offset && Util.mc.field_71441_e != null) {
+                if (this.module.arrayListOffset > this.module.offset && Util.mc.world != null) {
                     this.module.arrayListOffset -= this.module.offset;
                     this.module.sliding = true;
                 }
             } else if (this.module.isDisabled() && HUD.getInstance().animationHorizontalTime.getValue() != 1) {
-                if (this.module.arrayListOffset < (float)Module.this.renderer.getStringWidth(text) && Util.mc.field_71441_e != null) {
+                if (this.module.arrayListOffset < (float)Module.this.renderer.getStringWidth(text) && Util.mc.world != null) {
                     this.module.arrayListOffset += this.module.offset;
                     this.module.sliding = true;
                 } else {

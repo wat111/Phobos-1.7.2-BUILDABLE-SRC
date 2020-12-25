@@ -353,7 +353,7 @@ extends Module {
             return "\u00a7aSwitch";
         }
         if (target != null) {
-            return target.func_70005_c_();
+            return target.getName();
         }
         return null;
     }
@@ -363,22 +363,22 @@ extends Module {
         CPacketUseEntity packet;
         if (event.getStage() == 0 && this.rotate.getValue() != Rotate.OFF && this.rotating && this.eventMode.getValue() != 2 && event.getPacket() instanceof CPacketPlayer) {
             packet = (CPacketPlayer)event.getPacket();
-            packet.field_149476_e = this.yaw;
-            packet.field_149473_f = this.pitch;
+            packet.yaw = this.yaw;
+            packet.pitch = this.pitch;
             ++this.rotationPacketsSpoofed;
             if (this.rotationPacketsSpoofed >= this.rotations.getValue()) {
                 this.rotating = false;
                 this.rotationPacketsSpoofed = 0;
             }
         }
-        if (event.getStage() == 0 && event.getPacket() instanceof CPacketUseEntity && (packet = (CPacketUseEntity)event.getPacket()).func_149565_c() == CPacketUseEntity.Action.ATTACK && packet.func_149564_a((World)AutoCrystal.mc.field_71441_e) instanceof EntityEnderCrystal) {
+        if (event.getStage() == 0 && event.getPacket() instanceof CPacketUseEntity && (packet = (CPacketUseEntity)event.getPacket()).getAction() == CPacketUseEntity.Action.ATTACK && packet.getEntityFromWorld((World)AutoCrystal.mc.world) instanceof EntityEnderCrystal) {
             if (this.attackOppositeHand.getValue().booleanValue()) {
-                boolean offhand = AutoCrystal.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_185158_cP;
-                EnumHand enumHand = packet.field_186995_d = offhand ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
+                boolean offhand = AutoCrystal.mc.player.getHeldItemOffhand().getItem() == Items.END_CRYSTAL;
+                EnumHand enumHand = packet.hand = offhand ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
             }
             if (this.removeAfterAttack.getValue().booleanValue()) {
-                packet.func_149564_a((World)AutoCrystal.mc.field_71441_e).func_70106_y();
-                AutoCrystal.mc.field_71441_e.func_73028_b(packet.field_149567_a);
+                packet.getEntityFromWorld((World)AutoCrystal.mc.world).setDead();
+                AutoCrystal.mc.world.removeEntityFromWorld(packet.entityId);
             }
         }
     }
@@ -392,35 +392,35 @@ extends Module {
         if (!this.justRender.getValue().booleanValue() && this.explode.getValue().booleanValue() && this.instant.getValue().booleanValue() && event.getPacket() instanceof SPacketSpawnObject && (this.syncedCrystalPos == null || !this.syncedFeetPlace.getValue().booleanValue() || this.damageSync.getValue() == DamageSync.NONE)) {
             BlockPos pos;
             SPacketSpawnObject packet2 = (SPacketSpawnObject)event.getPacket();
-            if (packet2.func_148993_l() == 51 && AutoCrystal.mc.field_71439_g.func_174818_b(pos = new BlockPos(packet2.func_186880_c(), packet2.func_186882_d(), packet2.func_186881_e())) + (double)this.predictOffset.getValue().floatValue() <= MathUtil.square(this.breakRange.getValue().floatValue()) && (this.instantTimer.getValue() == PredictTimer.NONE || this.instantTimer.getValue() == PredictTimer.BREAK && this.breakTimer.passedMs(this.breakDelay.getValue().intValue()) || this.instantTimer.getValue() == PredictTimer.PREDICT && this.predictTimer.passedMs(this.predictDelay.getValue().intValue()))) {
-                if (this.predictSlowBreak(pos.func_177977_b())) {
+            if (packet2.getType() == 51 && AutoCrystal.mc.player.getDistanceSq(pos = new BlockPos(packet2.getX(), packet2.getY(), packet2.getZ())) + (double)this.predictOffset.getValue().floatValue() <= MathUtil.square(this.breakRange.getValue().floatValue()) && (this.instantTimer.getValue() == PredictTimer.NONE || this.instantTimer.getValue() == PredictTimer.BREAK && this.breakTimer.passedMs(this.breakDelay.getValue().intValue()) || this.instantTimer.getValue() == PredictTimer.PREDICT && this.predictTimer.passedMs(this.predictDelay.getValue().intValue()))) {
+                if (this.predictSlowBreak(pos.down())) {
                     return;
                 }
                 if (this.predictFriendDmg.getValue().booleanValue() && (this.antiFriendPop.getValue() == AntiFriendPop.BREAK || this.antiFriendPop.getValue() == AntiFriendPop.ALL) && this.isRightThread()) {
-                    for (EntityPlayer friend : AutoCrystal.mc.field_71441_e.field_73010_i) {
-                        if (friend == null || AutoCrystal.mc.field_71439_g.equals((Object)friend) || friend.func_174818_b(pos) > MathUtil.square(this.range.getValue().floatValue() + this.placeRange.getValue().floatValue()) || !Phobos.friendManager.isFriend(friend) || !((double)DamageUtil.calculateDamage(pos, (Entity)friend) > (double)EntityUtil.getHealth((Entity)friend) + 0.5)) continue;
+                    for (EntityPlayer friend : AutoCrystal.mc.world.playerEntities) {
+                        if (friend == null || AutoCrystal.mc.player.equals((Object)friend) || friend.getDistanceSq(pos) > MathUtil.square(this.range.getValue().floatValue() + this.placeRange.getValue().floatValue()) || !Phobos.friendManager.isFriend(friend) || !((double)DamageUtil.calculateDamage(pos, (Entity)friend) > (double)EntityUtil.getHealth((Entity)friend) + 0.5)) continue;
                         return;
                     }
                 }
-                if (placedPos.contains((Object)pos.func_177977_b())) {
+                if (placedPos.contains((Object)pos.down())) {
                     float selfDamage;
-                    if (this.isRightThread() && this.superSafe.getValue() != false ? DamageUtil.canTakeDamage(this.suicide.getValue()) && ((double)(selfDamage = DamageUtil.calculateDamage(pos, (Entity)AutoCrystal.mc.field_71439_g)) - 0.5 > (double)EntityUtil.getHealth((Entity)AutoCrystal.mc.field_71439_g) || selfDamage > this.maxSelfBreak.getValue().floatValue()) : this.superSafe.getValue() != false) {
+                    if (this.isRightThread() && this.superSafe.getValue() != false ? DamageUtil.canTakeDamage(this.suicide.getValue()) && ((double)(selfDamage = DamageUtil.calculateDamage(pos, (Entity)AutoCrystal.mc.player)) - 0.5 > (double)EntityUtil.getHealth((Entity)AutoCrystal.mc.player) || selfDamage > this.maxSelfBreak.getValue().floatValue()) : this.superSafe.getValue() != false) {
                         return;
                     }
-                    this.attackCrystalPredict(packet2.func_149001_c(), pos);
+                    this.attackCrystalPredict(packet2.getEntityID(), pos);
                 } else if (this.predictCalc.getValue().booleanValue() && this.isRightThread()) {
                     float selfDamage = -1.0f;
                     if (DamageUtil.canTakeDamage(this.suicide.getValue())) {
-                        selfDamage = DamageUtil.calculateDamage(pos, (Entity)AutoCrystal.mc.field_71439_g);
+                        selfDamage = DamageUtil.calculateDamage(pos, (Entity)AutoCrystal.mc.player);
                     }
-                    if ((double)selfDamage + 0.5 < (double)EntityUtil.getHealth((Entity)AutoCrystal.mc.field_71439_g) && selfDamage <= this.maxSelfBreak.getValue().floatValue()) {
-                        for (EntityPlayer player : AutoCrystal.mc.field_71441_e.field_73010_i) {
+                    if ((double)selfDamage + 0.5 < (double)EntityUtil.getHealth((Entity)AutoCrystal.mc.player) && selfDamage <= this.maxSelfBreak.getValue().floatValue()) {
+                        for (EntityPlayer player : AutoCrystal.mc.world.playerEntities) {
                             float damage;
-                            if (!(player.func_174818_b(pos) <= MathUtil.square(this.range.getValue().floatValue())) || !EntityUtil.isValid((Entity)player, this.range.getValue().floatValue() + this.breakRange.getValue().floatValue()) || this.antiNaked.getValue().booleanValue() && DamageUtil.isNaked(player) || !((damage = DamageUtil.calculateDamage(pos, (Entity)player)) > selfDamage || damage > this.minDamage.getValue().floatValue() && !DamageUtil.canTakeDamage(this.suicide.getValue())) && !(damage > EntityUtil.getHealth((Entity)player))) continue;
+                            if (!(player.getDistanceSq(pos) <= MathUtil.square(this.range.getValue().floatValue())) || !EntityUtil.isValid((Entity)player, this.range.getValue().floatValue() + this.breakRange.getValue().floatValue()) || this.antiNaked.getValue().booleanValue() && DamageUtil.isNaked(player) || !((damage = DamageUtil.calculateDamage(pos, (Entity)player)) > selfDamage || damage > this.minDamage.getValue().floatValue() && !DamageUtil.canTakeDamage(this.suicide.getValue())) && !(damage > EntityUtil.getHealth((Entity)player))) continue;
                             if (this.predictRotate.getValue().booleanValue() && this.eventMode.getValue() != 2 && (this.rotate.getValue() == Rotate.BREAK || this.rotate.getValue() == Rotate.ALL)) {
                                 this.rotateToPos(pos);
                             }
-                            this.attackCrystalPredict(packet2.func_149001_c(), pos);
+                            this.attackCrystalPredict(packet2.getEntityID(), pos);
                             break;
                         }
                     }
@@ -428,30 +428,30 @@ extends Module {
             }
         } else if (!this.soundConfirm.getValue().booleanValue() && event.getPacket() instanceof SPacketExplosion) {
             SPacketExplosion packet3 = (SPacketExplosion)event.getPacket();
-            BlockPos pos = new BlockPos(packet3.func_149148_f(), packet3.func_149143_g(), packet3.func_149145_h()).func_177977_b();
+            BlockPos pos = new BlockPos(packet3.getX(), packet3.getY(), packet3.getZ()).down();
             this.removePos(pos);
         } else if (event.getPacket() instanceof SPacketDestroyEntities) {
             SPacketDestroyEntities packet4 = (SPacketDestroyEntities)event.getPacket();
-            for (int id : packet4.func_149098_c()) {
-                Entity entity = AutoCrystal.mc.field_71441_e.func_73045_a(id);
+            for (int id : packet4.getEntityIDs()) {
+                Entity entity = AutoCrystal.mc.world.getEntityByID(id);
                 if (!(entity instanceof EntityEnderCrystal)) continue;
-                brokenPos.remove((Object)new BlockPos(entity.func_174791_d()).func_177977_b());
-                placedPos.remove((Object)new BlockPos(entity.func_174791_d()).func_177977_b());
+                brokenPos.remove((Object)new BlockPos(entity.getPositionVector()).down());
+                placedPos.remove((Object)new BlockPos(entity.getPositionVector()).down());
             }
         } else if (event.getPacket() instanceof SPacketEntityStatus) {
             SPacketEntityStatus packet5 = (SPacketEntityStatus)event.getPacket();
-            if (packet5.func_149160_c() == 35 && packet5.func_149161_a((World)AutoCrystal.mc.field_71441_e) instanceof EntityPlayer) {
-                this.totemPops.put((EntityPlayer)packet5.func_149161_a((World)AutoCrystal.mc.field_71441_e), new Timer().reset());
+            if (packet5.getOpCode() == 35 && packet5.getEntity((World)AutoCrystal.mc.world) instanceof EntityPlayer) {
+                this.totemPops.put((EntityPlayer)packet5.getEntity((World)AutoCrystal.mc.world), new Timer().reset());
             }
-        } else if (event.getPacket() instanceof SPacketSoundEffect && (packet = (SPacketSoundEffect)event.getPacket()).func_186977_b() == SoundCategory.BLOCKS && packet.func_186978_a() == SoundEvents.field_187539_bB) {
-            BlockPos pos = new BlockPos(packet.func_149207_d(), packet.func_149211_e(), packet.func_149210_f());
+        } else if (event.getPacket() instanceof SPacketSoundEffect && (packet = (SPacketSoundEffect)event.getPacket()).getCategory() == SoundCategory.BLOCKS && packet.getSound() == SoundEvents.ENTITY_GENERIC_EXPLODE) {
+            BlockPos pos = new BlockPos(packet.getX(), packet.getY(), packet.getZ());
             if (this.sound.getValue().booleanValue() || this.threadMode.getValue() == ThreadMode.SOUND) {
                 NoSoundLag.removeEntities(packet, this.soundRange.getValue().floatValue());
             }
             if (this.soundConfirm.getValue().booleanValue()) {
                 this.removePos(pos);
             }
-            if (this.threadMode.getValue() == ThreadMode.SOUND && this.isRightThread() && AutoCrystal.mc.field_71439_g != null && AutoCrystal.mc.field_71439_g.func_174818_b(pos) < MathUtil.square(this.soundPlayer.getValue().floatValue())) {
+            if (this.threadMode.getValue() == ThreadMode.SOUND && this.isRightThread() && AutoCrystal.mc.player != null && AutoCrystal.mc.player.getDistanceSq(pos) < MathUtil.square(this.soundPlayer.getValue().floatValue())) {
                 this.handlePool(true);
             }
         }
@@ -465,7 +465,7 @@ extends Module {
     }
 
     private boolean isRightThread() {
-        return mc.func_152345_ab() || !Phobos.eventManager.ticksOngoing() && !this.threadOngoing.get();
+        return mc.isCallingFromMinecraftThread() || !Phobos.eventManager.ticksOngoing() && !this.threadOngoing.get();
     }
 
     private void attackCrystalPredict(int entityID, BlockPos pos) {
@@ -473,11 +473,11 @@ extends Module {
             this.rotateToPos(pos);
         }
         CPacketUseEntity attackPacket = new CPacketUseEntity();
-        attackPacket.field_149567_a = entityID;
-        attackPacket.field_149566_b = CPacketUseEntity.Action.ATTACK;
-        AutoCrystal.mc.field_71439_g.field_71174_a.func_147297_a((Packet)attackPacket);
+        attackPacket.entityId = entityID;
+        attackPacket.action = CPacketUseEntity.Action.ATTACK;
+        AutoCrystal.mc.player.connection.sendPacket((Packet)attackPacket);
         if (this.breakSwing.getValue().booleanValue()) {
-            AutoCrystal.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketAnimation(EnumHand.MAIN_HAND));
+            AutoCrystal.mc.player.connection.sendPacket((Packet)new CPacketAnimation(EnumHand.MAIN_HAND));
         }
         if (this.resetBreakTimer.getValue().booleanValue()) {
             this.breakTimer.reset();
@@ -507,7 +507,7 @@ extends Module {
 
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent event) {
-        if (Keyboard.getEventKeyState() && !(AutoCrystal.mc.field_71462_r instanceof PhobosGui) && this.switchBind.getValue().getKey() == Keyboard.getEventKey()) {
+        if (Keyboard.getEventKeyState() && !(AutoCrystal.mc.currentScreen instanceof PhobosGui) && this.switchBind.getValue().getKey() == Keyboard.getEventKey()) {
             if (this.switchBack.getValue().booleanValue() && this.offhandSwitch.getValue().booleanValue() && this.offHand) {
                 Offhand module = Phobos.moduleManager.getModuleByClass(Offhand.class);
                 if (module.isOff()) {
@@ -557,9 +557,9 @@ extends Module {
     private void postProcessBreak() {
         while (!this.packetUseEntities.isEmpty()) {
             CPacketUseEntity packet = this.packetUseEntities.poll();
-            AutoCrystal.mc.field_71439_g.field_71174_a.func_147297_a((Packet)packet);
+            AutoCrystal.mc.player.connection.sendPacket((Packet)packet);
             if (this.breakSwing.getValue().booleanValue()) {
-                AutoCrystal.mc.field_71439_g.func_184609_a(EnumHand.MAIN_HAND);
+                AutoCrystal.mc.player.swingArm(EnumHand.MAIN_HAND);
             }
             this.breakTimer.reset();
         }
@@ -658,12 +658,12 @@ extends Module {
             this.renderPos = null;
             this.renderTimer.reset();
         }
-        this.mainHand = AutoCrystal.mc.field_71439_g.func_184614_ca().func_77973_b() == Items.field_185158_cP;
-        this.offHand = AutoCrystal.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_185158_cP;
+        this.mainHand = AutoCrystal.mc.player.getHeldItemMainhand().getItem() == Items.END_CRYSTAL;
+        this.offHand = AutoCrystal.mc.player.getHeldItemOffhand().getItem() == Items.END_CRYSTAL;
         this.currentDamage = 0.0;
         this.placePos = null;
-        if (this.lastSlot != AutoCrystal.mc.field_71439_g.field_71071_by.field_70461_c || AutoTrap.isPlacing || Surround.isPlacing) {
-            this.lastSlot = AutoCrystal.mc.field_71439_g.field_71071_by.field_70461_c;
+        if (this.lastSlot != AutoCrystal.mc.player.inventory.currentItem || AutoTrap.isPlacing || Surround.isPlacing) {
+            this.lastSlot = AutoCrystal.mc.player.inventory.currentItem;
             this.switchTimer.reset();
         }
         if (!this.offHand && !this.mainHand) {
@@ -673,13 +673,13 @@ extends Module {
         if (this.offHand || this.mainHand) {
             this.switching = false;
         }
-        if (!((this.offHand || this.mainHand || this.switchMode.getValue() != Switch.BREAKSLOT || this.switching) && DamageUtil.canBreakWeakness((EntityPlayer)AutoCrystal.mc.field_71439_g) && this.switchTimer.passedMs(this.switchCooldown.getValue().intValue()))) {
+        if (!((this.offHand || this.mainHand || this.switchMode.getValue() != Switch.BREAKSLOT || this.switching) && DamageUtil.canBreakWeakness((EntityPlayer)AutoCrystal.mc.player) && this.switchTimer.passedMs(this.switchCooldown.getValue().intValue()))) {
             this.renderPos = null;
             target = null;
             this.rotating = false;
             return false;
         }
-        if (this.mineSwitch.getValue().booleanValue() && Mouse.isButtonDown((int)0) && (this.switching || this.autoSwitch.getValue() == AutoSwitch.ALWAYS) && Mouse.isButtonDown((int)1) && AutoCrystal.mc.field_71439_g.func_184614_ca().func_77973_b() instanceof ItemPickaxe) {
+        if (this.mineSwitch.getValue().booleanValue() && Mouse.isButtonDown((int)0) && (this.switching || this.autoSwitch.getValue() == AutoSwitch.ALWAYS) && Mouse.isButtonDown((int)1) && AutoCrystal.mc.player.getHeldItemMainhand().getItem() instanceof ItemPickaxe) {
             this.switchItem();
         }
         this.mapCrystals();
@@ -699,9 +699,9 @@ extends Module {
         this.minDmgCount = 0;
         Entity maxCrystal = null;
         float maxDamage = 0.5f;
-        for (Entity entity : AutoCrystal.mc.field_71441_e.field_72996_f) {
-            if (entity.field_70128_L || !(entity instanceof EntityEnderCrystal) || !this.isValid(entity)) continue;
-            if (this.syncedFeetPlace.getValue().booleanValue() && entity.func_180425_c().func_177977_b().equals((Object)this.syncedCrystalPos) && this.damageSync.getValue() != DamageSync.NONE) {
+        for (Entity entity : AutoCrystal.mc.world.loadedEntityList) {
+            if (entity.isDead || !(entity instanceof EntityEnderCrystal) || !this.isValid(entity)) continue;
+            if (this.syncedFeetPlace.getValue().booleanValue() && entity.getPosition().down().equals((Object)this.syncedCrystalPos) && this.damageSync.getValue() != DamageSync.NONE) {
                 ++this.minDmgCount;
                 ++this.crystalCount;
                 if (this.syncCount.getValue().booleanValue()) {
@@ -716,14 +716,14 @@ extends Module {
             boolean countMin = false;
             float selfDamage = -1.0f;
             if (DamageUtil.canTakeDamage(this.suicide.getValue())) {
-                selfDamage = DamageUtil.calculateDamage(entity, (Entity)AutoCrystal.mc.field_71439_g);
+                selfDamage = DamageUtil.calculateDamage(entity, (Entity)AutoCrystal.mc.player);
             }
-            if ((double)selfDamage + 0.5 < (double)EntityUtil.getHealth((Entity)AutoCrystal.mc.field_71439_g) && selfDamage <= this.maxSelfBreak.getValue().floatValue()) {
+            if ((double)selfDamage + 0.5 < (double)EntityUtil.getHealth((Entity)AutoCrystal.mc.player) && selfDamage <= this.maxSelfBreak.getValue().floatValue()) {
                 Entity beforeCrystal = maxCrystal;
                 float beforeDamage = maxDamage;
-                for (EntityPlayer player : AutoCrystal.mc.field_71441_e.field_73010_i) {
+                for (EntityPlayer player : AutoCrystal.mc.world.playerEntities) {
                     float damage;
-                    if (!(player.func_70068_e(entity) <= MathUtil.square(this.range.getValue().floatValue()))) continue;
+                    if (!(player.getDistanceSq(entity) <= MathUtil.square(this.range.getValue().floatValue()))) continue;
                     if (EntityUtil.isValid((Entity)player, this.range.getValue().floatValue() + this.breakRange.getValue().floatValue())) {
                         if (this.antiNaked.getValue().booleanValue() && DamageUtil.isNaked(player) || !((damage = DamageUtil.calculateDamage(entity, (Entity)player)) > selfDamage || damage > this.minDamage.getValue().floatValue() && !DamageUtil.canTakeDamage(this.suicide.getValue())) && !(damage > EntityUtil.getHealth((Entity)player))) continue;
                         if (damage > maxDamage) {
@@ -741,7 +741,7 @@ extends Module {
                         this.crystalMap.put(entity, Float.valueOf(damage));
                         continue;
                     }
-                    if (this.antiFriendPop.getValue() != AntiFriendPop.BREAK && this.antiFriendPop.getValue() != AntiFriendPop.ALL || !Phobos.friendManager.isFriend(player.func_70005_c_()) || !((double)(damage = DamageUtil.calculateDamage(entity, (Entity)player)) > (double)EntityUtil.getHealth((Entity)player) + 0.5)) continue;
+                    if (this.antiFriendPop.getValue() != AntiFriendPop.BREAK && this.antiFriendPop.getValue() != AntiFriendPop.ALL || !Phobos.friendManager.isFriend(player.getName()) || !((double)(damage = DamageUtil.calculateDamage(entity, (Entity)player)) > (double)EntityUtil.getHealth((Entity)player) + 0.5)) continue;
                     maxCrystal = beforeCrystal;
                     maxDamage = beforeDamage;
                     this.crystalMap.remove((Object)entity);
@@ -767,10 +767,10 @@ extends Module {
             return;
         }
         if (this.webAttack.getValue().booleanValue() && this.webPos != null) {
-            if (AutoCrystal.mc.field_71439_g.func_174818_b(this.webPos.func_177984_a()) > MathUtil.square(this.breakRange.getValue().floatValue())) {
+            if (AutoCrystal.mc.player.getDistanceSq(this.webPos.up()) > MathUtil.square(this.breakRange.getValue().floatValue())) {
                 this.webPos = null;
             } else {
-                for (Entity entity : AutoCrystal.mc.field_71441_e.func_72872_a(Entity.class, new AxisAlignedBB(this.webPos.func_177984_a()))) {
+                for (Entity entity : AutoCrystal.mc.world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(this.webPos.up()))) {
                     if (!(entity instanceof EntityEnderCrystal)) continue;
                     this.attackList.add(entity);
                     this.efficientTarget = entity;
@@ -821,7 +821,7 @@ extends Module {
                 if (this.currentDamage >= (double)this.minMinDmg.getValue().floatValue() && (this.offHand || this.mainHand || this.autoSwitch.getValue() != AutoSwitch.NONE) && (this.crystalCount < crystalLimit || this.antiSurround.getValue().booleanValue() && this.lastPos != null && this.lastPos.equals((Object)this.placePos)) && (this.currentDamage > (double)this.minDamage.getValue().floatValue() || this.minDmgCount < crystalLimit) && this.currentDamage >= 1.0 && (DamageUtil.isArmorLow(target, this.minArmor.getValue()) || EntityUtil.getHealth((Entity)target) <= this.facePlace.getValue().floatValue() || this.currentDamage > (double)this.minDamage.getValue().floatValue() || this.shouldHoldFacePlace())) {
                     float damageOffset = this.damageSync.getValue() == DamageSync.BREAK ? this.dropOff.getValue().floatValue() - 5.0f : 0.0f;
                     boolean syncflag = false;
-                    if (this.syncedFeetPlace.getValue().booleanValue() && this.placePos.equals((Object)this.lastPos) && this.isEligableForFeetSync(target, this.placePos) && !this.syncTimer.passedMs(this.damageSyncTime.getValue().intValue()) && target.equals((Object)this.currentSyncTarget) && target.func_180425_c().equals((Object)this.syncedPlayerPos) && this.damageSync.getValue() != DamageSync.NONE) {
+                    if (this.syncedFeetPlace.getValue().booleanValue() && this.placePos.equals((Object)this.lastPos) && this.isEligableForFeetSync(target, this.placePos) && !this.syncTimer.passedMs(this.damageSyncTime.getValue().intValue()) && target.equals((Object)this.currentSyncTarget) && target.getPosition().equals((Object)this.syncedPlayerPos) && this.damageSync.getValue() != DamageSync.NONE) {
                         this.syncedCrystalPos = this.placePos;
                         this.lastDamage = this.currentDamage;
                         if (this.fullSync.getValue().booleanValue()) {
@@ -837,7 +837,7 @@ extends Module {
                         this.renderDamage = this.currentDamage;
                         if (this.switchItem()) {
                             this.currentSyncTarget = target;
-                            this.syncedPlayerPos = target.func_180425_c();
+                            this.syncedPlayerPos = target.getPosition();
                             if (this.foundDoublePop) {
                                 this.totemPops.put(target, new Timer().reset());
                             }
@@ -918,7 +918,7 @@ extends Module {
             this.switching = false;
             return true;
         }
-        if (AutoCrystal.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_185158_cP) {
+        if (AutoCrystal.mc.player.getHeldItemOffhand().getItem() == Items.END_CRYSTAL) {
             this.mainHand = false;
         } else {
             InventoryUtil.switchToHotbarSlot(ItemEndCrystal.class, false);
@@ -941,31 +941,31 @@ extends Module {
         this.foundDoublePop = false;
         BlockPos setToAir = null;
         IBlockState state = null;
-        if (this.webAttack.getValue().booleanValue() && targettedPlayer != null && (web = AutoCrystal.mc.field_71441_e.func_180495_p(playerPos = new BlockPos(targettedPlayer.func_174791_d())).func_177230_c()) == Blocks.field_150321_G) {
+        if (this.webAttack.getValue().booleanValue() && targettedPlayer != null && (web = AutoCrystal.mc.world.getBlockState(playerPos = new BlockPos(targettedPlayer.getPositionVector())).getBlock()) == Blocks.WEB) {
             setToAir = playerPos;
-            state = AutoCrystal.mc.field_71441_e.func_180495_p(playerPos);
-            AutoCrystal.mc.field_71441_e.func_175698_g(playerPos);
+            state = AutoCrystal.mc.world.getBlockState(playerPos);
+            AutoCrystal.mc.world.setBlockToAir(playerPos);
         }
         block0: for (BlockPos pos : BlockUtil.possiblePlacePositions(this.placeRange.getValue().floatValue(), this.antiSurround.getValue(), this.oneDot15.getValue())) {
-            if (!BlockUtil.rayTracePlaceCheck(pos, (this.raytrace.getValue() == Raytrace.PLACE || this.raytrace.getValue() == Raytrace.FULL) && AutoCrystal.mc.field_71439_g.func_174818_b(pos) > MathUtil.square(this.placetrace.getValue().floatValue()), 1.0f)) continue;
+            if (!BlockUtil.rayTracePlaceCheck(pos, (this.raytrace.getValue() == Raytrace.PLACE || this.raytrace.getValue() == Raytrace.FULL) && AutoCrystal.mc.player.getDistanceSq(pos) > MathUtil.square(this.placetrace.getValue().floatValue()), 1.0f)) continue;
             float selfDamage = -1.0f;
             if (DamageUtil.canTakeDamage(this.suicide.getValue())) {
-                selfDamage = DamageUtil.calculateDamage(pos, (Entity)AutoCrystal.mc.field_71439_g);
+                selfDamage = DamageUtil.calculateDamage(pos, (Entity)AutoCrystal.mc.player);
             }
-            if (!((double)selfDamage + 0.5 < (double)EntityUtil.getHealth((Entity)AutoCrystal.mc.field_71439_g)) || !(selfDamage <= this.maxSelfPlace.getValue().floatValue())) continue;
+            if (!((double)selfDamage + 0.5 < (double)EntityUtil.getHealth((Entity)AutoCrystal.mc.player)) || !(selfDamage <= this.maxSelfPlace.getValue().floatValue())) continue;
             if (targettedPlayer != null) {
                 float playerDamage = DamageUtil.calculateDamage(pos, (Entity)targettedPlayer);
                 if (this.calcEvenIfNoDamage.getValue().booleanValue() && (this.antiFriendPop.getValue() == AntiFriendPop.ALL || this.antiFriendPop.getValue() == AntiFriendPop.PLACE)) {
                     boolean friendPop = false;
-                    for (EntityPlayer friend : AutoCrystal.mc.field_71441_e.field_73010_i) {
+                    for (EntityPlayer friend : AutoCrystal.mc.world.playerEntities) {
                         float friendDamage;
-                        if (friend == null || AutoCrystal.mc.field_71439_g.equals((Object)friend) || friend.func_174818_b(pos) > MathUtil.square(this.range.getValue().floatValue() + this.placeRange.getValue().floatValue()) || !Phobos.friendManager.isFriend(friend) || !((double)(friendDamage = DamageUtil.calculateDamage(pos, (Entity)friend)) > (double)EntityUtil.getHealth((Entity)friend) + 0.5)) continue;
+                        if (friend == null || AutoCrystal.mc.player.equals((Object)friend) || friend.getDistanceSq(pos) > MathUtil.square(this.range.getValue().floatValue() + this.placeRange.getValue().floatValue()) || !Phobos.friendManager.isFriend(friend) || !((double)(friendDamage = DamageUtil.calculateDamage(pos, (Entity)friend)) > (double)EntityUtil.getHealth((Entity)friend) + 0.5)) continue;
                         friendPop = true;
                         break;
                     }
                     if (friendPop) continue;
                 }
-                if (this.isDoublePoppable(targettedPlayer, playerDamage) && (currentPos == null || targettedPlayer.func_174818_b(pos) < targettedPlayer.func_174818_b(currentPos))) {
+                if (this.isDoublePoppable(targettedPlayer, playerDamage) && (currentPos == null || targettedPlayer.getDistanceSq(pos) < targettedPlayer.getDistanceSq(currentPos))) {
                     currentTarget = targettedPlayer;
                     maxDamage = playerDamage;
                     currentPos = pos;
@@ -983,12 +983,12 @@ extends Module {
             EntityPlayer currentTargetBefore = currentTarget;
             BlockPos currentPosBefore = currentPos;
             float maxSelfDamageBefore = maxSelfDamage;
-            for (EntityPlayer player : AutoCrystal.mc.field_71441_e.field_73010_i) {
+            for (EntityPlayer player : AutoCrystal.mc.world.playerEntities) {
                 float friendDamage;
                 if (EntityUtil.isValid((Entity)player, this.placeRange.getValue().floatValue() + this.range.getValue().floatValue())) {
                     if (this.antiNaked.getValue().booleanValue() && DamageUtil.isNaked(player)) continue;
                     float playerDamage = DamageUtil.calculateDamage(pos, (Entity)player);
-                    if (this.doublePopOnDamage.getValue().booleanValue() && this.isDoublePoppable(player, playerDamage) && (currentPos == null || player.func_174818_b(pos) < player.func_174818_b(currentPos))) {
+                    if (this.doublePopOnDamage.getValue().booleanValue() && this.isDoublePoppable(player, playerDamage) && (currentPos == null || player.getDistanceSq(pos) < player.getDistanceSq(currentPos))) {
                         currentTarget = player;
                         maxDamage = playerDamage;
                         currentPos = pos;
@@ -1004,7 +1004,7 @@ extends Module {
                     maxSelfDamage = selfDamage;
                     continue;
                 }
-                if (this.antiFriendPop.getValue() != AntiFriendPop.ALL && this.antiFriendPop.getValue() != AntiFriendPop.PLACE || player == null || !(player.func_174818_b(pos) <= MathUtil.square(this.range.getValue().floatValue() + this.placeRange.getValue().floatValue())) || !Phobos.friendManager.isFriend(player) || !((double)(friendDamage = DamageUtil.calculateDamage(pos, (Entity)player)) > (double)EntityUtil.getHealth((Entity)player) + 0.5)) continue;
+                if (this.antiFriendPop.getValue() != AntiFriendPop.ALL && this.antiFriendPop.getValue() != AntiFriendPop.PLACE || player == null || !(player.getDistanceSq(pos) <= MathUtil.square(this.range.getValue().floatValue() + this.placeRange.getValue().floatValue())) || !Phobos.friendManager.isFriend(player) || !((double)(friendDamage = DamageUtil.calculateDamage(pos, (Entity)player)) > (double)EntityUtil.getHealth((Entity)player) + 0.5)) continue;
                 maxDamage = maxDamageBefore;
                 currentTarget = currentTargetBefore;
                 currentPos = currentPosBefore;
@@ -1013,7 +1013,7 @@ extends Module {
             }
         }
         if (setToAir != null) {
-            AutoCrystal.mc.field_71441_e.func_175656_a(setToAir, state);
+            AutoCrystal.mc.world.setBlockState(setToAir, state);
             this.webPos = currentPos;
         }
         target = currentTarget;
@@ -1026,7 +1026,7 @@ extends Module {
             return null;
         }
         EntityPlayer currentTarget = null;
-        for (EntityPlayer player : AutoCrystal.mc.field_71441_e.field_73010_i) {
+        for (EntityPlayer player : AutoCrystal.mc.world.playerEntities) {
             if (EntityUtil.isntValid((Entity)player, this.placeRange.getValue().floatValue() + this.range.getValue().floatValue()) || this.antiNaked.getValue().booleanValue() && DamageUtil.isNaked(player) || unsafe && EntityUtil.isSafe((Entity)player)) continue;
             if (this.minArmor.getValue() > 0 && DamageUtil.isArmorLow(player, this.minArmor.getValue())) {
                 currentTarget = player;
@@ -1036,22 +1036,22 @@ extends Module {
                 currentTarget = player;
                 continue;
             }
-            if (!(AutoCrystal.mc.field_71439_g.func_70068_e((Entity)player) < AutoCrystal.mc.field_71439_g.func_70068_e((Entity)currentTarget))) continue;
+            if (!(AutoCrystal.mc.player.getDistanceSq((Entity)player) < AutoCrystal.mc.player.getDistanceSq((Entity)currentTarget))) continue;
             currentTarget = player;
         }
         if (unsafe && currentTarget == null) {
             return this.getTarget(false);
         }
         if (this.predictPos.getValue().booleanValue() && currentTarget != null) {
-            GameProfile profile = new GameProfile(currentTarget.func_110124_au() == null ? UUID.fromString("8af022c8-b926-41a0-8b79-2b544ff00fcf") : currentTarget.func_110124_au(), currentTarget.func_70005_c_());
-            EntityOtherPlayerMP newTarget = new EntityOtherPlayerMP((World)AutoCrystal.mc.field_71441_e, profile);
+            GameProfile profile = new GameProfile(currentTarget.getUniqueID() == null ? UUID.fromString("8af022c8-b926-41a0-8b79-2b544ff00fcf") : currentTarget.getUniqueID(), currentTarget.getName());
+            EntityOtherPlayerMP newTarget = new EntityOtherPlayerMP((World)AutoCrystal.mc.world, profile);
             Vec3d extrapolatePosition = MathUtil.extrapolatePlayerPosition(currentTarget, this.predictTicks.getValue());
-            newTarget.func_82149_j((Entity)currentTarget);
-            newTarget.field_70165_t = extrapolatePosition.field_72450_a;
-            newTarget.field_70163_u = extrapolatePosition.field_72448_b;
-            newTarget.field_70161_v = extrapolatePosition.field_72449_c;
-            newTarget.func_70606_j(EntityUtil.getHealth((Entity)currentTarget));
-            newTarget.field_71071_by.func_70455_b(currentTarget.field_71071_by);
+            newTarget.copyLocationAndAnglesFrom((Entity)currentTarget);
+            newTarget.posX = extrapolatePosition.x;
+            newTarget.posY = extrapolatePosition.y;
+            newTarget.posZ = extrapolatePosition.z;
+            newTarget.setHealth(EntityUtil.getHealth((Entity)currentTarget));
+            newTarget.inventory.copyInventory(currentTarget.inventory);
             currentTarget = newTarget;
         }
         return currentTarget;
@@ -1095,14 +1095,14 @@ extends Module {
                 this.packetUseEntities.add(new CPacketUseEntity(entity));
             } else {
                 EntityUtil.attackEntity(entity, this.sync.getValue(), this.breakSwing.getValue());
-                brokenPos.add(new BlockPos(entity.func_174791_d()).func_177977_b());
+                brokenPos.add(new BlockPos(entity.getPositionVector()).down());
             }
         }
     }
 
     private void doFakeSwing() {
         if (this.fakeSwing.getValue().booleanValue()) {
-            EntityUtil.swingArmNoPacket(EnumHand.MAIN_HAND, (EntityLivingBase)AutoCrystal.mc.field_71439_g);
+            EntityUtil.swingArmNoPacket(EnumHand.MAIN_HAND, (EntityLivingBase)AutoCrystal.mc.player);
         }
     }
 
@@ -1110,25 +1110,25 @@ extends Module {
         RayTraceResult result;
         if (this.rotate.getValue() != Rotate.OFF && this.eventMode.getValue() != 2 && this.rotating) {
             if (this.didRotation) {
-                AutoCrystal.mc.field_71439_g.field_70125_A = (float)((double)AutoCrystal.mc.field_71439_g.field_70125_A + 4.0E-4);
+                AutoCrystal.mc.player.rotationPitch = (float)((double)AutoCrystal.mc.player.rotationPitch + 4.0E-4);
                 this.didRotation = false;
             } else {
-                AutoCrystal.mc.field_71439_g.field_70125_A = (float)((double)AutoCrystal.mc.field_71439_g.field_70125_A - 4.0E-4);
+                AutoCrystal.mc.player.rotationPitch = (float)((double)AutoCrystal.mc.player.rotationPitch - 4.0E-4);
                 this.didRotation = true;
             }
         }
-        if ((this.offHand || this.mainHand) && this.manual.getValue().booleanValue() && this.manualTimer.passedMs(this.manualBreak.getValue().intValue()) && Mouse.isButtonDown((int)1) && AutoCrystal.mc.field_71439_g.func_184592_cb().func_77973_b() != Items.field_151153_ao && AutoCrystal.mc.field_71439_g.field_71071_by.func_70448_g().func_77973_b() != Items.field_151153_ao && AutoCrystal.mc.field_71439_g.field_71071_by.func_70448_g().func_77973_b() != Items.field_151031_f && AutoCrystal.mc.field_71439_g.field_71071_by.func_70448_g().func_77973_b() != Items.field_151062_by && (result = AutoCrystal.mc.field_71476_x) != null) {
-            switch (result.field_72313_a) {
+        if ((this.offHand || this.mainHand) && this.manual.getValue().booleanValue() && this.manualTimer.passedMs(this.manualBreak.getValue().intValue()) && Mouse.isButtonDown((int)1) && AutoCrystal.mc.player.getHeldItemOffhand().getItem() != Items.GOLDEN_APPLE && AutoCrystal.mc.player.inventory.getCurrentItem().getItem() != Items.GOLDEN_APPLE && AutoCrystal.mc.player.inventory.getCurrentItem().getItem() != Items.BOW && AutoCrystal.mc.player.inventory.getCurrentItem().getItem() != Items.EXPERIENCE_BOTTLE && (result = AutoCrystal.mc.objectMouseOver) != null) {
+            switch (result.typeOfHit) {
                 case ENTITY: {
-                    Entity entity = result.field_72308_g;
+                    Entity entity = result.entityHit;
                     if (!(entity instanceof EntityEnderCrystal)) break;
                     EntityUtil.attackEntity(entity, this.sync.getValue(), this.breakSwing.getValue());
                     this.manualTimer.reset();
                     break;
                 }
                 case BLOCK: {
-                    BlockPos mousePos = AutoCrystal.mc.field_71476_x.func_178782_a().func_177984_a();
-                    for (Entity target : AutoCrystal.mc.field_71441_e.func_72839_b(null, new AxisAlignedBB(mousePos))) {
+                    BlockPos mousePos = AutoCrystal.mc.objectMouseOver.getBlockPos().up();
+                    for (Entity target : AutoCrystal.mc.world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(mousePos))) {
                         if (!(target instanceof EntityEnderCrystal)) continue;
                         EntityUtil.attackEntity(target, this.sync.getValue(), this.breakSwing.getValue());
                         this.manualTimer.reset();
@@ -1149,7 +1149,7 @@ extends Module {
             }
             case BREAK: 
             case ALL: {
-                float[] angle = MathUtil.calcAngle(AutoCrystal.mc.field_71439_g.func_174824_e(mc.func_184121_ak()), entity.func_174791_d());
+                float[] angle = MathUtil.calcAngle(AutoCrystal.mc.player.getPositionEyes(mc.getRenderPartialTicks()), entity.getPositionVector());
                 if (this.eventMode.getValue() == 2 && this.threadMode.getValue() == ThreadMode.NONE) {
                     Phobos.rotationManager.setPlayerRotations(angle[0], angle[1]);
                     break;
@@ -1171,7 +1171,7 @@ extends Module {
             }
             case PLACE: 
             case ALL: {
-                float[] angle = MathUtil.calcAngle(AutoCrystal.mc.field_71439_g.func_174824_e(mc.func_184121_ak()), new Vec3d((double)((float)pos.func_177958_n() + 0.5f), (double)((float)pos.func_177956_o() - 0.5f), (double)((float)pos.func_177952_p() + 0.5f)));
+                float[] angle = MathUtil.calcAngle(AutoCrystal.mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d((double)((float)pos.getX() + 0.5f), (double)((float)pos.getY() - 0.5f), (double)((float)pos.getZ() + 0.5f)));
                 if (this.eventMode.getValue() == 2 && this.threadMode.getValue() == ThreadMode.NONE) {
                     Phobos.rotationManager.setPlayerRotations(angle[0], angle[1]);
                     break;
@@ -1193,15 +1193,15 @@ extends Module {
     }
 
     private boolean isValid(Entity entity) {
-        return entity != null && AutoCrystal.mc.field_71439_g.func_70068_e(entity) <= MathUtil.square(this.breakRange.getValue().floatValue()) && (this.raytrace.getValue() == Raytrace.NONE || this.raytrace.getValue() == Raytrace.PLACE || AutoCrystal.mc.field_71439_g.func_70685_l(entity) || !AutoCrystal.mc.field_71439_g.func_70685_l(entity) && AutoCrystal.mc.field_71439_g.func_70068_e(entity) <= MathUtil.square(this.breaktrace.getValue().floatValue()));
+        return entity != null && AutoCrystal.mc.player.getDistanceSq(entity) <= MathUtil.square(this.breakRange.getValue().floatValue()) && (this.raytrace.getValue() == Raytrace.NONE || this.raytrace.getValue() == Raytrace.PLACE || AutoCrystal.mc.player.canEntityBeSeen(entity) || !AutoCrystal.mc.player.canEntityBeSeen(entity) && AutoCrystal.mc.player.getDistanceSq(entity) <= MathUtil.square(this.breaktrace.getValue().floatValue()));
     }
 
     private boolean isEligableForFeetSync(EntityPlayer player, BlockPos pos) {
         if (this.holySync.getValue().booleanValue()) {
-            BlockPos playerPos = new BlockPos(player.func_174791_d());
+            BlockPos playerPos = new BlockPos(player.getPositionVector());
             for (EnumFacing facing : EnumFacing.values()) {
                 BlockPos holyPos;
-                if (facing == EnumFacing.DOWN || facing == EnumFacing.UP || !pos.equals((Object)(holyPos = playerPos.func_177977_b().func_177972_a(facing)))) continue;
+                if (facing == EnumFacing.DOWN || facing == EnumFacing.UP || !pos.equals((Object)(holyPos = playerPos.down().offset(facing)))) continue;
                 return true;
             }
             return false;

@@ -46,40 +46,40 @@ extends Module {
 
     @SubscribeEvent
     public void onUpdateWalkingPlayer(UpdateWalkingPlayerEvent event) {
-        for (Entity entity : Trails.mc.field_71441_e.field_72996_f) {
+        for (Entity entity : Trails.mc.world.loadedEntityList) {
             if (!(entity instanceof EntityThrowable) && !(entity instanceof EntityArrow)) continue;
             List<Vec3d> vectors = this.renderMap.get((Object)entity) != null ? this.renderMap.get((Object)entity) : new ArrayList<Vec3d>();
-            vectors.add(new Vec3d(entity.field_70165_t, entity.field_70163_u, entity.field_70161_v));
+            vectors.add(new Vec3d(entity.posX, entity.posY, entity.posZ));
             this.renderMap.put(entity, vectors);
         }
     }
 
     @Override
     public void onRender3D(Render3DEvent event) {
-        for (Entity entity : Trails.mc.field_71441_e.field_72996_f) {
+        for (Entity entity : Trails.mc.world.loadedEntityList) {
             if (!this.renderMap.containsKey((Object)entity)) continue;
-            GlStateManager.func_179094_E();
+            GlStateManager.pushMatrix();
             RenderUtil.GLPre(this.lineWidth.getValue().floatValue());
-            GlStateManager.func_179147_l();
-            GlStateManager.func_179090_x();
-            GlStateManager.func_179132_a((boolean)false);
-            GlStateManager.func_179097_i();
-            GlStateManager.func_187428_a((GlStateManager.SourceFactor)GlStateManager.SourceFactor.SRC_ALPHA, (GlStateManager.DestFactor)GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, (GlStateManager.SourceFactor)GlStateManager.SourceFactor.ONE, (GlStateManager.DestFactor)GlStateManager.DestFactor.ZERO);
+            GlStateManager.enableBlend();
+            GlStateManager.disableTexture2D();
+            GlStateManager.depthMask((boolean)false);
+            GlStateManager.disableDepth();
+            GlStateManager.tryBlendFuncSeparate((GlStateManager.SourceFactor)GlStateManager.SourceFactor.SRC_ALPHA, (GlStateManager.DestFactor)GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, (GlStateManager.SourceFactor)GlStateManager.SourceFactor.ONE, (GlStateManager.DestFactor)GlStateManager.DestFactor.ZERO);
             GL11.glColor4f((float)((float)this.red.getValue().intValue() / 255.0f), (float)((float)this.green.getValue().intValue() / 255.0f), (float)((float)this.blue.getValue().intValue() / 255.0f), (float)((float)this.alpha.getValue().intValue() / 255.0f));
             GL11.glLineWidth((float)this.lineWidth.getValue().floatValue());
             GL11.glBegin((int)1);
             for (int i = 0; i < this.renderMap.get((Object)entity).size() - 1; ++i) {
-                GL11.glVertex3d((double)this.renderMap.get((Object)entity).get((int)i).field_72450_a, (double)this.renderMap.get((Object)entity).get((int)i).field_72448_b, (double)this.renderMap.get((Object)entity).get((int)i).field_72449_c);
-                GL11.glVertex3d((double)this.renderMap.get((Object)entity).get((int)(i + 1)).field_72450_a, (double)this.renderMap.get((Object)entity).get((int)(i + 1)).field_72448_b, (double)this.renderMap.get((Object)entity).get((int)(i + 1)).field_72449_c);
+                GL11.glVertex3d((double)this.renderMap.get((Object)entity).get((int)i).x, (double)this.renderMap.get((Object)entity).get((int)i).y, (double)this.renderMap.get((Object)entity).get((int)i).z);
+                GL11.glVertex3d((double)this.renderMap.get((Object)entity).get((int)(i + 1)).x, (double)this.renderMap.get((Object)entity).get((int)(i + 1)).y, (double)this.renderMap.get((Object)entity).get((int)(i + 1)).z);
             }
             GL11.glEnd();
-            GlStateManager.func_179117_G();
-            GlStateManager.func_179126_j();
-            GlStateManager.func_179132_a((boolean)true);
-            GlStateManager.func_179098_w();
-            GlStateManager.func_179084_k();
+            GlStateManager.resetColor();
+            GlStateManager.enableDepth();
+            GlStateManager.depthMask((boolean)true);
+            GlStateManager.enableTexture2D();
+            GlStateManager.disableBlend();
             RenderUtil.GlPost();
-            GlStateManager.func_179121_F();
+            GlStateManager.popMatrix();
         }
     }
 }

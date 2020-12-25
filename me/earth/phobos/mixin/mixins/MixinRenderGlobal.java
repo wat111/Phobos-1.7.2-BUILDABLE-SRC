@@ -28,7 +28,7 @@ public abstract class MixinRenderGlobal {
         if (Speed.getInstance().isOn() && Speed.getInstance().noShake.getValue().booleanValue() && Speed.getInstance().mode.getValue() != Speed.Mode.INSTANT && Speed.getInstance().antiShake) {
             y = Speed.getInstance().startY;
         }
-        chunkRenderContainer.func_178004_a(viewEntityXIn, y, viewEntityZIn);
+        chunkRenderContainer.initialize(viewEntityXIn, y, viewEntityZIn);
     }
 
     @Redirect(method={"renderEntities"}, at=@At(value="INVOKE", target="Lnet/minecraft/client/renderer/entity/RenderManager;setRenderPosition(DDD)V"))
@@ -37,8 +37,8 @@ public abstract class MixinRenderGlobal {
         if (Speed.getInstance().isOn() && Speed.getInstance().noShake.getValue().booleanValue() && Speed.getInstance().mode.getValue() != Speed.Mode.INSTANT && Speed.getInstance().antiShake) {
             y = Speed.getInstance().startY;
         }
-        TileEntityRendererDispatcher.field_147555_c = y;
-        renderManager.func_178628_a(renderPosXIn, y, renderPosZIn);
+        TileEntityRendererDispatcher.staticPlayerY = y;
+        renderManager.setRenderPosition(renderPosXIn, y, renderPosZIn);
     }
 
     @Redirect(method={"drawSelectionBox"}, at=@At(value="INVOKE", target="Lnet/minecraft/util/math/AxisAlignedBB;offset(DDD)Lnet/minecraft/util/math/AxisAlignedBB;"))
@@ -47,7 +47,7 @@ public abstract class MixinRenderGlobal {
         if (Speed.getInstance().isOn() && Speed.getInstance().noShake.getValue().booleanValue() && Speed.getInstance().mode.getValue() != Speed.Mode.INSTANT && Speed.getInstance().antiShake) {
             yIn = Speed.getInstance().startY;
         }
-        return axisAlignedBB.func_72317_d(x, y, z);
+        return axisAlignedBB.offset(x, y, z);
     }
 }
 

@@ -46,57 +46,57 @@ extends Module {
     @Override
     public void onRender3D(Render3DEvent event) {
         if (this.circle.getValue().booleanValue()) {
-            GlStateManager.func_179094_E();
+            GlStateManager.pushMatrix();
             RenderUtil.GLPre(this.lineWidth.getValue().floatValue());
-            GlStateManager.func_179147_l();
-            GlStateManager.func_187441_d((float)3.0f);
-            GlStateManager.func_179090_x();
-            GlStateManager.func_179132_a((boolean)false);
-            GlStateManager.func_179097_i();
-            GlStateManager.func_187428_a((GlStateManager.SourceFactor)GlStateManager.SourceFactor.SRC_ALPHA, (GlStateManager.DestFactor)GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, (GlStateManager.SourceFactor)GlStateManager.SourceFactor.ONE, (GlStateManager.DestFactor)GlStateManager.DestFactor.ZERO);
-            RenderManager renderManager = mc.func_175598_ae();
+            GlStateManager.enableBlend();
+            GlStateManager.glLineWidth((float)3.0f);
+            GlStateManager.disableTexture2D();
+            GlStateManager.depthMask((boolean)false);
+            GlStateManager.disableDepth();
+            GlStateManager.tryBlendFuncSeparate((GlStateManager.SourceFactor)GlStateManager.SourceFactor.SRC_ALPHA, (GlStateManager.DestFactor)GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, (GlStateManager.SourceFactor)GlStateManager.SourceFactor.ONE, (GlStateManager.DestFactor)GlStateManager.DestFactor.ZERO);
+            RenderManager renderManager = mc.getRenderManager();
             Color color = Color.RED;
             ArrayList<Vec3d> hVectors = new ArrayList<Vec3d>();
-            double x = Ranges.mc.field_71439_g.field_70142_S + (Ranges.mc.field_71439_g.field_70165_t - Ranges.mc.field_71439_g.field_70142_S) * (double)event.getPartialTicks() - renderManager.field_78725_b;
-            double y = Ranges.mc.field_71439_g.field_70137_T + (Ranges.mc.field_71439_g.field_70163_u - Ranges.mc.field_71439_g.field_70137_T) * (double)event.getPartialTicks() - renderManager.field_78726_c;
-            double z = Ranges.mc.field_71439_g.field_70136_U + (Ranges.mc.field_71439_g.field_70161_v - Ranges.mc.field_71439_g.field_70136_U) * (double)event.getPartialTicks() - renderManager.field_78723_d;
+            double x = Ranges.mc.player.lastTickPosX + (Ranges.mc.player.posX - Ranges.mc.player.lastTickPosX) * (double)event.getPartialTicks() - renderManager.renderPosX;
+            double y = Ranges.mc.player.lastTickPosY + (Ranges.mc.player.posY - Ranges.mc.player.lastTickPosY) * (double)event.getPartialTicks() - renderManager.renderPosY;
+            double z = Ranges.mc.player.lastTickPosZ + (Ranges.mc.player.posZ - Ranges.mc.player.lastTickPosZ) * (double)event.getPartialTicks() - renderManager.renderPosZ;
             GL11.glColor4f((float)((float)color.getRed() / 255.0f), (float)((float)color.getGreen() / 255.0f), (float)((float)color.getBlue() / 255.0f), (float)((float)color.getAlpha() / 255.0f));
             GL11.glLineWidth((float)this.lineWidth.getValue().floatValue());
             GL11.glBegin((int)1);
             for (int i = 0; i <= 360; ++i) {
                 Vec3d vec = new Vec3d(x + Math.sin((double)i * Math.PI / 180.0) * this.radius.getValue(), y + 0.1, z + Math.cos((double)i * Math.PI / 180.0) * this.radius.getValue());
-                RayTraceResult result = Ranges.mc.field_71441_e.func_147447_a(new Vec3d(x, y + 0.1, z), vec, false, true, false);
+                RayTraceResult result = Ranges.mc.world.rayTraceBlocks(new Vec3d(x, y + 0.1, z), vec, false, true, false);
                 if (result != null && this.raytrace.getValue().booleanValue()) {
-                    hVectors.add(result.field_72307_f);
+                    hVectors.add(result.hitVec);
                     continue;
                 }
                 hVectors.add(vec);
             }
             for (int j = 0; j < hVectors.size() - 1; ++j) {
-                GL11.glVertex3d((double)((Vec3d)hVectors.get((int)j)).field_72450_a, (double)((Vec3d)hVectors.get((int)j)).field_72448_b, (double)((Vec3d)hVectors.get((int)j)).field_72449_c);
-                GL11.glVertex3d((double)((Vec3d)hVectors.get((int)(j + 1))).field_72450_a, (double)((Vec3d)hVectors.get((int)(j + 1))).field_72448_b, (double)((Vec3d)hVectors.get((int)(j + 1))).field_72449_c);
+                GL11.glVertex3d((double)((Vec3d)hVectors.get((int)j)).x, (double)((Vec3d)hVectors.get((int)j)).y, (double)((Vec3d)hVectors.get((int)j)).z);
+                GL11.glVertex3d((double)((Vec3d)hVectors.get((int)(j + 1))).x, (double)((Vec3d)hVectors.get((int)(j + 1))).y, (double)((Vec3d)hVectors.get((int)(j + 1))).z);
             }
             GL11.glEnd();
-            GlStateManager.func_179117_G();
-            GlStateManager.func_179126_j();
-            GlStateManager.func_179132_a((boolean)true);
-            GlStateManager.func_179098_w();
-            GlStateManager.func_179084_k();
+            GlStateManager.resetColor();
+            GlStateManager.enableDepth();
+            GlStateManager.depthMask((boolean)true);
+            GlStateManager.enableTexture2D();
+            GlStateManager.disableBlend();
             RenderUtil.GlPost();
-            GlStateManager.func_179121_F();
+            GlStateManager.popMatrix();
         }
         if (this.hitSpheres.getValue().booleanValue()) {
-            for (EntityPlayer player : Ranges.mc.field_71441_e.field_73010_i) {
-                if (player == null || player.equals((Object)Ranges.mc.field_71439_g) && !this.ownSphere.getValue().booleanValue()) continue;
+            for (EntityPlayer player : Ranges.mc.world.playerEntities) {
+                if (player == null || player.equals((Object)Ranges.mc.player) && !this.ownSphere.getValue().booleanValue()) continue;
                 Vec3d interpolated = EntityUtil.interpolateEntity((Entity)player, event.getPartialTicks());
-                if (Phobos.friendManager.isFriend(player.func_70005_c_())) {
+                if (Phobos.friendManager.isFriend(player.getName())) {
                     GL11.glColor4f((float)0.15f, (float)0.15f, (float)1.0f, (float)1.0f);
-                } else if (Ranges.mc.field_71439_g.func_70032_d((Entity)player) >= 64.0f) {
+                } else if (Ranges.mc.player.getDistance((Entity)player) >= 64.0f) {
                     GL11.glColor4f((float)0.0f, (float)1.0f, (float)0.0f, (float)1.0f);
                 } else {
-                    GL11.glColor4f((float)1.0f, (float)(Ranges.mc.field_71439_g.func_70032_d((Entity)player) / 150.0f), (float)0.0f, (float)1.0f);
+                    GL11.glColor4f((float)1.0f, (float)(Ranges.mc.player.getDistance((Entity)player) / 150.0f), (float)0.0f, (float)1.0f);
                 }
-                RenderUtil.drawSphere(interpolated.field_72450_a, interpolated.field_72448_b, interpolated.field_72449_c, this.radius.getValue().floatValue(), 20, 15);
+                RenderUtil.drawSphere(interpolated.x, interpolated.y, interpolated.z, this.radius.getValue().floatValue(), 20, 15);
             }
         }
     }

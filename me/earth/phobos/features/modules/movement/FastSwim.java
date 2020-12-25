@@ -24,11 +24,11 @@ extends Module {
 
     @SubscribeEvent
     public void onMove(MoveEvent event) {
-        if (FastSwim.mc.field_71439_g.func_180799_ab() && !FastSwim.mc.field_71439_g.field_70122_E) {
+        if (FastSwim.mc.player.isInLava() && !FastSwim.mc.player.onGround) {
             event.setX(event.getX() * this.lavaHorizontal.getValue());
             event.setZ(event.getZ() * this.lavaHorizontal.getValue());
             event.setY(event.getY() * this.lavaVertical.getValue());
-        } else if (FastSwim.mc.field_71439_g.func_70090_H() && !FastSwim.mc.field_71439_g.field_70122_E) {
+        } else if (FastSwim.mc.player.isInWater() && !FastSwim.mc.player.onGround) {
             event.setX(event.getX() * this.waterHorizontal.getValue());
             event.setZ(event.getZ() * this.waterHorizontal.getValue());
             event.setY(event.getY() * this.waterVertical.getValue());

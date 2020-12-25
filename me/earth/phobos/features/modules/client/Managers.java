@@ -67,7 +67,7 @@ extends Module {
     public void onSettingChange(ClientEvent event) {
         if (event.getStage() == 2) {
             if (this.oneChunk.getPlannedValue().booleanValue()) {
-                Managers.mc.field_71474_y.field_151451_c = 1;
+                Managers.mc.gameSettings.renderDistanceChunks = 1;
             }
             if (event.getSetting() != null && this.equals(event.getSetting().getFeature())) {
                 if (event.getSetting().equals(this.holeThread)) {

@@ -46,7 +46,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinEntityPlayerSP
 extends AbstractClientPlayer {
     public MixinEntityPlayerSP(Minecraft p_i47378_1_, World p_i47378_2_, NetHandlerPlayClient p_i47378_3_, StatisticsManager p_i47378_4_, RecipeBook p_i47378_5_) {
-        super(p_i47378_2_, p_i47378_3_.func_175105_e());
+        super(p_i47378_2_, p_i47378_3_.getGameProfile());
     }
 
     @Inject(method={"sendChatMessage"}, at={@At(value="HEAD")}, cancellable=true)
@@ -58,23 +58,23 @@ extends AbstractClientPlayer {
     @Redirect(method={"onLivingUpdate"}, at=@At(value="INVOKE", target="Lnet/minecraft/client/entity/EntityPlayerSP;closeScreen()V"))
     public void closeScreenHook(EntityPlayerSP entityPlayerSP) {
         if (!BetterPortals.getInstance().isOn() || !BetterPortals.getInstance().portalChat.getValue().booleanValue()) {
-            entityPlayerSP.func_71053_j();
+            entityPlayerSP.closeScreen();
         }
     }
 
     @Redirect(method={"onLivingUpdate"}, at=@At(value="INVOKE", target="Lnet/minecraft/client/Minecraft;displayGuiScreen(Lnet/minecraft/client/gui/GuiScreen;)V"))
     public void displayGuiScreenHook(Minecraft mc, GuiScreen screen) {
         if (!BetterPortals.getInstance().isOn() || !BetterPortals.getInstance().portalChat.getValue().booleanValue()) {
-            mc.func_147108_a(screen);
+            mc.displayGuiScreen(screen);
         }
     }
 
     @Redirect(method={"onLivingUpdate"}, at=@At(value="INVOKE", target="Lnet/minecraft/client/entity/EntityPlayerSP;setSprinting(Z)V", ordinal=2))
     public void onLivingUpdate(EntityPlayerSP entityPlayerSP, boolean sprinting) {
-        if (Sprint.getInstance().isOn() && Sprint.getInstance().mode.getValue() == Sprint.Mode.RAGE && (Util.mc.field_71439_g.field_71158_b.field_192832_b != 0.0f || Util.mc.field_71439_g.field_71158_b.field_78902_a != 0.0f)) {
-            entityPlayerSP.func_70031_b(true);
+        if (Sprint.getInstance().isOn() && Sprint.getInstance().mode.getValue() == Sprint.Mode.RAGE && (Util.mc.player.movementInput.moveForward != 0.0f || Util.mc.player.movementInput.moveStrafe != 0.0f)) {
+            entityPlayerSP.setSprinting(true);
         } else {
-            entityPlayerSP.func_70031_b(sprinting);
+            entityPlayerSP.setSprinting(sprinting);
         }
     }
 
@@ -114,7 +114,7 @@ extends AbstractClientPlayer {
         MoveEvent event = new MoveEvent(0, moverType, x, y, z);
         MinecraftForge.EVENT_BUS.post((Event)event);
         if (!event.isCanceled()) {
-            super.func_70091_d(event.getType(), event.getX(), event.getY(), event.getZ());
+            super.move(event.getType(), event.getX(), event.getY(), event.getZ());
         }
     }
 }

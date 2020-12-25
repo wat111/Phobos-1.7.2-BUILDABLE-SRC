@@ -72,7 +72,7 @@ extends Module {
 
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent event) {
-        if (Keyboard.getEventKeyState() && !(AutoArmor.mc.field_71462_r instanceof PhobosGui) && this.elytraBind.getValue().getKey() == Keyboard.getEventKey()) {
+        if (Keyboard.getEventKeyState() && !(AutoArmor.mc.currentScreen instanceof PhobosGui) && this.elytraBind.getValue().getKey() == Keyboard.getEventKey()) {
             this.elytraOn = !this.elytraOn;
         }
     }
@@ -98,7 +98,7 @@ extends Module {
 
     @Override
     public void onTick() {
-        if (AutoArmor.fullNullCheck() || AutoArmor.mc.field_71462_r instanceof GuiContainer && !(AutoArmor.mc.field_71462_r instanceof GuiInventory)) {
+        if (AutoArmor.fullNullCheck() || AutoArmor.mc.currentScreen instanceof GuiContainer && !(AutoArmor.mc.currentScreen instanceof GuiInventory)) {
             return;
         }
         if (this.taskList.isEmpty()) {
@@ -109,37 +109,37 @@ extends Module {
             int slot3;
             ItemStack chest;
             int slot4;
-            if (this.mendingTakeOff.getValue().booleanValue() && InventoryUtil.holdingItem(ItemExpBottle.class) && AutoArmor.mc.field_71474_y.field_74313_G.func_151470_d() && (this.isSafe() || EntityUtil.isSafe((Entity)AutoArmor.mc.field_71439_g, 1, false))) {
+            if (this.mendingTakeOff.getValue().booleanValue() && InventoryUtil.holdingItem(ItemExpBottle.class) && AutoArmor.mc.gameSettings.keyBindUseItem.isKeyDown() && (this.isSafe() || EntityUtil.isSafe((Entity)AutoArmor.mc.player, 1, false))) {
                 int bootDamage;
                 int leggingDamage;
                 int chestDamage;
                 int helmDamage;
-                ItemStack helm = AutoArmor.mc.field_71439_g.field_71069_bz.func_75139_a(5).func_75211_c();
-                if (!helm.field_190928_g && (helmDamage = DamageUtil.getRoundedDamage(helm)) >= this.helmetThreshold.getValue()) {
+                ItemStack helm = AutoArmor.mc.player.inventoryContainer.getSlot(5).getStack();
+                if (!helm.isEmpty && (helmDamage = DamageUtil.getRoundedDamage(helm)) >= this.helmetThreshold.getValue()) {
                     this.takeOffSlot(5);
                 }
-                ItemStack chest2 = AutoArmor.mc.field_71439_g.field_71069_bz.func_75139_a(6).func_75211_c();
-                if (!chest2.field_190928_g && (chestDamage = DamageUtil.getRoundedDamage(chest2)) >= this.chestThreshold.getValue()) {
+                ItemStack chest2 = AutoArmor.mc.player.inventoryContainer.getSlot(6).getStack();
+                if (!chest2.isEmpty && (chestDamage = DamageUtil.getRoundedDamage(chest2)) >= this.chestThreshold.getValue()) {
                     this.takeOffSlot(6);
                 }
-                ItemStack legging2 = AutoArmor.mc.field_71439_g.field_71069_bz.func_75139_a(7).func_75211_c();
-                if (!legging2.field_190928_g && (leggingDamage = DamageUtil.getRoundedDamage(legging2)) >= this.legThreshold.getValue()) {
+                ItemStack legging2 = AutoArmor.mc.player.inventoryContainer.getSlot(7).getStack();
+                if (!legging2.isEmpty && (leggingDamage = DamageUtil.getRoundedDamage(legging2)) >= this.legThreshold.getValue()) {
                     this.takeOffSlot(7);
                 }
-                ItemStack feet2 = AutoArmor.mc.field_71439_g.field_71069_bz.func_75139_a(8).func_75211_c();
-                if (!feet2.field_190928_g && (bootDamage = DamageUtil.getRoundedDamage(feet2)) >= this.bootsThreshold.getValue()) {
+                ItemStack feet2 = AutoArmor.mc.player.inventoryContainer.getSlot(8).getStack();
+                if (!feet2.isEmpty && (bootDamage = DamageUtil.getRoundedDamage(feet2)) >= this.bootsThreshold.getValue()) {
                     this.takeOffSlot(8);
                 }
                 return;
             }
-            ItemStack helm = AutoArmor.mc.field_71439_g.field_71069_bz.func_75139_a(5).func_75211_c();
-            if (helm.func_77973_b() == Items.field_190931_a && (slot4 = InventoryUtil.findArmorSlot(EntityEquipmentSlot.HEAD, this.curse.getValue(), XCarry.getInstance().isOn())) != -1) {
+            ItemStack helm = AutoArmor.mc.player.inventoryContainer.getSlot(5).getStack();
+            if (helm.getItem() == Items.AIR && (slot4 = InventoryUtil.findArmorSlot(EntityEquipmentSlot.HEAD, this.curse.getValue(), XCarry.getInstance().isOn())) != -1) {
                 this.getSlotOn(5, slot4);
             }
-            if ((chest = AutoArmor.mc.field_71439_g.field_71069_bz.func_75139_a(6).func_75211_c()).func_77973_b() == Items.field_190931_a) {
+            if ((chest = AutoArmor.mc.player.inventoryContainer.getSlot(6).getStack()).getItem() == Items.AIR) {
                 if (this.taskList.isEmpty()) {
                     if (this.elytraOn && this.elytraTimer.passedMs(500L)) {
-                        int elytraSlot = InventoryUtil.findItemInventorySlot(Items.field_185160_cR, false, XCarry.getInstance().isOn());
+                        int elytraSlot = InventoryUtil.findItemInventorySlot(Items.ELYTRA, false, XCarry.getInstance().isOn());
                         if (elytraSlot != -1) {
                             if (elytraSlot < 5 && elytraSlot > 1 || !this.shiftClick.getValue().booleanValue()) {
                                 this.taskList.add(new InventoryUtil.Task(elytraSlot));
@@ -156,9 +156,9 @@ extends Module {
                         this.getSlotOn(6, slot3);
                     }
                 }
-            } else if (this.elytraOn && chest.func_77973_b() != Items.field_185160_cR && this.elytraTimer.passedMs(500L)) {
+            } else if (this.elytraOn && chest.getItem() != Items.ELYTRA && this.elytraTimer.passedMs(500L)) {
                 if (this.taskList.isEmpty()) {
-                    slot3 = InventoryUtil.findItemInventorySlot(Items.field_185160_cR, false, XCarry.getInstance().isOn());
+                    slot3 = InventoryUtil.findItemInventorySlot(Items.ELYTRA, false, XCarry.getInstance().isOn());
                     if (slot3 != -1) {
                         this.taskList.add(new InventoryUtil.Task(slot3));
                         this.taskList.add(new InventoryUtil.Task(6));
@@ -169,10 +169,10 @@ extends Module {
                     }
                     this.elytraTimer.reset();
                 }
-            } else if (!this.elytraOn && chest.func_77973_b() == Items.field_185160_cR && this.elytraTimer.passedMs(500L) && this.taskList.isEmpty()) {
-                slot3 = InventoryUtil.findItemInventorySlot((Item)Items.field_151163_ad, false, XCarry.getInstance().isOn());
-                if (slot3 == -1 && (slot3 = InventoryUtil.findItemInventorySlot((Item)Items.field_151030_Z, false, XCarry.getInstance().isOn())) == -1 && (slot3 = InventoryUtil.findItemInventorySlot((Item)Items.field_151171_ah, false, XCarry.getInstance().isOn())) == -1 && (slot3 = InventoryUtil.findItemInventorySlot((Item)Items.field_151023_V, false, XCarry.getInstance().isOn())) == -1) {
-                    slot3 = InventoryUtil.findItemInventorySlot((Item)Items.field_151027_R, false, XCarry.getInstance().isOn());
+            } else if (!this.elytraOn && chest.getItem() == Items.ELYTRA && this.elytraTimer.passedMs(500L) && this.taskList.isEmpty()) {
+                slot3 = InventoryUtil.findItemInventorySlot((Item)Items.DIAMOND_CHESTPLATE, false, XCarry.getInstance().isOn());
+                if (slot3 == -1 && (slot3 = InventoryUtil.findItemInventorySlot((Item)Items.IRON_CHESTPLATE, false, XCarry.getInstance().isOn())) == -1 && (slot3 = InventoryUtil.findItemInventorySlot((Item)Items.GOLDEN_CHESTPLATE, false, XCarry.getInstance().isOn())) == -1 && (slot3 = InventoryUtil.findItemInventorySlot((Item)Items.CHAINMAIL_CHESTPLATE, false, XCarry.getInstance().isOn())) == -1) {
+                    slot3 = InventoryUtil.findItemInventorySlot((Item)Items.LEATHER_CHESTPLATE, false, XCarry.getInstance().isOn());
                 }
                 if (slot3 != -1) {
                     this.taskList.add(new InventoryUtil.Task(slot3));
@@ -184,10 +184,10 @@ extends Module {
                 }
                 this.elytraTimer.reset();
             }
-            if ((legging = AutoArmor.mc.field_71439_g.field_71069_bz.func_75139_a(7).func_75211_c()).func_77973_b() == Items.field_190931_a && (slot2 = InventoryUtil.findArmorSlot(EntityEquipmentSlot.LEGS, this.curse.getValue(), XCarry.getInstance().isOn())) != -1) {
+            if ((legging = AutoArmor.mc.player.inventoryContainer.getSlot(7).getStack()).getItem() == Items.AIR && (slot2 = InventoryUtil.findArmorSlot(EntityEquipmentSlot.LEGS, this.curse.getValue(), XCarry.getInstance().isOn())) != -1) {
                 this.getSlotOn(7, slot2);
             }
-            if ((feet = AutoArmor.mc.field_71439_g.field_71069_bz.func_75139_a(8).func_75211_c()).func_77973_b() == Items.field_190931_a && (slot = InventoryUtil.findArmorSlot(EntityEquipmentSlot.FEET, this.curse.getValue(), XCarry.getInstance().isOn())) != -1) {
+            if ((feet = AutoArmor.mc.player.inventoryContainer.getSlot(8).getStack()).getItem() == Items.AIR && (slot = InventoryUtil.findArmorSlot(EntityEquipmentSlot.FEET, this.curse.getValue(), XCarry.getInstance().isOn())) != -1) {
                 this.getSlotOn(8, slot);
             }
         }
@@ -253,7 +253,7 @@ extends Module {
         if (closest == null) {
             return true;
         }
-        return AutoArmor.mc.field_71439_g.func_70068_e((Entity)closest) >= MathUtil.square(this.closestEnemy.getValue().intValue());
+        return AutoArmor.mc.player.getDistanceSq((Entity)closest) >= MathUtil.square(this.closestEnemy.getValue().intValue());
     }
 }
 

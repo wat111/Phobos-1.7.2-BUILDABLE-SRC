@@ -83,26 +83,26 @@ extends Module {
         int i;
         if (this.items.getValue().booleanValue()) {
             i = 0;
-            for (Entity entity : ESP.mc.field_71441_e.field_72996_f) {
-                if (!(entity instanceof EntityItem) || !(ESP.mc.field_71439_g.func_70068_e(entity) < 2500.0)) continue;
-                interp = EntityUtil.getInterpolatedRenderPos(entity, mc.func_184121_ak());
-                bb = new AxisAlignedBB(entity.func_174813_aQ().field_72340_a - 0.05 - entity.field_70165_t + interp.field_72450_a, entity.func_174813_aQ().field_72338_b - 0.0 - entity.field_70163_u + interp.field_72448_b, entity.func_174813_aQ().field_72339_c - 0.05 - entity.field_70161_v + interp.field_72449_c, entity.func_174813_aQ().field_72336_d + 0.05 - entity.field_70165_t + interp.field_72450_a, entity.func_174813_aQ().field_72337_e + 0.1 - entity.field_70163_u + interp.field_72448_b, entity.func_174813_aQ().field_72334_f + 0.05 - entity.field_70161_v + interp.field_72449_c);
-                GlStateManager.func_179094_E();
-                GlStateManager.func_179147_l();
-                GlStateManager.func_179097_i();
-                GlStateManager.func_179120_a((int)770, (int)771, (int)0, (int)1);
-                GlStateManager.func_179090_x();
-                GlStateManager.func_179132_a((boolean)false);
+            for (Entity entity : ESP.mc.world.loadedEntityList) {
+                if (!(entity instanceof EntityItem) || !(ESP.mc.player.getDistanceSq(entity) < 2500.0)) continue;
+                interp = EntityUtil.getInterpolatedRenderPos(entity, mc.getRenderPartialTicks());
+                bb = new AxisAlignedBB(entity.getEntityBoundingBox().minX - 0.05 - entity.posX + interp.x, entity.getEntityBoundingBox().minY - 0.0 - entity.posY + interp.y, entity.getEntityBoundingBox().minZ - 0.05 - entity.posZ + interp.z, entity.getEntityBoundingBox().maxX + 0.05 - entity.posX + interp.x, entity.getEntityBoundingBox().maxY + 0.1 - entity.posY + interp.y, entity.getEntityBoundingBox().maxZ + 0.05 - entity.posZ + interp.z);
+                GlStateManager.pushMatrix();
+                GlStateManager.enableBlend();
+                GlStateManager.disableDepth();
+                GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)0, (int)1);
+                GlStateManager.disableTexture2D();
+                GlStateManager.depthMask((boolean)false);
                 GL11.glEnable((int)2848);
                 GL11.glHint((int)3154, (int)4354);
                 GL11.glLineWidth((float)1.0f);
-                RenderGlobal.func_189696_b((AxisAlignedBB)bb, (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getRed() / 255.0f : (float)this.red.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getGreen() / 255.0f : (float)this.green.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getBlue() / 255.0f : (float)this.blue.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getAlpha() : (float)this.boxAlpha.getValue().intValue() / 255.0f));
+                RenderGlobal.renderFilledBox((AxisAlignedBB)bb, (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getRed() / 255.0f : (float)this.red.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getGreen() / 255.0f : (float)this.green.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getBlue() / 255.0f : (float)this.blue.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getAlpha() : (float)this.boxAlpha.getValue().intValue() / 255.0f));
                 GL11.glDisable((int)2848);
-                GlStateManager.func_179132_a((boolean)true);
-                GlStateManager.func_179126_j();
-                GlStateManager.func_179098_w();
-                GlStateManager.func_179084_k();
-                GlStateManager.func_179121_F();
+                GlStateManager.depthMask((boolean)true);
+                GlStateManager.enableDepth();
+                GlStateManager.enableTexture2D();
+                GlStateManager.disableBlend();
+                GlStateManager.popMatrix();
                 RenderUtil.drawBlockOutline(bb, this.colorSync.getValue() != false ? Colors.INSTANCE.getCurrentColor() : new Color(this.red.getValue(), this.green.getValue(), this.blue.getValue(), this.alpha.getValue()), 1.0f);
                 if (++i < 50) continue;
                 break;
@@ -110,26 +110,26 @@ extends Module {
         }
         if (this.xporbs.getValue().booleanValue()) {
             i = 0;
-            for (Entity entity : ESP.mc.field_71441_e.field_72996_f) {
-                if (!(entity instanceof EntityXPOrb) || !(ESP.mc.field_71439_g.func_70068_e(entity) < 2500.0)) continue;
-                interp = EntityUtil.getInterpolatedRenderPos(entity, mc.func_184121_ak());
-                bb = new AxisAlignedBB(entity.func_174813_aQ().field_72340_a - 0.05 - entity.field_70165_t + interp.field_72450_a, entity.func_174813_aQ().field_72338_b - 0.0 - entity.field_70163_u + interp.field_72448_b, entity.func_174813_aQ().field_72339_c - 0.05 - entity.field_70161_v + interp.field_72449_c, entity.func_174813_aQ().field_72336_d + 0.05 - entity.field_70165_t + interp.field_72450_a, entity.func_174813_aQ().field_72337_e + 0.1 - entity.field_70163_u + interp.field_72448_b, entity.func_174813_aQ().field_72334_f + 0.05 - entity.field_70161_v + interp.field_72449_c);
-                GlStateManager.func_179094_E();
-                GlStateManager.func_179147_l();
-                GlStateManager.func_179097_i();
-                GlStateManager.func_179120_a((int)770, (int)771, (int)0, (int)1);
-                GlStateManager.func_179090_x();
-                GlStateManager.func_179132_a((boolean)false);
+            for (Entity entity : ESP.mc.world.loadedEntityList) {
+                if (!(entity instanceof EntityXPOrb) || !(ESP.mc.player.getDistanceSq(entity) < 2500.0)) continue;
+                interp = EntityUtil.getInterpolatedRenderPos(entity, mc.getRenderPartialTicks());
+                bb = new AxisAlignedBB(entity.getEntityBoundingBox().minX - 0.05 - entity.posX + interp.x, entity.getEntityBoundingBox().minY - 0.0 - entity.posY + interp.y, entity.getEntityBoundingBox().minZ - 0.05 - entity.posZ + interp.z, entity.getEntityBoundingBox().maxX + 0.05 - entity.posX + interp.x, entity.getEntityBoundingBox().maxY + 0.1 - entity.posY + interp.y, entity.getEntityBoundingBox().maxZ + 0.05 - entity.posZ + interp.z);
+                GlStateManager.pushMatrix();
+                GlStateManager.enableBlend();
+                GlStateManager.disableDepth();
+                GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)0, (int)1);
+                GlStateManager.disableTexture2D();
+                GlStateManager.depthMask((boolean)false);
                 GL11.glEnable((int)2848);
                 GL11.glHint((int)3154, (int)4354);
                 GL11.glLineWidth((float)1.0f);
-                RenderGlobal.func_189696_b((AxisAlignedBB)bb, (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getRed() / 255.0f : (float)this.red.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getGreen() / 255.0f : (float)this.green.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getBlue() / 255.0f : (float)this.blue.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getAlpha() / 255.0f : (float)this.boxAlpha.getValue().intValue() / 255.0f));
+                RenderGlobal.renderFilledBox((AxisAlignedBB)bb, (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getRed() / 255.0f : (float)this.red.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getGreen() / 255.0f : (float)this.green.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getBlue() / 255.0f : (float)this.blue.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getAlpha() / 255.0f : (float)this.boxAlpha.getValue().intValue() / 255.0f));
                 GL11.glDisable((int)2848);
-                GlStateManager.func_179132_a((boolean)true);
-                GlStateManager.func_179126_j();
-                GlStateManager.func_179098_w();
-                GlStateManager.func_179084_k();
-                GlStateManager.func_179121_F();
+                GlStateManager.depthMask((boolean)true);
+                GlStateManager.enableDepth();
+                GlStateManager.enableTexture2D();
+                GlStateManager.disableBlend();
+                GlStateManager.popMatrix();
                 RenderUtil.drawBlockOutline(bb, this.colorSync.getValue() != false ? Colors.INSTANCE.getCurrentColor() : new Color(this.red.getValue(), this.green.getValue(), this.blue.getValue(), this.alpha.getValue()), 1.0f);
                 if (++i < 50) continue;
                 break;
@@ -137,26 +137,26 @@ extends Module {
         }
         if (this.pearl.getValue().booleanValue()) {
             i = 0;
-            for (Entity entity : ESP.mc.field_71441_e.field_72996_f) {
-                if (!(entity instanceof EntityEnderPearl) || !(ESP.mc.field_71439_g.func_70068_e(entity) < 2500.0)) continue;
-                interp = EntityUtil.getInterpolatedRenderPos(entity, mc.func_184121_ak());
-                bb = new AxisAlignedBB(entity.func_174813_aQ().field_72340_a - 0.05 - entity.field_70165_t + interp.field_72450_a, entity.func_174813_aQ().field_72338_b - 0.0 - entity.field_70163_u + interp.field_72448_b, entity.func_174813_aQ().field_72339_c - 0.05 - entity.field_70161_v + interp.field_72449_c, entity.func_174813_aQ().field_72336_d + 0.05 - entity.field_70165_t + interp.field_72450_a, entity.func_174813_aQ().field_72337_e + 0.1 - entity.field_70163_u + interp.field_72448_b, entity.func_174813_aQ().field_72334_f + 0.05 - entity.field_70161_v + interp.field_72449_c);
-                GlStateManager.func_179094_E();
-                GlStateManager.func_179147_l();
-                GlStateManager.func_179097_i();
-                GlStateManager.func_179120_a((int)770, (int)771, (int)0, (int)1);
-                GlStateManager.func_179090_x();
-                GlStateManager.func_179132_a((boolean)false);
+            for (Entity entity : ESP.mc.world.loadedEntityList) {
+                if (!(entity instanceof EntityEnderPearl) || !(ESP.mc.player.getDistanceSq(entity) < 2500.0)) continue;
+                interp = EntityUtil.getInterpolatedRenderPos(entity, mc.getRenderPartialTicks());
+                bb = new AxisAlignedBB(entity.getEntityBoundingBox().minX - 0.05 - entity.posX + interp.x, entity.getEntityBoundingBox().minY - 0.0 - entity.posY + interp.y, entity.getEntityBoundingBox().minZ - 0.05 - entity.posZ + interp.z, entity.getEntityBoundingBox().maxX + 0.05 - entity.posX + interp.x, entity.getEntityBoundingBox().maxY + 0.1 - entity.posY + interp.y, entity.getEntityBoundingBox().maxZ + 0.05 - entity.posZ + interp.z);
+                GlStateManager.pushMatrix();
+                GlStateManager.enableBlend();
+                GlStateManager.disableDepth();
+                GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)0, (int)1);
+                GlStateManager.disableTexture2D();
+                GlStateManager.depthMask((boolean)false);
                 GL11.glEnable((int)2848);
                 GL11.glHint((int)3154, (int)4354);
                 GL11.glLineWidth((float)1.0f);
-                RenderGlobal.func_189696_b((AxisAlignedBB)bb, (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getRed() / 255.0f : (float)this.red.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getGreen() / 255.0f : (float)this.green.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getBlue() / 255.0f : (float)this.blue.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getAlpha() / 255.0f : (float)this.boxAlpha.getValue().intValue() / 255.0f));
+                RenderGlobal.renderFilledBox((AxisAlignedBB)bb, (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getRed() / 255.0f : (float)this.red.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getGreen() / 255.0f : (float)this.green.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getBlue() / 255.0f : (float)this.blue.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getAlpha() / 255.0f : (float)this.boxAlpha.getValue().intValue() / 255.0f));
                 GL11.glDisable((int)2848);
-                GlStateManager.func_179132_a((boolean)true);
-                GlStateManager.func_179126_j();
-                GlStateManager.func_179098_w();
-                GlStateManager.func_179084_k();
-                GlStateManager.func_179121_F();
+                GlStateManager.depthMask((boolean)true);
+                GlStateManager.enableDepth();
+                GlStateManager.enableTexture2D();
+                GlStateManager.disableBlend();
+                GlStateManager.popMatrix();
                 RenderUtil.drawBlockOutline(bb, this.colorSync.getValue() != false ? Colors.INSTANCE.getCurrentColor() : new Color(this.red.getValue(), this.green.getValue(), this.blue.getValue(), this.alpha.getValue()), 1.0f);
                 if (++i < 50) continue;
                 break;
@@ -164,26 +164,26 @@ extends Module {
         }
         if (this.xpbottles.getValue().booleanValue()) {
             i = 0;
-            for (Entity entity : ESP.mc.field_71441_e.field_72996_f) {
-                if (!(entity instanceof EntityExpBottle) || !(ESP.mc.field_71439_g.func_70068_e(entity) < 2500.0)) continue;
-                interp = EntityUtil.getInterpolatedRenderPos(entity, mc.func_184121_ak());
-                bb = new AxisAlignedBB(entity.func_174813_aQ().field_72340_a - 0.05 - entity.field_70165_t + interp.field_72450_a, entity.func_174813_aQ().field_72338_b - 0.0 - entity.field_70163_u + interp.field_72448_b, entity.func_174813_aQ().field_72339_c - 0.05 - entity.field_70161_v + interp.field_72449_c, entity.func_174813_aQ().field_72336_d + 0.05 - entity.field_70165_t + interp.field_72450_a, entity.func_174813_aQ().field_72337_e + 0.1 - entity.field_70163_u + interp.field_72448_b, entity.func_174813_aQ().field_72334_f + 0.05 - entity.field_70161_v + interp.field_72449_c);
-                GlStateManager.func_179094_E();
-                GlStateManager.func_179147_l();
-                GlStateManager.func_179097_i();
-                GlStateManager.func_179120_a((int)770, (int)771, (int)0, (int)1);
-                GlStateManager.func_179090_x();
-                GlStateManager.func_179132_a((boolean)false);
+            for (Entity entity : ESP.mc.world.loadedEntityList) {
+                if (!(entity instanceof EntityExpBottle) || !(ESP.mc.player.getDistanceSq(entity) < 2500.0)) continue;
+                interp = EntityUtil.getInterpolatedRenderPos(entity, mc.getRenderPartialTicks());
+                bb = new AxisAlignedBB(entity.getEntityBoundingBox().minX - 0.05 - entity.posX + interp.x, entity.getEntityBoundingBox().minY - 0.0 - entity.posY + interp.y, entity.getEntityBoundingBox().minZ - 0.05 - entity.posZ + interp.z, entity.getEntityBoundingBox().maxX + 0.05 - entity.posX + interp.x, entity.getEntityBoundingBox().maxY + 0.1 - entity.posY + interp.y, entity.getEntityBoundingBox().maxZ + 0.05 - entity.posZ + interp.z);
+                GlStateManager.pushMatrix();
+                GlStateManager.enableBlend();
+                GlStateManager.disableDepth();
+                GlStateManager.tryBlendFuncSeparate((int)770, (int)771, (int)0, (int)1);
+                GlStateManager.disableTexture2D();
+                GlStateManager.depthMask((boolean)false);
                 GL11.glEnable((int)2848);
                 GL11.glHint((int)3154, (int)4354);
                 GL11.glLineWidth((float)1.0f);
-                RenderGlobal.func_189696_b((AxisAlignedBB)bb, (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getRed() / 255.0f : (float)this.red.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getGreen() / 255.0f : (float)this.green.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getBlue() / 255.0f : (float)this.blue.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getAlpha() / 255.0f : (float)this.boxAlpha.getValue().intValue() / 255.0f));
+                RenderGlobal.renderFilledBox((AxisAlignedBB)bb, (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getRed() / 255.0f : (float)this.red.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getGreen() / 255.0f : (float)this.green.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getBlue() / 255.0f : (float)this.blue.getValue().intValue() / 255.0f), (float)(this.colorSync.getValue() != false ? (float)Colors.INSTANCE.getCurrentColor().getAlpha() / 255.0f : (float)this.boxAlpha.getValue().intValue() / 255.0f));
                 GL11.glDisable((int)2848);
-                GlStateManager.func_179132_a((boolean)true);
-                GlStateManager.func_179126_j();
-                GlStateManager.func_179098_w();
-                GlStateManager.func_179084_k();
-                GlStateManager.func_179121_F();
+                GlStateManager.depthMask((boolean)true);
+                GlStateManager.enableDepth();
+                GlStateManager.enableTexture2D();
+                GlStateManager.disableBlend();
+                GlStateManager.popMatrix();
                 RenderUtil.drawBlockOutline(bb, this.colorSync.getValue() != false ? Colors.INSTANCE.getCurrentColor() : new Color(this.red.getValue(), this.green.getValue(), this.blue.getValue(), this.alpha.getValue()), 1.0f);
                 if (++i < 50) continue;
                 break;
@@ -192,28 +192,28 @@ extends Module {
     }
 
     public void onRenderModel(RenderEntityModelEvent event) {
-        if (event.getStage() != 0 || event.entity == null || event.entity.func_82150_aj() && this.invisibles.getValue() == false || this.self.getValue() == false && event.entity.equals((Object)ESP.mc.field_71439_g) || this.players.getValue() == false && event.entity instanceof EntityPlayer || this.animals.getValue() == false && EntityUtil.isPassive(event.entity) || !this.mobs.getValue().booleanValue() && !EntityUtil.isPassive(event.entity) && !(event.entity instanceof EntityPlayer)) {
+        if (event.getStage() != 0 || event.entity == null || event.entity.isInvisible() && this.invisibles.getValue() == false || this.self.getValue() == false && event.entity.equals((Object)ESP.mc.player) || this.players.getValue() == false && event.entity instanceof EntityPlayer || this.animals.getValue() == false && EntityUtil.isPassive(event.entity) || !this.mobs.getValue().booleanValue() && !EntityUtil.isPassive(event.entity) && !(event.entity instanceof EntityPlayer)) {
             return;
         }
         Color color = this.colorSync.getValue() != false ? Colors.INSTANCE.getCurrentColor() : EntityUtil.getColor(event.entity, this.red.getValue(), this.green.getValue(), this.blue.getValue(), this.alpha.getValue(), this.colorFriends.getValue());
-        boolean fancyGraphics = ESP.mc.field_71474_y.field_74347_j;
-        ESP.mc.field_71474_y.field_74347_j = false;
-        float gamma = ESP.mc.field_71474_y.field_74333_Y;
-        ESP.mc.field_71474_y.field_74333_Y = 10000.0f;
+        boolean fancyGraphics = ESP.mc.gameSettings.fancyGraphics;
+        ESP.mc.gameSettings.fancyGraphics = false;
+        float gamma = ESP.mc.gameSettings.gammaSetting;
+        ESP.mc.gameSettings.gammaSetting = 10000.0f;
         if (!(!this.onTop.getValue().booleanValue() || Chams.getInstance().isEnabled() && Chams.getInstance().colored.getValue().booleanValue())) {
-            event.modelBase.func_78088_a(event.entity, event.limbSwing, event.limbSwingAmount, event.age, event.headYaw, event.headPitch, event.scale);
+            event.modelBase.render(event.entity, event.limbSwing, event.limbSwingAmount, event.age, event.headYaw, event.headPitch, event.scale);
         }
         if (this.mode.getValue() == Mode.OUTLINE) {
             RenderUtil.renderOne(this.lineWidth.getValue().floatValue());
-            event.modelBase.func_78088_a(event.entity, event.limbSwing, event.limbSwingAmount, event.age, event.headYaw, event.headPitch, event.scale);
-            GlStateManager.func_187441_d((float)this.lineWidth.getValue().floatValue());
+            event.modelBase.render(event.entity, event.limbSwing, event.limbSwingAmount, event.age, event.headYaw, event.headPitch, event.scale);
+            GlStateManager.glLineWidth((float)this.lineWidth.getValue().floatValue());
             RenderUtil.renderTwo();
-            event.modelBase.func_78088_a(event.entity, event.limbSwing, event.limbSwingAmount, event.age, event.headYaw, event.headPitch, event.scale);
-            GlStateManager.func_187441_d((float)this.lineWidth.getValue().floatValue());
+            event.modelBase.render(event.entity, event.limbSwing, event.limbSwingAmount, event.age, event.headYaw, event.headPitch, event.scale);
+            GlStateManager.glLineWidth((float)this.lineWidth.getValue().floatValue());
             RenderUtil.renderThree();
             RenderUtil.renderFour(color);
-            event.modelBase.func_78088_a(event.entity, event.limbSwing, event.limbSwingAmount, event.age, event.headYaw, event.headPitch, event.scale);
-            GlStateManager.func_187441_d((float)this.lineWidth.getValue().floatValue());
+            event.modelBase.render(event.entity, event.limbSwing, event.limbSwingAmount, event.age, event.headYaw, event.headPitch, event.scale);
+            GlStateManager.glLineWidth((float)this.lineWidth.getValue().floatValue());
             RenderUtil.renderFive();
         } else {
             GL11.glPushMatrix();
@@ -228,19 +228,19 @@ extends Module {
             GL11.glDisable((int)2929);
             GL11.glEnable((int)2848);
             GL11.glEnable((int)3042);
-            GlStateManager.func_179112_b((int)770, (int)771);
-            GlStateManager.func_179131_c((float)((float)color.getRed() / 255.0f), (float)((float)color.getGreen() / 255.0f), (float)((float)color.getBlue() / 255.0f), (float)((float)color.getAlpha() / 255.0f));
-            GlStateManager.func_187441_d((float)this.lineWidth.getValue().floatValue());
-            event.modelBase.func_78088_a(event.entity, event.limbSwing, event.limbSwingAmount, event.age, event.headYaw, event.headPitch, event.scale);
+            GlStateManager.blendFunc((int)770, (int)771);
+            GlStateManager.color((float)((float)color.getRed() / 255.0f), (float)((float)color.getGreen() / 255.0f), (float)((float)color.getBlue() / 255.0f), (float)((float)color.getAlpha() / 255.0f));
+            GlStateManager.glLineWidth((float)this.lineWidth.getValue().floatValue());
+            event.modelBase.render(event.entity, event.limbSwing, event.limbSwingAmount, event.age, event.headYaw, event.headPitch, event.scale);
             GL11.glPopAttrib();
             GL11.glPopMatrix();
         }
         if (!(this.onTop.getValue().booleanValue() || Chams.getInstance().isEnabled() && Chams.getInstance().colored.getValue().booleanValue())) {
-            event.modelBase.func_78088_a(event.entity, event.limbSwing, event.limbSwingAmount, event.age, event.headYaw, event.headPitch, event.scale);
+            event.modelBase.render(event.entity, event.limbSwing, event.limbSwingAmount, event.age, event.headYaw, event.headPitch, event.scale);
         }
         try {
-            ESP.mc.field_71474_y.field_74347_j = fancyGraphics;
-            ESP.mc.field_71474_y.field_74333_Y = gamma;
+            ESP.mc.gameSettings.fancyGraphics = fancyGraphics;
+            ESP.mc.gameSettings.gammaSetting = gamma;
         }
         catch (Exception exception) {
             // empty catch block

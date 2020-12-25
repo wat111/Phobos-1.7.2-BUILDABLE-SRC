@@ -93,9 +93,9 @@ extends Module {
     @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent event) {
         if (event.getGui() == null && this.secretClose.getValue().booleanValue() && this.rotation.getValue().booleanValue()) {
-            this.pos = new BlockPos(Bypass.mc.field_71439_g.func_174791_d());
-            this.yaw = Bypass.mc.field_71439_g.field_70177_z;
-            this.pitch = Bypass.mc.field_71439_g.field_70125_A;
+            this.pos = new BlockPos(Bypass.mc.player.getPositionVector());
+            this.yaw = Bypass.mc.player.rotationYaw;
+            this.pitch = Bypass.mc.player.rotationPitch;
             this.rotate = true;
         }
     }
@@ -107,8 +107,8 @@ extends Module {
                 event.setCanceled(true);
             } else if (event.getPacket() instanceof CPacketPlayer && this.rotation.getValue().booleanValue() && this.rotate) {
                 CPacketPlayer packet = (CPacketPlayer)event.getPacket();
-                packet.field_149476_e = this.yaw;
-                packet.field_149473_f = this.pitch;
+                packet.yaw = this.yaw;
+                packet.pitch = this.pitch;
             }
         }
         if (this.packets.getValue().booleanValue() && this.limitSwing.getValue().booleanValue() && event.getPacket() instanceof CPacketAnimation) {
@@ -125,14 +125,14 @@ extends Module {
             SPacketEntityMetadata MetadataPacket;
             if (event.getPacket() instanceof SPacketSetSlot) {
                 SPacketSetSlot packet = (SPacketSetSlot)event.getPacket();
-                if (packet.func_149173_d() == 6) {
+                if (packet.getSlot() == 6) {
                     event.setCanceled(true);
                 }
-                if (!this.allow_ghost.getValue().booleanValue() && packet.func_149174_e().func_77973_b().equals((Object)Items.field_185160_cR)) {
+                if (!this.allow_ghost.getValue().booleanValue() && packet.getStack().getItem().equals((Object)Items.ELYTRA)) {
                     event.setCanceled(true);
                 }
             }
-            if (this.cancel_close.getValue().booleanValue() && Bypass.mc.field_71439_g.func_184613_cA() && event.getPacket() instanceof SPacketEntityMetadata && (MetadataPacket = (SPacketEntityMetadata)event.getPacket()).func_149375_d() == Bypass.mc.field_71439_g.func_145782_y()) {
+            if (this.cancel_close.getValue().booleanValue() && Bypass.mc.player.isElytraFlying() && event.getPacket() instanceof SPacketEntityMetadata && (MetadataPacket = (SPacketEntityMetadata)event.getPacket()).getEntityId() == Bypass.mc.player.getEntityId()) {
                 event.setCanceled(true);
             }
         }
@@ -143,17 +143,17 @@ extends Module {
 
     @Override
     public void onTick() {
-        if (this.secretClose.getValue().booleanValue() && this.rotation.getValue().booleanValue() && this.rotate && this.pos != null && Bypass.mc.field_71439_g != null && Bypass.mc.field_71439_g.func_174818_b(this.pos) > 400.0) {
+        if (this.secretClose.getValue().booleanValue() && this.rotation.getValue().booleanValue() && this.rotate && this.pos != null && Bypass.mc.player != null && Bypass.mc.player.getDistanceSq(this.pos) > 400.0) {
             this.rotate = false;
         }
         if (this.elytra.getValue().booleanValue()) {
             if (this.cooldown > 0) {
                 --this.cooldown;
-            } else if (!(Bypass.mc.field_71439_g == null || Bypass.mc.field_71462_r instanceof GuiInventory || Bypass.mc.field_71439_g.field_70122_E && this.discreet.getValue().booleanValue())) {
+            } else if (!(Bypass.mc.player == null || Bypass.mc.currentScreen instanceof GuiInventory || Bypass.mc.player.onGround && this.discreet.getValue().booleanValue())) {
                 for (int i = 0; i < 36; ++i) {
-                    ItemStack item = Bypass.mc.field_71439_g.field_71071_by.func_70301_a(i);
-                    if (!item.func_77973_b().equals((Object)Items.field_185160_cR)) continue;
-                    Bypass.mc.field_71442_b.func_187098_a(0, i < 9 ? i + 36 : i, 0, ClickType.QUICK_MOVE, (EntityPlayer)Bypass.mc.field_71439_g);
+                    ItemStack item = Bypass.mc.player.inventory.getStackInSlot(i);
+                    if (!item.getItem().equals((Object)Items.ELYTRA)) continue;
+                    Bypass.mc.playerController.windowClick(0, i < 9 ? i + 36 : i, 0, ClickType.QUICK_MOVE, (EntityPlayer)Bypass.mc.player);
                     this.cooldown = this.delay.getValue();
                     return;
                 }
@@ -164,8 +164,8 @@ extends Module {
     @Override
     public void onUpdate() {
         this.swingPacket = 0;
-        if (this.elytra.getValue().booleanValue() && this.timer.passedMs(this.reopen_interval.getValue().intValue()) && this.reopen.getValue().booleanValue() && !Bypass.mc.field_71439_g.func_184613_cA() && Bypass.mc.field_71439_g.field_70143_R > 0.0f) {
-            Bypass.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketEntityAction((Entity)Bypass.mc.field_71439_g, CPacketEntityAction.Action.START_FALL_FLYING));
+        if (this.elytra.getValue().booleanValue() && this.timer.passedMs(this.reopen_interval.getValue().intValue()) && this.reopen.getValue().booleanValue() && !Bypass.mc.player.isElytraFlying() && Bypass.mc.player.fallDistance > 0.0f) {
+            Bypass.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)Bypass.mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
         }
     }
 }

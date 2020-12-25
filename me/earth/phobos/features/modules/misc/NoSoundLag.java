@@ -53,31 +53,31 @@ extends Module {
 
     @SubscribeEvent
     public void onPacketReceived(PacketEvent.Receive event) {
-        if (event != null && event.getPacket() != null && NoSoundLag.mc.field_71439_g != null && NoSoundLag.mc.field_71441_e != null && event.getPacket() instanceof SPacketSoundEffect) {
+        if (event != null && event.getPacket() != null && NoSoundLag.mc.player != null && NoSoundLag.mc.world != null && event.getPacket() instanceof SPacketSoundEffect) {
             SPacketSoundEffect packet = (SPacketSoundEffect)event.getPacket();
-            if (this.crystals.getValue().booleanValue() && packet.func_186977_b() == SoundCategory.BLOCKS && packet.func_186978_a() == SoundEvents.field_187539_bB && (AutoCrystal.getInstance().isOff() || !AutoCrystal.getInstance().sound.getValue().booleanValue() && AutoCrystal.getInstance().threadMode.getValue() != AutoCrystal.ThreadMode.SOUND)) {
+            if (this.crystals.getValue().booleanValue() && packet.getCategory() == SoundCategory.BLOCKS && packet.getSound() == SoundEvents.ENTITY_GENERIC_EXPLODE && (AutoCrystal.getInstance().isOff() || !AutoCrystal.getInstance().sound.getValue().booleanValue() && AutoCrystal.getInstance().threadMode.getValue() != AutoCrystal.ThreadMode.SOUND)) {
                 NoSoundLag.removeEntities(packet, this.soundRange.getValue().floatValue());
             }
-            if (BLACKLIST.contains((Object)packet.func_186978_a()) && this.armor.getValue().booleanValue()) {
+            if (BLACKLIST.contains((Object)packet.getSound()) && this.armor.getValue().booleanValue()) {
                 event.setCanceled(true);
             }
         }
     }
 
     public static void removeEntities(SPacketSoundEffect packet, float range) {
-        BlockPos pos = new BlockPos(packet.func_149207_d(), packet.func_149211_e(), packet.func_149210_f());
+        BlockPos pos = new BlockPos(packet.getX(), packet.getY(), packet.getZ());
         ArrayList<Entity> toRemove = new ArrayList<Entity>();
-        for (Entity entity : NoSoundLag.mc.field_71441_e.field_72996_f) {
-            if (!(entity instanceof EntityEnderCrystal) || !(entity.func_174818_b(pos) <= MathUtil.square(range))) continue;
+        for (Entity entity : NoSoundLag.mc.world.loadedEntityList) {
+            if (!(entity instanceof EntityEnderCrystal) || !(entity.getDistanceSq(pos) <= MathUtil.square(range))) continue;
             toRemove.add(entity);
         }
         for (Entity entity : toRemove) {
-            entity.func_70106_y();
+            entity.setDead();
         }
     }
 
     static {
-        BLACKLIST = Sets.newHashSet((Object[])new SoundEvent[]{SoundEvents.field_187719_p, SoundEvents.field_191258_p, SoundEvents.field_187716_o, SoundEvents.field_187725_r, SoundEvents.field_187722_q, SoundEvents.field_187713_n, SoundEvents.field_187728_s});
+        BLACKLIST = Sets.newHashSet((Object[])new SoundEvent[]{SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, SoundEvents.ITEM_ARMOR_EQIIP_ELYTRA, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, SoundEvents.ITEM_ARMOR_EQUIP_IRON, SoundEvents.ITEM_ARMOR_EQUIP_GOLD, SoundEvents.ITEM_ARMOR_EQUIP_CHAIN, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER});
     }
 }
 

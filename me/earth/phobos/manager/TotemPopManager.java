@@ -27,11 +27,11 @@ extends Feature {
             for (EntityPlayer player : this.toAnnounce) {
                 if (player == null) continue;
                 int playerNumber = 0;
-                for (char character : player.func_70005_c_().toCharArray()) {
+                for (char character : player.getName().toCharArray()) {
                     playerNumber += character;
                     playerNumber *= 10;
                 }
-                Command.sendOverwriteMessage("\u00a7c" + player.func_70005_c_() + " popped " + "\u00a7a" + this.getTotemPops(player) + "\u00a7c" + " Totem" + (this.getTotemPops(player) == 1 ? "" : "s") + ".", playerNumber, this.notifications.totemNoti.getValue());
+                Command.sendOverwriteMessage("\u00a7c" + player.getName() + " popped " + "\u00a7a" + this.getTotemPops(player) + "\u00a7c" + " Totem" + (this.getTotemPops(player) == 1 ? "" : "s") + ".", playerNumber, this.notifications.totemNoti.getValue());
                 this.toAnnounce.remove((Object)player);
                 this.notifications.totemAnnounce.reset();
                 break;
@@ -49,20 +49,20 @@ extends Feature {
 
     public void onTotemPop(EntityPlayer player) {
         this.popTotem(player);
-        if (!player.equals((Object)TotemPopManager.mc.field_71439_g)) {
+        if (!player.equals((Object)TotemPopManager.mc.player)) {
             this.toAnnounce.add(player);
             this.notifications.totemAnnounce.reset();
         }
     }
 
     public void onDeath(EntityPlayer player) {
-        if (this.getTotemPops(player) != 0 && !player.equals((Object)TotemPopManager.mc.field_71439_g) && this.notifications.isOn() && this.notifications.totemPops.getValue().booleanValue()) {
+        if (this.getTotemPops(player) != 0 && !player.equals((Object)TotemPopManager.mc.player) && this.notifications.isOn() && this.notifications.totemPops.getValue().booleanValue()) {
             int playerNumber = 0;
-            for (char character : player.func_70005_c_().toCharArray()) {
+            for (char character : player.getName().toCharArray()) {
                 playerNumber += character;
                 playerNumber *= 10;
             }
-            Command.sendOverwriteMessage("\u00a7c" + player.func_70005_c_() + " died after popping " + "\u00a7a" + this.getTotemPops(player) + "\u00a7c" + " Totem" + (this.getTotemPops(player) == 1 ? "" : "s") + ".", playerNumber, this.notifications.totemNoti.getValue());
+            Command.sendOverwriteMessage("\u00a7c" + player.getName() + " died after popping " + "\u00a7a" + this.getTotemPops(player) + "\u00a7c" + " Totem" + (this.getTotemPops(player) == 1 ? "" : "s") + ".", playerNumber, this.notifications.totemNoti.getValue());
             this.toAnnounce.remove((Object)player);
         }
         this.resetPops(player);

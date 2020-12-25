@@ -108,13 +108,13 @@ extends Module {
         if (Surround.fullNullCheck()) {
             this.disable();
         }
-        this.lastHotbarSlot = Surround.mc.field_71439_g.field_71071_by.field_70461_c;
-        this.startPos = EntityUtil.getRoundedBlockPos((Entity)Surround.mc.field_71439_g);
+        this.lastHotbarSlot = Surround.mc.player.inventory.currentItem;
+        this.startPos = EntityUtil.getRoundedBlockPos((Entity)Surround.mc.player);
         if (this.center.getValue().booleanValue() && !Phobos.moduleManager.isModuleEnabled("Freecam")) {
-            if (Surround.mc.field_71441_e.func_180495_p(new BlockPos(Surround.mc.field_71439_g.func_174791_d())).func_177230_c() == Blocks.field_150321_G) {
-                Phobos.positionManager.setPositionPacket(Surround.mc.field_71439_g.field_70165_t, this.startPos.func_177956_o(), Surround.mc.field_71439_g.field_70161_v, true, true, true);
+            if (Surround.mc.world.getBlockState(new BlockPos(Surround.mc.player.getPositionVector())).getBlock() == Blocks.WEB) {
+                Phobos.positionManager.setPositionPacket(Surround.mc.player.posX, this.startPos.getY(), Surround.mc.player.posZ, true, true, true);
             } else {
-                Phobos.positionManager.setPositionPacket((double)this.startPos.func_177958_n() + 0.5, this.startPos.func_177956_o(), (double)this.startPos.func_177952_p() + 0.5, true, true, true);
+                Phobos.positionManager.setPositionPacket((double)this.startPos.getX() + 0.5, this.startPos.getY(), (double)this.startPos.getZ() + 0.5, true, true, true);
             }
         }
         this.retries.clear();
@@ -160,7 +160,7 @@ extends Module {
         if (this.render.getValue().booleanValue() && (this.isSafe == 0 || this.isSafe == 1)) {
             this.placeVectors = this.fuckYou3arthqu4keYourCodeIsGarbage();
             for (BlockPos pos : this.placeVectors) {
-                if (!(Surround.mc.field_71441_e.func_180495_p(pos).func_177230_c() instanceof BlockAir)) continue;
+                if (!(Surround.mc.world.getBlockState(pos).getBlock() instanceof BlockAir)) continue;
                 RenderUtil.drawBoxESP(pos, this.colorSync.getValue() != false ? Colors.INSTANCE.getCurrentColor() : new Color(this.red.getValue(), this.green.getValue(), this.blue.getValue(), this.alpha.getValue()), this.customOutline.getValue(), new Color(this.cRed.getValue(), this.cGreen.getValue(), this.cBlue.getValue(), this.cAlpha.getValue()), this.lineWidth.getValue().floatValue(), this.outline.getValue(), this.box.getValue(), this.boxAlpha.getValue(), false);
             }
         }
@@ -186,13 +186,13 @@ extends Module {
         if (this.check()) {
             return;
         }
-        if (!EntityUtil.isSafe((Entity)Surround.mc.field_71439_g, 0, this.floor.getValue())) {
+        if (!EntityUtil.isSafe((Entity)Surround.mc.player, 0, this.floor.getValue())) {
             this.isSafe = 0;
-            this.placeBlocks(Surround.mc.field_71439_g.func_174791_d(), EntityUtil.getUnsafeBlockArray((Entity)Surround.mc.field_71439_g, 0, this.floor.getValue()), this.helpingBlocks.getValue(), false, false);
-        } else if (!EntityUtil.isSafe((Entity)Surround.mc.field_71439_g, -1, false)) {
+            this.placeBlocks(Surround.mc.player.getPositionVector(), EntityUtil.getUnsafeBlockArray((Entity)Surround.mc.player, 0, this.floor.getValue()), this.helpingBlocks.getValue(), false, false);
+        } else if (!EntityUtil.isSafe((Entity)Surround.mc.player, -1, false)) {
             this.isSafe = 1;
             if (this.antiPedo.getValue().booleanValue()) {
-                this.placeBlocks(Surround.mc.field_71439_g.func_174791_d(), EntityUtil.getUnsafeBlockArray((Entity)Surround.mc.field_71439_g, -1, false), false, false, true);
+                this.placeBlocks(Surround.mc.player.getPositionVector(), EntityUtil.getUnsafeBlockArray((Entity)Surround.mc.player, -1, false), false, false, true);
             }
         } else {
             this.isSafe = 2;
@@ -228,13 +228,13 @@ extends Module {
     private Vec3d areClose(Vec3d[] vec3ds) {
         int matches = 0;
         for (Vec3d vec3d : vec3ds) {
-            for (Vec3d pos : EntityUtil.getUnsafeBlockArray((Entity)Surround.mc.field_71439_g, 0, this.floor.getValue())) {
+            for (Vec3d pos : EntityUtil.getUnsafeBlockArray((Entity)Surround.mc.player, 0, this.floor.getValue())) {
                 if (!vec3d.equals((Object)pos)) continue;
                 ++matches;
             }
         }
         if (matches == 2) {
-            return Surround.mc.field_71439_g.func_174791_d().func_178787_e(vec3ds[0].func_178787_e(vec3ds[1]));
+            return Surround.mc.player.getPositionVector().add(vec3ds[0].add(vec3ds[1]));
         }
         return null;
     }
@@ -247,7 +247,7 @@ extends Module {
             if (isHelping && !this.intelligent.getValue().booleanValue() && ++helpings > 1) {
                 return false;
             }
-            BlockPos position = new BlockPos(pos).func_177963_a(vec3d.field_72450_a, vec3d.field_72448_b, vec3d.field_72449_c);
+            BlockPos position = new BlockPos(pos).add(vec3d.x, vec3d.y, vec3d.z);
             switch (BlockUtil.isPositionPlaceable(position, this.raytrace.getValue())) {
                 case -1: {
                     continue block6;
@@ -260,7 +260,7 @@ extends Module {
                         continue block6;
                     }
                     if (!this.extendMove.getValue().booleanValue() && Phobos.speedManager.getSpeedKpH() != 0.0 || isExtending || this.extenders >= this.extender.getValue()) continue block6;
-                    this.placeBlocks(Surround.mc.field_71439_g.func_174791_d().func_178787_e(vec3d), EntityUtil.getUnsafeBlockArrayFromVec3d(Surround.mc.field_71439_g.func_174791_d().func_178787_e(vec3d), 0, this.floor.getValue()), hasHelpingBlocks, false, true);
+                    this.placeBlocks(Surround.mc.player.getPositionVector().add(vec3d), EntityUtil.getUnsafeBlockArrayFromVec3d(Surround.mc.player.getPositionVector().add(vec3d), 0, this.floor.getValue()), hasHelpingBlocks, false, true);
                     this.extendingBlocks.add(vec3d);
                     ++this.extenders;
                     continue block6;
@@ -285,7 +285,7 @@ extends Module {
         if (Surround.fullNullCheck()) {
             return true;
         }
-        this.offHand = InventoryUtil.isBlock(Surround.mc.field_71439_g.func_184592_cb().func_77973_b(), BlockObsidian.class);
+        this.offHand = InventoryUtil.isBlock(Surround.mc.player.getHeldItemOffhand().getItem(), BlockObsidian.class);
         isPlacing = false;
         this.didPlace = false;
         this.extenders = 1;
@@ -308,15 +308,15 @@ extends Module {
             return true;
         }
         this.isSneaking = EntityUtil.stopSneaking(this.isSneaking);
-        if (Surround.mc.field_71439_g.field_71071_by.field_70461_c != this.lastHotbarSlot && Surround.mc.field_71439_g.field_71071_by.field_70461_c != this.obbySlot && Surround.mc.field_71439_g.field_71071_by.field_70461_c != echestSlot) {
-            this.lastHotbarSlot = Surround.mc.field_71439_g.field_71071_by.field_70461_c;
+        if (Surround.mc.player.inventory.currentItem != this.lastHotbarSlot && Surround.mc.player.inventory.currentItem != this.obbySlot && Surround.mc.player.inventory.currentItem != echestSlot) {
+            this.lastHotbarSlot = Surround.mc.player.inventory.currentItem;
         }
         switch (this.movementMode.getValue()) {
             case NONE: {
                 break;
             }
             case STATIC: {
-                if (!this.startPos.equals((Object)EntityUtil.getRoundedBlockPos((Entity)Surround.mc.field_71439_g))) {
+                if (!this.startPos.equals((Object)EntityUtil.getRoundedBlockPos((Entity)Surround.mc.player))) {
                     this.disable();
                     return true;
                 }
@@ -331,7 +331,7 @@ extends Module {
                 return true;
             }
         }
-        return Phobos.moduleManager.isModuleEnabled("Freecam") || !this.timer.passedMs(this.delay.getValue().intValue()) || this.switchMode.getValue() == InventoryUtil.Switch.NONE && Surround.mc.field_71439_g.field_71071_by.field_70461_c != InventoryUtil.findHotbarBlock(BlockObsidian.class);
+        return Phobos.moduleManager.isModuleEnabled("Freecam") || !this.timer.passedMs(this.delay.getValue().intValue()) || this.switchMode.getValue() == InventoryUtil.Switch.NONE && Surround.mc.player.inventory.currentItem != InventoryUtil.findHotbarBlock(BlockObsidian.class);
     }
 
     private void placeBlock(BlockPos pos) {
@@ -354,9 +354,9 @@ extends Module {
 
     private List<BlockPos> fuckYou3arthqu4keYourCodeIsGarbage() {
         if (this.floor.getValue().booleanValue()) {
-            return Arrays.asList(new BlockPos[]{new BlockPos(Surround.mc.field_71439_g.func_174791_d()).func_177982_a(0, -1, 0), new BlockPos(Surround.mc.field_71439_g.func_174791_d()).func_177982_a(1, 0, 0), new BlockPos(Surround.mc.field_71439_g.func_174791_d()).func_177982_a(-1, 0, 0), new BlockPos(Surround.mc.field_71439_g.func_174791_d()).func_177982_a(0, 0, -1), new BlockPos(Surround.mc.field_71439_g.func_174791_d()).func_177982_a(0, 0, 1)});
+            return Arrays.asList(new BlockPos[]{new BlockPos(Surround.mc.player.getPositionVector()).add(0, -1, 0), new BlockPos(Surround.mc.player.getPositionVector()).add(1, 0, 0), new BlockPos(Surround.mc.player.getPositionVector()).add(-1, 0, 0), new BlockPos(Surround.mc.player.getPositionVector()).add(0, 0, -1), new BlockPos(Surround.mc.player.getPositionVector()).add(0, 0, 1)});
         }
-        return Arrays.asList(new BlockPos[]{new BlockPos(Surround.mc.field_71439_g.func_174791_d()).func_177982_a(1, 0, 0), new BlockPos(Surround.mc.field_71439_g.func_174791_d()).func_177982_a(-1, 0, 0), new BlockPos(Surround.mc.field_71439_g.func_174791_d()).func_177982_a(0, 0, -1), new BlockPos(Surround.mc.field_71439_g.func_174791_d()).func_177982_a(0, 0, 1)});
+        return Arrays.asList(new BlockPos[]{new BlockPos(Surround.mc.player.getPositionVector()).add(1, 0, 0), new BlockPos(Surround.mc.player.getPositionVector()).add(-1, 0, 0), new BlockPos(Surround.mc.player.getPositionVector()).add(0, 0, -1), new BlockPos(Surround.mc.player.getPositionVector()).add(0, 0, 1)});
     }
 
     public static enum MovementMode {

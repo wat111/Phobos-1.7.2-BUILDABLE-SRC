@@ -43,7 +43,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(value={Minecraft.class})
 public abstract class MixinMinecraft {
     @Shadow
-    public abstract void func_147108_a(@Nullable GuiScreen var1);
+    public abstract void displayGuiScreen(@Nullable GuiScreen var1);
 
     @Inject(method={"runTickKeyboard"}, at={@At(value="FIELD", target="Lnet/minecraft/client/Minecraft;currentScreen:Lnet/minecraft/client/gui/GuiScreen;", ordinal=0)}, locals=LocalCapture.CAPTURE_FAILSOFT)
     private void onRunTickKeyboard(CallbackInfo ci, int i) {
@@ -75,15 +75,15 @@ public abstract class MixinMinecraft {
 
     @Inject(method={"runTick()V"}, at={@At(value="RETURN")})
     private void runTick(CallbackInfo callbackInfo) {
-        if (Minecraft.func_71410_x().field_71462_r instanceof GuiMainMenu && Screens.INSTANCE.mainScreen.getValue().booleanValue()) {
-            Minecraft.func_71410_x().func_147108_a((GuiScreen)new GuiCustomMainScreen());
+        if (Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu && Screens.INSTANCE.mainScreen.getValue().booleanValue()) {
+            Minecraft.getMinecraft().displayGuiScreen((GuiScreen)new GuiCustomMainScreen());
         }
     }
 
     @Inject(method={"displayGuiScreen"}, at={@At(value="HEAD")})
     private void displayGuiScreen(GuiScreen screen, CallbackInfo ci) {
         if (screen instanceof GuiMainMenu) {
-            this.func_147108_a(new GuiCustomMainScreen());
+            this.displayGuiScreen(new GuiCustomMainScreen());
         }
     }
 
@@ -110,12 +110,12 @@ public abstract class MixinMinecraft {
 
     @Redirect(method={"sendClickBlockToController"}, at=@At(value="INVOKE", target="Lnet/minecraft/client/entity/EntityPlayerSP;isHandActive()Z"))
     private boolean isHandActiveWrapper(EntityPlayerSP playerSP) {
-        return !MultiTask.getInstance().isOn() && playerSP.func_184587_cr();
+        return !MultiTask.getInstance().isOn() && playerSP.isHandActive();
     }
 
     @Redirect(method={"rightClickMouse"}, at=@At(value="INVOKE", target="Lnet/minecraft/client/multiplayer/PlayerControllerMP;getIsHittingBlock()Z", ordinal=0), require=1)
     private boolean isHittingBlockHook(PlayerControllerMP playerControllerMP) {
-        return !MultiTask.getInstance().isOn() && playerControllerMP.func_181040_m();
+        return !MultiTask.getInstance().isOn() && playerControllerMP.getIsHittingBlock();
     }
 }
 

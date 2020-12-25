@@ -78,11 +78,11 @@ extends Module {
     @Override
     public void onRender3D(Render3DEvent event) {
         if (!Nametags.fullNullCheck()) {
-            for (EntityPlayer player : Nametags.mc.field_71441_e.field_73010_i) {
-                if (player == null || player.equals((Object)Nametags.mc.field_71439_g) || !player.func_70089_S() || player.func_82150_aj() && !this.invisibles.getValue().booleanValue() || this.onlyFov.getValue().booleanValue() && !RotationUtil.isInFov((Entity)player)) continue;
-                double x = this.interpolate(player.field_70142_S, player.field_70165_t, event.getPartialTicks()) - Nametags.mc.func_175598_ae().field_78725_b;
-                double y = this.interpolate(player.field_70137_T, player.field_70163_u, event.getPartialTicks()) - Nametags.mc.func_175598_ae().field_78726_c;
-                double z = this.interpolate(player.field_70136_U, player.field_70161_v, event.getPartialTicks()) - Nametags.mc.func_175598_ae().field_78723_d;
+            for (EntityPlayer player : Nametags.mc.world.playerEntities) {
+                if (player == null || player.equals((Object)Nametags.mc.player) || !player.isEntityAlive() || player.isInvisible() && !this.invisibles.getValue().booleanValue() || this.onlyFov.getValue().booleanValue() && !RotationUtil.isInFov((Entity)player)) continue;
+                double x = this.interpolate(player.lastTickPosX, player.posX, event.getPartialTicks()) - Nametags.mc.getRenderManager().renderPosX;
+                double y = this.interpolate(player.lastTickPosY, player.posY, event.getPartialTicks()) - Nametags.mc.getRenderManager().renderPosY;
+                double z = this.interpolate(player.lastTickPosZ, player.posZ, event.getPartialTicks()) - Nametags.mc.getRenderManager().renderPosZ;
                 this.renderNameTag(player, x, y, z, event.getPartialTicks());
             }
         }
@@ -90,17 +90,17 @@ extends Module {
 
     private void renderNameTag(EntityPlayer player, double x, double y, double z, float delta) {
         double tempY = y;
-        tempY += player.func_70093_af() ? 0.5 : 0.7;
-        Entity camera = mc.func_175606_aa();
+        tempY += player.isSneaking() ? 0.5 : 0.7;
+        Entity camera = mc.getRenderViewEntity();
         assert (camera != null);
-        double originalPositionX = camera.field_70165_t;
-        double originalPositionY = camera.field_70163_u;
-        double originalPositionZ = camera.field_70161_v;
-        camera.field_70165_t = this.interpolate(camera.field_70169_q, camera.field_70165_t, delta);
-        camera.field_70163_u = this.interpolate(camera.field_70167_r, camera.field_70163_u, delta);
-        camera.field_70161_v = this.interpolate(camera.field_70166_s, camera.field_70161_v, delta);
+        double originalPositionX = camera.posX;
+        double originalPositionY = camera.posY;
+        double originalPositionZ = camera.posZ;
+        camera.posX = this.interpolate(camera.prevPosX, camera.posX, delta);
+        camera.posY = this.interpolate(camera.prevPosY, camera.posY, delta);
+        camera.posZ = this.interpolate(camera.prevPosZ, camera.posZ, delta);
         String displayTag = this.getDisplayTag(player);
-        double distance = camera.func_70011_f(x + Nametags.mc.func_175598_ae().field_78730_l, y + Nametags.mc.func_175598_ae().field_78731_m, z + Nametags.mc.func_175598_ae().field_78728_n);
+        double distance = camera.getDistance(x + Nametags.mc.getRenderManager().viewerPosX, y + Nametags.mc.getRenderManager().viewerPosY, z + Nametags.mc.getRenderManager().viewerPosZ);
         int width = this.renderer.getStringWidth(displayTag) / 2;
         double scale = (0.0018 + (double)this.scaling.getValue().floatValue() * (distance * (double)this.factor.getValue().floatValue())) / 1000.0;
         if (distance <= 8.0 && this.smartScale.getValue().booleanValue()) {
@@ -109,28 +109,28 @@ extends Module {
         if (!this.scaleing.getValue().booleanValue()) {
             scale = (double)this.scaling.getValue().floatValue() / 100.0;
         }
-        GlStateManager.func_179094_E();
-        RenderHelper.func_74519_b();
-        GlStateManager.func_179088_q();
-        GlStateManager.func_179136_a((float)1.0f, (float)-1500000.0f);
-        GlStateManager.func_179140_f();
-        GlStateManager.func_179109_b((float)((float)x), (float)((float)tempY + 1.4f), (float)((float)z));
-        GlStateManager.func_179114_b((float)(-Nametags.mc.func_175598_ae().field_78735_i), (float)0.0f, (float)1.0f, (float)0.0f);
-        GlStateManager.func_179114_b((float)Nametags.mc.func_175598_ae().field_78732_j, (float)(Nametags.mc.field_71474_y.field_74320_O == 2 ? -1.0f : 1.0f), (float)0.0f, (float)0.0f);
-        GlStateManager.func_179139_a((double)(-scale), (double)(-scale), (double)scale);
-        GlStateManager.func_179097_i();
-        GlStateManager.func_179147_l();
-        GlStateManager.func_179147_l();
+        GlStateManager.pushMatrix();
+        RenderHelper.enableStandardItemLighting();
+        GlStateManager.enablePolygonOffset();
+        GlStateManager.doPolygonOffset((float)1.0f, (float)-1500000.0f);
+        GlStateManager.disableLighting();
+        GlStateManager.translate((float)((float)x), (float)((float)tempY + 1.4f), (float)((float)z));
+        GlStateManager.rotate((float)(-Nametags.mc.getRenderManager().playerViewY), (float)0.0f, (float)1.0f, (float)0.0f);
+        GlStateManager.rotate((float)Nametags.mc.getRenderManager().playerViewX, (float)(Nametags.mc.gameSettings.thirdPersonView == 2 ? -1.0f : 1.0f), (float)0.0f, (float)0.0f);
+        GlStateManager.scale((double)(-scale), (double)(-scale), (double)scale);
+        GlStateManager.disableDepth();
+        GlStateManager.enableBlend();
+        GlStateManager.enableBlend();
         if (this.rect.getValue().booleanValue()) {
             RenderUtil.drawRect(-width - 2, -(this.renderer.getFontHeight() + 1), (float)width + 2.0f, 1.5f, 0x55000000);
         }
-        GlStateManager.func_179084_k();
-        ItemStack renderMainHand = player.func_184614_ca().func_77946_l();
-        if (renderMainHand.func_77962_s() && (renderMainHand.func_77973_b() instanceof ItemTool || renderMainHand.func_77973_b() instanceof ItemArmor)) {
-            renderMainHand.field_77994_a = 1;
+        GlStateManager.disableBlend();
+        ItemStack renderMainHand = player.getHeldItemMainhand().copy();
+        if (renderMainHand.hasEffect() && (renderMainHand.getItem() instanceof ItemTool || renderMainHand.getItem() instanceof ItemArmor)) {
+            renderMainHand.stackSize = 1;
         }
-        if (this.heldStackName.getValue().booleanValue() && !renderMainHand.field_190928_g && renderMainHand.func_77973_b() != Items.field_190931_a) {
-            String stackName = renderMainHand.func_82833_r();
+        if (this.heldStackName.getValue().booleanValue() && !renderMainHand.isEmpty && renderMainHand.getItem() != Items.AIR) {
+            String stackName = renderMainHand.getDisplayName();
             int stackNameWidth = this.renderer.getStringWidth(stackName) / 2;
             GL11.glPushMatrix();
             GL11.glScalef((float)0.75f, (float)0.75f, (float)0.0f);
@@ -139,78 +139,78 @@ extends Module {
             GL11.glPopMatrix();
         }
         if (this.armor.getValue().booleanValue()) {
-            GlStateManager.func_179094_E();
+            GlStateManager.pushMatrix();
             int xOffset = -8;
-            for (ItemStack stack : player.field_71071_by.field_70460_b) {
+            for (ItemStack stack : player.inventory.armorInventory) {
                 if (stack == null) continue;
                 xOffset -= 8;
             }
             xOffset -= 8;
-            ItemStack renderOffhand = player.func_184592_cb().func_77946_l();
-            if (renderOffhand.func_77962_s() && (renderOffhand.func_77973_b() instanceof ItemTool || renderOffhand.func_77973_b() instanceof ItemArmor)) {
-                renderOffhand.field_77994_a = 1;
+            ItemStack renderOffhand = player.getHeldItemOffhand().copy();
+            if (renderOffhand.hasEffect() && (renderOffhand.getItem() instanceof ItemTool || renderOffhand.getItem() instanceof ItemArmor)) {
+                renderOffhand.stackSize = 1;
             }
             this.renderItemStack(renderOffhand, xOffset, -26);
             xOffset += 16;
-            for (ItemStack stack : player.field_71071_by.field_70460_b) {
+            for (ItemStack stack : player.inventory.armorInventory) {
                 if (stack == null) continue;
-                ItemStack armourStack = stack.func_77946_l();
-                if (armourStack.func_77962_s() && (armourStack.func_77973_b() instanceof ItemTool || armourStack.func_77973_b() instanceof ItemArmor)) {
-                    armourStack.field_77994_a = 1;
+                ItemStack armourStack = stack.copy();
+                if (armourStack.hasEffect() && (armourStack.getItem() instanceof ItemTool || armourStack.getItem() instanceof ItemArmor)) {
+                    armourStack.stackSize = 1;
                 }
                 this.renderItemStack(armourStack, xOffset, -26);
                 xOffset += 16;
             }
             this.renderItemStack(renderMainHand, xOffset, -26);
-            GlStateManager.func_179121_F();
+            GlStateManager.popMatrix();
         }
         this.renderer.drawStringWithShadow(displayTag, -width, -(this.renderer.getFontHeight() - 1), this.getDisplayColour(player));
-        camera.field_70165_t = originalPositionX;
-        camera.field_70163_u = originalPositionY;
-        camera.field_70161_v = originalPositionZ;
-        GlStateManager.func_179126_j();
-        GlStateManager.func_179084_k();
-        GlStateManager.func_179113_r();
-        GlStateManager.func_179136_a((float)1.0f, (float)1500000.0f);
-        GlStateManager.func_179121_F();
+        camera.posX = originalPositionX;
+        camera.posY = originalPositionY;
+        camera.posZ = originalPositionZ;
+        GlStateManager.enableDepth();
+        GlStateManager.disableBlend();
+        GlStateManager.disablePolygonOffset();
+        GlStateManager.doPolygonOffset((float)1.0f, (float)1500000.0f);
+        GlStateManager.popMatrix();
     }
 
     private void renderItemStack(ItemStack stack, int x, int y) {
-        GlStateManager.func_179094_E();
-        GlStateManager.func_179132_a((boolean)true);
-        GlStateManager.func_179086_m((int)256);
-        RenderHelper.func_74519_b();
-        Nametags.mc.func_175599_af().field_77023_b = -150.0f;
-        GlStateManager.func_179118_c();
-        GlStateManager.func_179126_j();
-        GlStateManager.func_179129_p();
-        mc.func_175599_af().func_180450_b(stack, x, y);
-        mc.func_175599_af().func_175030_a(Nametags.mc.field_71466_p, stack, x, y);
-        Nametags.mc.func_175599_af().field_77023_b = 0.0f;
-        RenderHelper.func_74518_a();
-        GlStateManager.func_179089_o();
-        GlStateManager.func_179141_d();
-        GlStateManager.func_179152_a((float)0.5f, (float)0.5f, (float)0.5f);
-        GlStateManager.func_179097_i();
+        GlStateManager.pushMatrix();
+        GlStateManager.depthMask((boolean)true);
+        GlStateManager.clear((int)256);
+        RenderHelper.enableStandardItemLighting();
+        Nametags.mc.getRenderItem().zLevel = -150.0f;
+        GlStateManager.disableAlpha();
+        GlStateManager.enableDepth();
+        GlStateManager.disableCull();
+        mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
+        mc.getRenderItem().renderItemOverlays(Nametags.mc.fontRenderer, stack, x, y);
+        Nametags.mc.getRenderItem().zLevel = 0.0f;
+        RenderHelper.disableStandardItemLighting();
+        GlStateManager.enableCull();
+        GlStateManager.enableAlpha();
+        GlStateManager.scale((float)0.5f, (float)0.5f, (float)0.5f);
+        GlStateManager.disableDepth();
         this.renderEnchantmentText(stack, x, y);
-        GlStateManager.func_179126_j();
-        GlStateManager.func_179152_a((float)2.0f, (float)2.0f, (float)2.0f);
-        GlStateManager.func_179121_F();
+        GlStateManager.enableDepth();
+        GlStateManager.scale((float)2.0f, (float)2.0f, (float)2.0f);
+        GlStateManager.popMatrix();
     }
 
     private void renderEnchantmentText(ItemStack stack, int x, int y) {
         int enchantmentY = y - 8;
-        if (stack.func_77973_b() == Items.field_151153_ao && stack.func_77962_s()) {
+        if (stack.getItem() == Items.GOLDEN_APPLE && stack.hasEffect()) {
             this.renderer.drawStringWithShadow("god", x * 2, enchantmentY, -3977919);
             enchantmentY -= 8;
         }
-        NBTTagList enchants = stack.func_77986_q();
-        for (int index = 0; index < enchants.func_74745_c(); ++index) {
-            short id = enchants.func_150305_b(index).func_74765_d("id");
-            short level = enchants.func_150305_b(index).func_74765_d("lvl");
-            Enchantment enc = Enchantment.func_185262_c((int)id);
+        NBTTagList enchants = stack.getEnchantmentTagList();
+        for (int index = 0; index < enchants.tagCount(); ++index) {
+            short id = enchants.getCompoundTagAt(index).getShort("id");
+            short level = enchants.getCompoundTagAt(index).getShort("lvl");
+            Enchantment enc = Enchantment.getEnchantmentByID((int)id);
             if (enc == null) continue;
-            String encName = enc.func_190936_d() ? (Object)TextFormatting.RED + enc.func_77316_c((int)level).substring(11).substring(0, 1).toLowerCase() : enc.func_77316_c((int)level).substring(0, 1).toLowerCase();
+            String encName = enc.isCurse() ? (Object)TextFormatting.RED + enc.getTranslatedName((int)level).substring(11).substring(0, 1).toLowerCase() : enc.getTranslatedName((int)level).substring(0, 1).toLowerCase();
             encName = encName + level;
             this.renderer.drawStringWithShadow(encName, x * 2, enchantmentY, -1);
             enchantmentY -= 8;
@@ -228,13 +228,13 @@ extends Module {
         int index;
         float enchantmentY = 0.0f;
         boolean arm = false;
-        for (ItemStack stack : player.field_71071_by.field_70460_b) {
+        for (ItemStack stack : player.inventory.armorInventory) {
             float encY = 0.0f;
             if (stack != null) {
-                NBTTagList enchants = stack.func_77986_q();
-                for (index = 0; index < enchants.func_74745_c(); ++index) {
-                    short id = enchants.func_150305_b(index).func_74765_d("id");
-                    enc = Enchantment.func_185262_c((int)id);
+                NBTTagList enchants = stack.getEnchantmentTagList();
+                for (index = 0; index < enchants.tagCount(); ++index) {
+                    short id = enchants.getCompoundTagAt(index).getShort("id");
+                    enc = Enchantment.getEnchantmentByID((int)id);
                     if (enc == null) continue;
                     encY += 8.0f;
                     arm = true;
@@ -243,13 +243,13 @@ extends Module {
             if (!(encY > enchantmentY)) continue;
             enchantmentY = encY;
         }
-        ItemStack renderMainHand = player.func_184614_ca().func_77946_l();
-        if (renderMainHand.func_77962_s()) {
+        ItemStack renderMainHand = player.getHeldItemMainhand().copy();
+        if (renderMainHand.hasEffect()) {
             float encY = 0.0f;
-            NBTTagList enchants = renderMainHand.func_77986_q();
-            for (int index2 = 0; index2 < enchants.func_74745_c(); ++index2) {
-                short id = enchants.func_150305_b(index2).func_74765_d("id");
-                Enchantment enc2 = Enchantment.func_185262_c((int)id);
+            NBTTagList enchants = renderMainHand.getEnchantmentTagList();
+            for (int index2 = 0; index2 < enchants.tagCount(); ++index2) {
+                short id = enchants.getCompoundTagAt(index2).getShort("id");
+                Enchantment enc2 = Enchantment.getEnchantmentByID((int)id);
                 if (enc2 == null) continue;
                 encY += 8.0f;
                 arm = true;
@@ -258,12 +258,12 @@ extends Module {
                 enchantmentY = encY;
             }
         }
-        if ((renderOffHand = player.func_184592_cb().func_77946_l()).func_77962_s()) {
+        if ((renderOffHand = player.getHeldItemOffhand().copy()).hasEffect()) {
             float encY = 0.0f;
-            NBTTagList enchants = renderOffHand.func_77986_q();
-            for (index = 0; index < enchants.func_74745_c(); ++index) {
-                short id = enchants.func_150305_b(index).func_74765_d("id");
-                enc = Enchantment.func_185262_c((int)id);
+            NBTTagList enchants = renderOffHand.getEnchantmentTagList();
+            for (index = 0; index < enchants.tagCount(); ++index) {
+                short id = enchants.getCompoundTagAt(index).getShort("id");
+                enc = Enchantment.getEnchantmentByID((int)id);
                 if (enc == null) continue;
                 encY += 8.0f;
                 arm = true;
@@ -276,8 +276,8 @@ extends Module {
     }
 
     private String getDisplayTag(EntityPlayer player) {
-        String name = player.func_145748_c_().func_150254_d();
-        if (name.contains(mc.func_110432_I().func_111285_a())) {
+        String name = player.getDisplayName().getFormattedText();
+        if (name.contains(mc.getSession().getUsername())) {
             name = "You";
         }
         if (!this.health.getValue().booleanValue()) {
@@ -288,7 +288,7 @@ extends Module {
         String pingStr = "";
         if (this.ping.getValue().booleanValue()) {
             try {
-                int responseTime = Objects.requireNonNull(mc.func_147114_u()).func_175102_a(player.func_110124_au()).func_178853_c();
+                int responseTime = Objects.requireNonNull(mc.getConnection()).getPlayerInfo(player.getUniqueID()).getResponseTime();
                 pingStr = pingStr + responseTime + "ms ";
             }
             catch (Exception responseTime) {
@@ -301,11 +301,11 @@ extends Module {
         }
         String idString = "";
         if (this.entityID.getValue().booleanValue()) {
-            idString = idString + "ID: " + player.func_145782_y() + " ";
+            idString = idString + "ID: " + player.getEntityId() + " ";
         }
         String gameModeStr = "";
         if (this.gamemode.getValue().booleanValue()) {
-            gameModeStr = player.func_184812_l_() ? gameModeStr + "[C] " : (player.func_175149_v() || player.func_82150_aj() ? gameModeStr + "[I] " : gameModeStr + "[S] ");
+            gameModeStr = player.isCreative() ? gameModeStr + "[C] " : (player.isSpectator() || player.isInvisible() ? gameModeStr + "[I] " : gameModeStr + "[S] ");
         }
         name = Math.floor(health) == (double)health ? name + color + " " + (health > 0.0f ? Integer.valueOf((int)Math.floor(health)) : "dead") : name + color + " " + (health > 0.0f ? Integer.valueOf((int)health) : "dead");
         return pingStr + idString + gameModeStr + name + popStr;
@@ -319,9 +319,9 @@ extends Module {
         if (Phobos.friendManager.isFriend(player)) {
             return -11157267;
         }
-        if (player.func_82150_aj()) {
+        if (player.isInvisible()) {
             colour = -1113785;
-        } else if (player.func_70093_af() && this.sneak.getValue().booleanValue()) {
+        } else if (player.isSneaking() && this.sneak.getValue().booleanValue()) {
             colour = -6481515;
         }
         return colour;

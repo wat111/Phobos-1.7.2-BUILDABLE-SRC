@@ -23,7 +23,7 @@ public class DiscordPresence {
         DiscordEventHandlers handlers = new DiscordEventHandlers();
         rpc.Discord_Initialize("737779695134834695", handlers, true, "");
         DiscordPresence.presence.startTimestamp = System.currentTimeMillis() / 1000L;
-        DiscordPresence.presence.details = Minecraft.func_71410_x().field_71462_r instanceof GuiMainMenu ? "In the main menu." : "Playing " + (Minecraft.func_71410_x().field_71422_O != null ? (RPC.INSTANCE.showIP.getValue().booleanValue() ? "on " + Minecraft.func_71410_x().field_71422_O.field_78845_b + "." : " multiplayer.") : " singleplayer.");
+        DiscordPresence.presence.details = Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu ? "In the main menu." : "Playing " + (Minecraft.getMinecraft().currentServerData != null ? (RPC.INSTANCE.showIP.getValue().booleanValue() ? "on " + Minecraft.getMinecraft().currentServerData.serverIP + "." : " multiplayer.") : " singleplayer.");
         DiscordPresence.presence.state = RPC.INSTANCE.state.getValue();
         DiscordPresence.presence.largeImageKey = "phobos";
         DiscordPresence.presence.largeImageText = "3arthh4ck 1.7.2";
@@ -31,7 +31,7 @@ public class DiscordPresence {
         thread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 rpc.Discord_RunCallbacks();
-                DiscordPresence.presence.details = "Playing " + (Minecraft.func_71410_x().field_71422_O != null ? (RPC.INSTANCE.showIP.getValue().booleanValue() ? "on " + Minecraft.func_71410_x().field_71422_O.field_78845_b + "." : " multiplayer.") : " singleplayer.");
+                DiscordPresence.presence.details = "Playing " + (Minecraft.getMinecraft().currentServerData != null ? (RPC.INSTANCE.showIP.getValue().booleanValue() ? "on " + Minecraft.getMinecraft().currentServerData.serverIP + "." : " multiplayer.") : " singleplayer.");
                 DiscordPresence.presence.state = RPC.INSTANCE.state.getValue();
                 rpc.Discord_UpdatePresence(presence);
                 try {

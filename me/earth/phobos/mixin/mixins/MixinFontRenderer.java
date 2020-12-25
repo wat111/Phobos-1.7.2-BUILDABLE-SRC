@@ -21,10 +21,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value={FontRenderer.class})
 public abstract class MixinFontRenderer {
     @Shadow
-    protected abstract int func_180455_b(String var1, float var2, float var3, int var4, boolean var5);
+    protected abstract int renderString(String var1, float var2, float var3, int var4, boolean var5);
 
     @Shadow
-    protected abstract void func_78255_a(String var1, boolean var2);
+    protected abstract void renderStringAtPos(String var1, boolean var2);
 
     @Inject(method={"drawString(Ljava/lang/String;FFIZ)I"}, at={@At(value="HEAD")}, cancellable=true)
     public void renderStringHook(String text, float x, float y, int color, boolean dropShadow, CallbackInfoReturnable<Integer> info) {
@@ -37,17 +37,17 @@ public abstract class MixinFontRenderer {
     @Redirect(method={"drawString(Ljava/lang/String;FFIZ)I"}, at=@At(value="INVOKE", target="Lnet/minecraft/client/gui/FontRenderer;renderString(Ljava/lang/String;FFIZ)I"))
     public int renderStringHook(FontRenderer fontrenderer, String text, float x, float y, int color, boolean dropShadow) {
         if (Phobos.moduleManager != null && HUD.getInstance().shadow.getValue().booleanValue() && dropShadow) {
-            return this.func_180455_b(text, x - 0.5f, y - 0.5f, color, true);
+            return this.renderString(text, x - 0.5f, y - 0.5f, color, true);
         }
-        return this.func_180455_b(text, x, y, color, dropShadow);
+        return this.renderString(text, x, y, color, dropShadow);
     }
 
     @Redirect(method={"renderString(Ljava/lang/String;FFIZ)I"}, at=@At(value="INVOKE", target="Lnet/minecraft/client/gui/FontRenderer;renderStringAtPos(Ljava/lang/String;Z)V"))
     public void renderStringAtPosHook(FontRenderer renderer, String text, boolean shadow) {
         if (Media.getInstance().isOn() && Media.getInstance().changeOwn.getValue().booleanValue()) {
-            this.func_78255_a(text.replace(Media.getPlayerName(), Media.getInstance().ownName.getValue()), shadow);
+            this.renderStringAtPos(text.replace(Media.getPlayerName(), Media.getInstance().ownName.getValue()), shadow);
         } else {
-            this.func_78255_a(text, shadow);
+            this.renderStringAtPos(text, shadow);
         }
     }
 }

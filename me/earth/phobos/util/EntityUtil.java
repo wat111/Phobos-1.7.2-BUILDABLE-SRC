@@ -125,37 +125,37 @@ implements Util {
 
     public static void attackEntity(Entity entity, boolean packet, boolean swingArm) {
         if (packet) {
-            EntityUtil.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketUseEntity(entity));
+            EntityUtil.mc.player.connection.sendPacket((Packet)new CPacketUseEntity(entity));
         } else {
-            EntityUtil.mc.field_71442_b.func_78764_a((EntityPlayer)EntityUtil.mc.field_71439_g, entity);
+            EntityUtil.mc.playerController.attackEntity((EntityPlayer)EntityUtil.mc.player, entity);
         }
         if (swingArm) {
-            EntityUtil.mc.field_71439_g.func_184609_a(EnumHand.MAIN_HAND);
+            EntityUtil.mc.player.swingArm(EnumHand.MAIN_HAND);
         }
     }
 
     public static Vec3d interpolateEntity(Entity entity, float time) {
-        return new Vec3d(entity.field_70142_S + (entity.field_70165_t - entity.field_70142_S) * (double)time, entity.field_70137_T + (entity.field_70163_u - entity.field_70137_T) * (double)time, entity.field_70136_U + (entity.field_70161_v - entity.field_70136_U) * (double)time);
+        return new Vec3d(entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double)time, entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double)time, entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * (double)time);
     }
 
     public static Vec3d getInterpolatedPos(Entity entity, float partialTicks) {
-        return new Vec3d(entity.field_70142_S, entity.field_70137_T, entity.field_70136_U).func_178787_e(EntityUtil.getInterpolatedAmount(entity, partialTicks));
+        return new Vec3d(entity.lastTickPosX, entity.lastTickPosY, entity.lastTickPosZ).add(EntityUtil.getInterpolatedAmount(entity, partialTicks));
     }
 
     public static Vec3d getInterpolatedRenderPos(Entity entity, float partialTicks) {
-        return EntityUtil.getInterpolatedPos(entity, partialTicks).func_178786_a(EntityUtil.mc.func_175598_ae().field_78725_b, EntityUtil.mc.func_175598_ae().field_78726_c, EntityUtil.mc.func_175598_ae().field_78723_d);
+        return EntityUtil.getInterpolatedPos(entity, partialTicks).subtract(EntityUtil.mc.getRenderManager().renderPosX, EntityUtil.mc.getRenderManager().renderPosY, EntityUtil.mc.getRenderManager().renderPosZ);
     }
 
     public static Vec3d getInterpolatedRenderPos(Vec3d vec) {
-        return new Vec3d(vec.field_72450_a, vec.field_72448_b, vec.field_72449_c).func_178786_a(EntityUtil.mc.func_175598_ae().field_78725_b, EntityUtil.mc.func_175598_ae().field_78726_c, EntityUtil.mc.func_175598_ae().field_78723_d);
+        return new Vec3d(vec.x, vec.y, vec.z).subtract(EntityUtil.mc.getRenderManager().renderPosX, EntityUtil.mc.getRenderManager().renderPosY, EntityUtil.mc.getRenderManager().renderPosZ);
     }
 
     public static Vec3d getInterpolatedAmount(Entity entity, double x, double y, double z) {
-        return new Vec3d((entity.field_70165_t - entity.field_70142_S) * x, (entity.field_70163_u - entity.field_70137_T) * y, (entity.field_70161_v - entity.field_70136_U) * z);
+        return new Vec3d((entity.posX - entity.lastTickPosX) * x, (entity.posY - entity.lastTickPosY) * y, (entity.posZ - entity.lastTickPosZ) * z);
     }
 
     public static Vec3d getInterpolatedAmount(Entity entity, Vec3d vec) {
-        return EntityUtil.getInterpolatedAmount(entity, vec.field_72450_a, vec.field_72448_b, vec.field_72449_c);
+        return EntityUtil.getInterpolatedAmount(entity, vec.x, vec.y, vec.z);
     }
 
     public static Vec3d getInterpolatedAmount(Entity entity, float partialTicks) {
@@ -163,13 +163,13 @@ implements Util {
     }
 
     public static boolean isPassive(Entity entity) {
-        if (entity instanceof EntityWolf && ((EntityWolf)entity).func_70919_bu()) {
+        if (entity instanceof EntityWolf && ((EntityWolf)entity).isAngry()) {
             return false;
         }
         if (entity instanceof EntityAgeable || entity instanceof EntityAmbientCreature || entity instanceof EntitySquid) {
             return true;
         }
-        return entity instanceof EntityIronGolem && ((EntityIronGolem)entity).func_70643_av() == null;
+        return entity instanceof EntityIronGolem && ((EntityIronGolem)entity).getRevengeTarget() == null;
     }
 
     public static boolean isSafe(Entity entity, int height, boolean floor) {
@@ -177,8 +177,8 @@ implements Util {
     }
 
     public static boolean stopSneaking(boolean isSneaking) {
-        if (isSneaking && EntityUtil.mc.field_71439_g != null) {
-            EntityUtil.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketEntityAction((Entity)EntityUtil.mc.field_71439_g, CPacketEntityAction.Action.STOP_SNEAKING));
+        if (isSneaking && EntityUtil.mc.player != null) {
+            EntityUtil.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)EntityUtil.mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
         }
         return false;
     }
@@ -188,24 +188,24 @@ implements Util {
     }
 
     public static BlockPos getPlayerPos(EntityPlayer player) {
-        return new BlockPos(Math.floor(player.field_70165_t), Math.floor(player.field_70163_u), Math.floor(player.field_70161_v));
+        return new BlockPos(Math.floor(player.posX), Math.floor(player.posY), Math.floor(player.posZ));
     }
 
     public static List<Vec3d> getUnsafeBlocks(Entity entity, int height, boolean floor) {
-        return EntityUtil.getUnsafeBlocksFromVec3d(entity.func_174791_d(), height, floor);
+        return EntityUtil.getUnsafeBlocksFromVec3d(entity.getPositionVector(), height, floor);
     }
 
     public static boolean isMobAggressive(Entity entity) {
         if (entity instanceof EntityPigZombie) {
-            if (((EntityPigZombie)entity).func_184734_db() || ((EntityPigZombie)entity).func_175457_ck()) {
+            if (((EntityPigZombie)entity).isArmsRaised() || ((EntityPigZombie)entity).isAngry()) {
                 return true;
             }
         } else {
             if (entity instanceof EntityWolf) {
-                return ((EntityWolf)entity).func_70919_bu() && !EntityUtil.mc.field_71439_g.equals((Object)((EntityWolf)entity).func_70902_q());
+                return ((EntityWolf)entity).isAngry() && !EntityUtil.mc.player.equals((Object)((EntityWolf)entity).getOwner());
             }
             if (entity instanceof EntityEnderman) {
-                return ((EntityEnderman)entity).func_70823_r();
+                return ((EntityEnderman)entity).isScreaming();
             }
         }
         return EntityUtil.isHostileMob(entity);
@@ -234,8 +234,8 @@ implements Util {
     public static List<Vec3d> getUnsafeBlocksFromVec3d(Vec3d pos, int height, boolean floor) {
         ArrayList<Vec3d> vec3ds = new ArrayList<Vec3d>();
         for (Vec3d vector : EntityUtil.getOffsets(height, floor)) {
-            BlockPos targetPos = new BlockPos(pos).func_177963_a(vector.field_72450_a, vector.field_72448_b, vector.field_72449_c);
-            Block block = EntityUtil.mc.field_71441_e.func_180495_p(targetPos).func_177230_c();
+            BlockPos targetPos = new BlockPos(pos).add(vector.x, vector.y, vector.z);
+            Block block = EntityUtil.mc.world.getBlockState(targetPos).getBlock();
             if (!(block instanceof BlockAir) && !(block instanceof BlockLiquid) && !(block instanceof BlockTallGrass) && !(block instanceof BlockFire) && !(block instanceof BlockDeadBush) && !(block instanceof BlockSnow)) continue;
             vec3ds.add(vector);
         }
@@ -243,7 +243,7 @@ implements Util {
     }
 
     public static boolean isInHole(Entity entity) {
-        return EntityUtil.isBlockValid(new BlockPos(entity.field_70165_t, entity.field_70163_u, entity.field_70161_v));
+        return EntityUtil.isBlockValid(new BlockPos(entity.posX, entity.posY, entity.posZ));
     }
 
     public static boolean isBlockValid(BlockPos blockPos) {
@@ -252,9 +252,9 @@ implements Util {
 
     public static boolean isObbyHole(BlockPos blockPos) {
         BlockPos[] touchingBlocks;
-        for (BlockPos pos : touchingBlocks = new BlockPos[]{blockPos.func_177978_c(), blockPos.func_177968_d(), blockPos.func_177974_f(), blockPos.func_177976_e(), blockPos.func_177977_b()}) {
-            IBlockState touchingState = EntityUtil.mc.field_71441_e.func_180495_p(pos);
-            if (touchingState.func_177230_c() != Blocks.field_150350_a && touchingState.func_177230_c() == Blocks.field_150343_Z) continue;
+        for (BlockPos pos : touchingBlocks = new BlockPos[]{blockPos.north(), blockPos.south(), blockPos.east(), blockPos.west(), blockPos.down()}) {
+            IBlockState touchingState = EntityUtil.mc.world.getBlockState(pos);
+            if (touchingState.getBlock() != Blocks.AIR && touchingState.getBlock() == Blocks.OBSIDIAN) continue;
             return false;
         }
         return true;
@@ -262,9 +262,9 @@ implements Util {
 
     public static boolean isBedrockHole(BlockPos blockPos) {
         BlockPos[] touchingBlocks;
-        for (BlockPos pos : touchingBlocks = new BlockPos[]{blockPos.func_177978_c(), blockPos.func_177968_d(), blockPos.func_177974_f(), blockPos.func_177976_e(), blockPos.func_177977_b()}) {
-            IBlockState touchingState = EntityUtil.mc.field_71441_e.func_180495_p(pos);
-            if (touchingState.func_177230_c() != Blocks.field_150350_a && touchingState.func_177230_c() == Blocks.field_150357_h) continue;
+        for (BlockPos pos : touchingBlocks = new BlockPos[]{blockPos.north(), blockPos.south(), blockPos.east(), blockPos.west(), blockPos.down()}) {
+            IBlockState touchingState = EntityUtil.mc.world.getBlockState(pos);
+            if (touchingState.getBlock() != Blocks.AIR && touchingState.getBlock() == Blocks.BEDROCK) continue;
             return false;
         }
         return true;
@@ -272,9 +272,9 @@ implements Util {
 
     public static boolean isBothHole(BlockPos blockPos) {
         BlockPos[] touchingBlocks;
-        for (BlockPos pos : touchingBlocks = new BlockPos[]{blockPos.func_177978_c(), blockPos.func_177968_d(), blockPos.func_177974_f(), blockPos.func_177976_e(), blockPos.func_177977_b()}) {
-            IBlockState touchingState = EntityUtil.mc.field_71441_e.func_180495_p(pos);
-            if (touchingState.func_177230_c() != Blocks.field_150350_a && (touchingState.func_177230_c() == Blocks.field_150357_h || touchingState.func_177230_c() == Blocks.field_150343_Z)) continue;
+        for (BlockPos pos : touchingBlocks = new BlockPos[]{blockPos.north(), blockPos.south(), blockPos.east(), blockPos.west(), blockPos.down()}) {
+            IBlockState touchingState = EntityUtil.mc.world.getBlockState(pos);
+            if (touchingState.getBlock() != Blocks.AIR && (touchingState.getBlock() == Blocks.BEDROCK || touchingState.getBlock() == Blocks.OBSIDIAN)) continue;
             return false;
         }
         return true;
@@ -293,7 +293,7 @@ implements Util {
     }
 
     public static double getDst(Vec3d vec) {
-        return EntityUtil.mc.field_71439_g.func_174791_d().func_72438_d(vec);
+        return EntityUtil.mc.player.getPositionVector().distanceTo(vec);
     }
 
     public static boolean isTrapped(EntityPlayer player, boolean antiScaffold, boolean antiStep, boolean legs, boolean platform, boolean antiDrop) {
@@ -311,8 +311,8 @@ implements Util {
         }
         for (int i = 0; i < EntityUtil.getTrapOffsets(antiScaffold, antiStep, legs, platform, antiDrop).length; ++i) {
             Vec3d vector = EntityUtil.getTrapOffsets(antiScaffold, antiStep, legs, platform, antiDrop)[i];
-            BlockPos targetPos = new BlockPos(player.func_174791_d()).func_177963_a(vector.field_72450_a, vector.field_72448_b, vector.field_72449_c);
-            Block block = EntityUtil.mc.field_71441_e.func_180495_p(targetPos).func_177230_c();
+            BlockPos targetPos = new BlockPos(player.getPositionVector()).add(vector.x, vector.y, vector.z);
+            Block block = EntityUtil.mc.world.getBlockState(targetPos).getBlock();
             if (!(block instanceof BlockAir) && !(block instanceof BlockLiquid) && !(block instanceof BlockTallGrass) && !(block instanceof BlockFire) && !(block instanceof BlockDeadBush) && !(block instanceof BlockSnow)) continue;
             vec3ds.add(vector);
         }
@@ -323,11 +323,11 @@ implements Util {
         if (entity == null) {
             return false;
         }
-        double y = entity.field_70163_u + 0.01;
-        for (int x = MathHelper.func_76128_c((double)entity.field_70165_t); x < MathHelper.func_76143_f((double)entity.field_70165_t); ++x) {
-            for (int z = MathHelper.func_76128_c((double)entity.field_70161_v); z < MathHelper.func_76143_f((double)entity.field_70161_v); ++z) {
+        double y = entity.posY + 0.01;
+        for (int x = MathHelper.floor((double)entity.posX); x < MathHelper.ceil((double)entity.posX); ++x) {
+            for (int z = MathHelper.floor((double)entity.posZ); z < MathHelper.ceil((double)entity.posZ); ++z) {
                 BlockPos pos = new BlockPos(x, (int)y, z);
-                if (!(EntityUtil.mc.field_71441_e.func_180495_p(pos).func_177230_c() instanceof BlockLiquid)) continue;
+                if (!(EntityUtil.mc.world.getBlockState(pos).getBlock() instanceof BlockLiquid)) continue;
                 return true;
             }
         }
@@ -335,7 +335,7 @@ implements Util {
     }
 
     public static boolean isDrivenByPlayer(Entity entityIn) {
-        return EntityUtil.mc.field_71439_g != null && entityIn != null && entityIn.equals((Object)EntityUtil.mc.field_71439_g.func_184187_bx());
+        return EntityUtil.mc.player != null && entityIn != null && entityIn.equals((Object)EntityUtil.mc.player.getRidingEntity());
     }
 
     public static boolean isPlayer(Entity entity) {
@@ -350,11 +350,11 @@ implements Util {
         if (entity == null) {
             return false;
         }
-        double y = entity.field_70163_u - (packet ? 0.03 : (EntityUtil.isPlayer(entity) ? 0.2 : 0.5));
-        for (int x = MathHelper.func_76128_c((double)entity.field_70165_t); x < MathHelper.func_76143_f((double)entity.field_70165_t); ++x) {
-            for (int z = MathHelper.func_76128_c((double)entity.field_70161_v); z < MathHelper.func_76143_f((double)entity.field_70161_v); ++z) {
-                BlockPos pos = new BlockPos(x, MathHelper.func_76128_c((double)y), z);
-                if (!(EntityUtil.mc.field_71441_e.func_180495_p(pos).func_177230_c() instanceof BlockLiquid)) continue;
+        double y = entity.posY - (packet ? 0.03 : (EntityUtil.isPlayer(entity) ? 0.2 : 0.5));
+        for (int x = MathHelper.floor((double)entity.posX); x < MathHelper.ceil((double)entity.posX); ++x) {
+            for (int z = MathHelper.floor((double)entity.posZ); z < MathHelper.ceil((double)entity.posZ); ++z) {
+                BlockPos pos = new BlockPos(x, MathHelper.floor((double)y), z);
+                if (!(EntityUtil.mc.world.getBlockState(pos).getBlock() instanceof BlockLiquid)) continue;
                 return true;
             }
         }
@@ -364,7 +364,7 @@ implements Util {
     public static List<Vec3d> getUntrappedBlocksExtended(int extension, EntityPlayer player, boolean antiScaffold, boolean antiStep, boolean legs, boolean platform, boolean antiDrop, boolean raytrace, boolean noScaffoldExtend) {
         ArrayList<Vec3d> placeTargets = new ArrayList<Vec3d>();
         if (extension == 1) {
-            placeTargets.addAll(EntityUtil.targets(player.func_174791_d(), antiScaffold, antiStep, legs, platform, antiDrop, raytrace));
+            placeTargets.addAll(EntityUtil.targets(player.getPositionVector(), antiScaffold, antiStep, legs, platform, antiDrop, raytrace));
         } else {
             int extend = 1;
             for (Vec3d vec3d : MathUtil.getBlockBlocks((Entity)player)) {
@@ -403,7 +403,7 @@ implements Util {
             List<Vec3d> vec3ds = EntityUtil.getUnsafeBlocksFromVec3d(vec3d, 2, false);
             if (vec3ds.size() == 4) {
                 block5: for (Vec3d vector : vec3ds) {
-                    BlockPos position = new BlockPos(vec3d).func_177963_a(vector.field_72450_a, vector.field_72448_b, vector.field_72449_c);
+                    BlockPos position = new BlockPos(vec3d).add(vector.x, vector.y, vector.z);
                     switch (BlockUtil.isPositionPlaceable(position, raytrace)) {
                         case 0: {
                             break block5;
@@ -414,7 +414,7 @@ implements Util {
                             continue block5;
                         }
                         case 3: {
-                            placeTargets.add(vec3d.func_178787_e(vector));
+                            placeTargets.add(vec3d.add(vector));
                         }
                     }
                 }
@@ -482,7 +482,7 @@ implements Util {
     }
 
     public static BlockPos getRoundedBlockPos(Entity entity) {
-        return new BlockPos(MathUtil.roundVec(entity.func_174791_d(), 0));
+        return new BlockPos(MathUtil.roundVec(entity.getPositionVector(), 0));
     }
 
     public static boolean isLiving(Entity entity) {
@@ -490,7 +490,7 @@ implements Util {
     }
 
     public static boolean isAlive(Entity entity) {
-        return EntityUtil.isLiving(entity) && !entity.field_70128_L && ((EntityLivingBase)entity).func_110143_aJ() > 0.0f;
+        return EntityUtil.isLiving(entity) && !entity.isDead && ((EntityLivingBase)entity).getHealth() > 0.0f;
     }
 
     public static boolean isDead(Entity entity) {
@@ -500,7 +500,7 @@ implements Util {
     public static float getHealth(Entity entity) {
         if (EntityUtil.isLiving(entity)) {
             EntityLivingBase livingBase = (EntityLivingBase)entity;
-            return livingBase.func_110143_aJ() + livingBase.func_110139_bj();
+            return livingBase.getHealth() + livingBase.getAbsorptionAmount();
         }
         return 0.0f;
     }
@@ -508,17 +508,17 @@ implements Util {
     public static float getHealth(Entity entity, boolean absorption) {
         if (EntityUtil.isLiving(entity)) {
             EntityLivingBase livingBase = (EntityLivingBase)entity;
-            return livingBase.func_110143_aJ() + (absorption ? livingBase.func_110139_bj() : 0.0f);
+            return livingBase.getHealth() + (absorption ? livingBase.getAbsorptionAmount() : 0.0f);
         }
         return 0.0f;
     }
 
     public static boolean canEntityFeetBeSeen(Entity entityIn) {
-        return EntityUtil.mc.field_71441_e.func_147447_a(new Vec3d(EntityUtil.mc.field_71439_g.field_70165_t, EntityUtil.mc.field_71439_g.field_70165_t + (double)EntityUtil.mc.field_71439_g.func_70047_e(), EntityUtil.mc.field_71439_g.field_70161_v), new Vec3d(entityIn.field_70165_t, entityIn.field_70163_u, entityIn.field_70161_v), false, true, false) == null;
+        return EntityUtil.mc.world.rayTraceBlocks(new Vec3d(EntityUtil.mc.player.posX, EntityUtil.mc.player.posX + (double)EntityUtil.mc.player.getEyeHeight(), EntityUtil.mc.player.posZ), new Vec3d(entityIn.posX, entityIn.posY, entityIn.posZ), false, true, false) == null;
     }
 
     public static boolean isntValid(Entity entity, double range) {
-        return entity == null || EntityUtil.isDead(entity) || entity.equals((Object)EntityUtil.mc.field_71439_g) || entity instanceof EntityPlayer && Phobos.friendManager.isFriend(entity.func_70005_c_()) || EntityUtil.mc.field_71439_g.func_70068_e(entity) > MathUtil.square(range);
+        return entity == null || EntityUtil.isDead(entity) || entity.equals((Object)EntityUtil.mc.player) || entity instanceof EntityPlayer && Phobos.friendManager.isFriend(entity.getName()) || EntityUtil.mc.player.getDistanceSq(entity) > MathUtil.square(range);
     }
 
     public static boolean isValid(Entity entity, double range) {
@@ -526,21 +526,21 @@ implements Util {
     }
 
     public static boolean holdingWeapon(EntityPlayer player) {
-        return player.func_184614_ca().func_77973_b() instanceof ItemSword || player.func_184614_ca().func_77973_b() instanceof ItemAxe;
+        return player.getHeldItemMainhand().getItem() instanceof ItemSword || player.getHeldItemMainhand().getItem() instanceof ItemAxe;
     }
 
     public static double getMaxSpeed() {
         double maxModifier = 0.2873;
-        if (EntityUtil.mc.field_71439_g.func_70644_a(Objects.requireNonNull(Potion.func_188412_a((int)1)))) {
-            maxModifier *= 1.0 + 0.2 * (double)(Objects.requireNonNull(EntityUtil.mc.field_71439_g.func_70660_b(Objects.requireNonNull(Potion.func_188412_a((int)1)))).func_76458_c() + 1);
+        if (EntityUtil.mc.player.isPotionActive(Objects.requireNonNull(Potion.getPotionById((int)1)))) {
+            maxModifier *= 1.0 + 0.2 * (double)(Objects.requireNonNull(EntityUtil.mc.player.getActivePotionEffect(Objects.requireNonNull(Potion.getPotionById((int)1)))).getAmplifier() + 1);
         }
         return maxModifier;
     }
 
     public static void mutliplyEntitySpeed(Entity entity, double multiplier) {
         if (entity != null) {
-            entity.field_70159_w *= multiplier;
-            entity.field_70179_y *= multiplier;
+            entity.motionX *= multiplier;
+            entity.motionZ *= multiplier;
         }
     }
 
@@ -549,44 +549,44 @@ implements Util {
             return false;
         }
         if (entity instanceof EntityPlayer) {
-            return EntityUtil.mc.field_71474_y.field_74351_w.func_151470_d() || EntityUtil.mc.field_71474_y.field_74368_y.func_151470_d() || EntityUtil.mc.field_71474_y.field_74370_x.func_151470_d() || EntityUtil.mc.field_71474_y.field_74366_z.func_151470_d();
+            return EntityUtil.mc.gameSettings.keyBindForward.isKeyDown() || EntityUtil.mc.gameSettings.keyBindBack.isKeyDown() || EntityUtil.mc.gameSettings.keyBindLeft.isKeyDown() || EntityUtil.mc.gameSettings.keyBindRight.isKeyDown();
         }
-        return entity.field_70159_w != 0.0 || entity.field_70181_x != 0.0 || entity.field_70179_y != 0.0;
+        return entity.motionX != 0.0 || entity.motionY != 0.0 || entity.motionZ != 0.0;
     }
 
     public static boolean movementKey() {
-        return EntityUtil.mc.field_71439_g.field_71158_b.field_187255_c || EntityUtil.mc.field_71439_g.field_71158_b.field_187258_f || EntityUtil.mc.field_71439_g.field_71158_b.field_187257_e || EntityUtil.mc.field_71439_g.field_71158_b.field_187256_d || EntityUtil.mc.field_71439_g.field_71158_b.field_78901_c || EntityUtil.mc.field_71439_g.field_71158_b.field_78899_d;
+        return EntityUtil.mc.player.movementInput.forwardKeyDown || EntityUtil.mc.player.movementInput.rightKeyDown || EntityUtil.mc.player.movementInput.leftKeyDown || EntityUtil.mc.player.movementInput.backKeyDown || EntityUtil.mc.player.movementInput.jump || EntityUtil.mc.player.movementInput.sneak;
     }
 
     public static double getEntitySpeed(Entity entity) {
         if (entity != null) {
-            double distTraveledLastTickX = entity.field_70165_t - entity.field_70169_q;
-            double distTraveledLastTickZ = entity.field_70161_v - entity.field_70166_s;
-            double speed = MathHelper.func_76133_a((double)(distTraveledLastTickX * distTraveledLastTickX + distTraveledLastTickZ * distTraveledLastTickZ));
+            double distTraveledLastTickX = entity.posX - entity.prevPosX;
+            double distTraveledLastTickZ = entity.posZ - entity.prevPosZ;
+            double speed = MathHelper.sqrt((double)(distTraveledLastTickX * distTraveledLastTickX + distTraveledLastTickZ * distTraveledLastTickZ));
             return speed * 20.0;
         }
         return 0.0;
     }
 
     public static boolean holding32k(EntityPlayer player) {
-        return EntityUtil.is32k(player.func_184614_ca());
+        return EntityUtil.is32k(player.getHeldItemMainhand());
     }
 
     public static boolean is32k(ItemStack stack) {
         if (stack == null) {
             return false;
         }
-        if (stack.func_77978_p() == null) {
+        if (stack.getTagCompound() == null) {
             return false;
         }
-        NBTTagList enchants = (NBTTagList)stack.func_77978_p().func_74781_a("ench");
+        NBTTagList enchants = (NBTTagList)stack.getTagCompound().getTag("ench");
         if (enchants == null) {
             return false;
         }
-        for (int i = 0; i < enchants.func_74745_c(); ++i) {
-            NBTTagCompound enchant = enchants.func_150305_b(i);
-            if (enchant.func_74762_e("id") != 16) continue;
-            int lvl = enchant.func_74762_e("lvl");
+        for (int i = 0; i < enchants.tagCount(); ++i) {
+            NBTTagCompound enchant = enchants.getCompoundTagAt(i);
+            if (enchant.getInteger("id") != 16) continue;
+            int lvl = enchant.getInteger("lvl");
             if (lvl < 42) break;
             return true;
         }
@@ -594,18 +594,18 @@ implements Util {
     }
 
     public static boolean simpleIs32k(ItemStack stack) {
-        return EnchantmentHelper.func_77506_a((Enchantment)Enchantments.field_185302_k, (ItemStack)stack) >= 1000;
+        return EnchantmentHelper.getEnchantmentLevel((Enchantment)Enchantments.SHARPNESS, (ItemStack)stack) >= 1000;
     }
 
     public static void moveEntityStrafe(double speed, Entity entity) {
         if (entity != null) {
-            MovementInput movementInput = EntityUtil.mc.field_71439_g.field_71158_b;
-            double forward = movementInput.field_192832_b;
-            double strafe = movementInput.field_78902_a;
-            float yaw = EntityUtil.mc.field_71439_g.field_70177_z;
+            MovementInput movementInput = EntityUtil.mc.player.movementInput;
+            double forward = movementInput.moveForward;
+            double strafe = movementInput.moveStrafe;
+            float yaw = EntityUtil.mc.player.rotationYaw;
             if (forward == 0.0 && strafe == 0.0) {
-                entity.field_70159_w = 0.0;
-                entity.field_70179_y = 0.0;
+                entity.motionX = 0.0;
+                entity.motionZ = 0.0;
             } else {
                 if (forward != 0.0) {
                     if (strafe > 0.0) {
@@ -620,14 +620,14 @@ implements Util {
                         forward = -1.0;
                     }
                 }
-                entity.field_70159_w = forward * speed * Math.cos(Math.toRadians(yaw + 90.0f)) + strafe * speed * Math.sin(Math.toRadians(yaw + 90.0f));
-                entity.field_70179_y = forward * speed * Math.sin(Math.toRadians(yaw + 90.0f)) - strafe * speed * Math.cos(Math.toRadians(yaw + 90.0f));
+                entity.motionX = forward * speed * Math.cos(Math.toRadians(yaw + 90.0f)) + strafe * speed * Math.sin(Math.toRadians(yaw + 90.0f));
+                entity.motionZ = forward * speed * Math.sin(Math.toRadians(yaw + 90.0f)) - strafe * speed * Math.cos(Math.toRadians(yaw + 90.0f));
             }
         }
     }
 
     public static boolean rayTraceHitCheck(Entity entity, boolean shouldCheck) {
-        return !shouldCheck || EntityUtil.mc.field_71439_g.func_70685_l(entity);
+        return !shouldCheck || EntityUtil.mc.player.canEntityBeSeen(entity);
     }
 
     public static Color getColor(Entity entity, int red, int green, int blue, int alpha, boolean colorFriends) {
@@ -652,7 +652,7 @@ implements Util {
         Freecam freecam = Freecam.getInstance();
         FakePlayer fakePlayer = FakePlayer.getInstance();
         Blink blink = Blink.getInstance();
-        int playerID = player.func_145782_y();
+        int playerID = player.getEntityId();
         if (freecam.isOn() && playerID == 69420) {
             return true;
         }
@@ -669,43 +669,43 @@ implements Util {
     }
 
     public static boolean isMoving() {
-        return (double)EntityUtil.mc.field_71439_g.field_191988_bg != 0.0 || (double)EntityUtil.mc.field_71439_g.field_70702_br != 0.0;
+        return (double)EntityUtil.mc.player.moveForward != 0.0 || (double)EntityUtil.mc.player.moveStrafing != 0.0;
     }
 
     public static EntityPlayer getClosestEnemy(double distance) {
         EntityPlayer closest = null;
-        for (EntityPlayer player : EntityUtil.mc.field_71441_e.field_73010_i) {
+        for (EntityPlayer player : EntityUtil.mc.world.playerEntities) {
             if (EntityUtil.isntValid((Entity)player, distance)) continue;
             if (closest == null) {
                 closest = player;
                 continue;
             }
-            if (!(EntityUtil.mc.field_71439_g.func_70068_e((Entity)player) < EntityUtil.mc.field_71439_g.func_70068_e((Entity)closest))) continue;
+            if (!(EntityUtil.mc.player.getDistanceSq((Entity)player) < EntityUtil.mc.player.getDistanceSq((Entity)closest))) continue;
             closest = player;
         }
         return closest;
     }
 
     public static boolean checkCollide() {
-        if (EntityUtil.mc.field_71439_g.func_70093_af()) {
+        if (EntityUtil.mc.player.isSneaking()) {
             return false;
         }
-        if (EntityUtil.mc.field_71439_g.func_184187_bx() != null && EntityUtil.mc.field_71439_g.func_184187_bx().field_70143_R >= 3.0f) {
+        if (EntityUtil.mc.player.getRidingEntity() != null && EntityUtil.mc.player.getRidingEntity().fallDistance >= 3.0f) {
             return false;
         }
-        return !(EntityUtil.mc.field_71439_g.field_70143_R >= 3.0f);
+        return !(EntityUtil.mc.player.fallDistance >= 3.0f);
     }
 
     public static boolean isInLiquid() {
-        if (EntityUtil.mc.field_71439_g.field_70143_R >= 3.0f) {
+        if (EntityUtil.mc.player.fallDistance >= 3.0f) {
             return false;
         }
         boolean inLiquid = false;
-        AxisAlignedBB bb = EntityUtil.mc.field_71439_g.func_184187_bx() != null ? EntityUtil.mc.field_71439_g.func_184187_bx().func_174813_aQ() : EntityUtil.mc.field_71439_g.func_174813_aQ();
-        int y = (int)bb.field_72338_b;
-        for (int x = MathHelper.func_76128_c((double)bb.field_72340_a); x < MathHelper.func_76128_c((double)bb.field_72336_d) + 1; ++x) {
-            for (int z = MathHelper.func_76128_c((double)bb.field_72339_c); z < MathHelper.func_76128_c((double)bb.field_72334_f) + 1; ++z) {
-                Block block = EntityUtil.mc.field_71441_e.func_180495_p(new BlockPos(x, y, z)).func_177230_c();
+        AxisAlignedBB bb = EntityUtil.mc.player.getRidingEntity() != null ? EntityUtil.mc.player.getRidingEntity().getEntityBoundingBox() : EntityUtil.mc.player.getEntityBoundingBox();
+        int y = (int)bb.minY;
+        for (int x = MathHelper.floor((double)bb.minX); x < MathHelper.floor((double)bb.maxX) + 1; ++x) {
+            for (int z = MathHelper.floor((double)bb.minZ); z < MathHelper.floor((double)bb.maxZ) + 1; ++z) {
+                Block block = EntityUtil.mc.world.getBlockState(new BlockPos(x, y, z)).getBlock();
                 if (block instanceof BlockAir) continue;
                 if (!(block instanceof BlockLiquid)) {
                     return false;
@@ -717,16 +717,16 @@ implements Util {
     }
 
     public static boolean isOnLiquid(double offset) {
-        if (EntityUtil.mc.field_71439_g.field_70143_R >= 3.0f) {
+        if (EntityUtil.mc.player.fallDistance >= 3.0f) {
             return false;
         }
-        AxisAlignedBB bb = EntityUtil.mc.field_71439_g.func_184187_bx() != null ? EntityUtil.mc.field_71439_g.func_184187_bx().func_174813_aQ().func_191195_a(0.0, 0.0, 0.0).func_72317_d(0.0, -offset, 0.0) : EntityUtil.mc.field_71439_g.func_174813_aQ().func_191195_a(0.0, 0.0, 0.0).func_72317_d(0.0, -offset, 0.0);
+        AxisAlignedBB bb = EntityUtil.mc.player.getRidingEntity() != null ? EntityUtil.mc.player.getRidingEntity().getEntityBoundingBox().contract(0.0, 0.0, 0.0).offset(0.0, -offset, 0.0) : EntityUtil.mc.player.getEntityBoundingBox().contract(0.0, 0.0, 0.0).offset(0.0, -offset, 0.0);
         boolean onLiquid = false;
-        int y = (int)bb.field_72338_b;
-        for (int x = MathHelper.func_76128_c((double)bb.field_72340_a); x < MathHelper.func_76128_c((double)(bb.field_72336_d + 1.0)); ++x) {
-            for (int z = MathHelper.func_76128_c((double)bb.field_72339_c); z < MathHelper.func_76128_c((double)(bb.field_72334_f + 1.0)); ++z) {
-                Block block = EntityUtil.mc.field_71441_e.func_180495_p(new BlockPos(x, y, z)).func_177230_c();
-                if (block == Blocks.field_150350_a) continue;
+        int y = (int)bb.minY;
+        for (int x = MathHelper.floor((double)bb.minX); x < MathHelper.floor((double)(bb.maxX + 1.0)); ++x) {
+            for (int z = MathHelper.floor((double)bb.minZ); z < MathHelper.floor((double)(bb.maxZ + 1.0)); ++z) {
+                Block block = EntityUtil.mc.world.getBlockState(new BlockPos(x, y, z)).getBlock();
+                if (block == Blocks.AIR) continue;
                 if (!(block instanceof BlockLiquid)) {
                     return false;
                 }
@@ -740,10 +740,10 @@ implements Util {
         if (entity == null) {
             return false;
         }
-        double n = entity.field_70163_u + 0.01;
-        for (int i = MathHelper.func_76128_c((double)entity.field_70165_t); i < MathHelper.func_76143_f((double)entity.field_70165_t); ++i) {
-            for (int j = MathHelper.func_76128_c((double)entity.field_70161_v); j < MathHelper.func_76143_f((double)entity.field_70161_v); ++j) {
-                if (!(EntityUtil.mc.field_71441_e.func_180495_p(new BlockPos(i, (int)n, j)).func_177230_c() instanceof BlockLiquid)) continue;
+        double n = entity.posY + 0.01;
+        for (int i = MathHelper.floor((double)entity.posX); i < MathHelper.ceil((double)entity.posX); ++i) {
+            for (int j = MathHelper.floor((double)entity.posZ); j < MathHelper.ceil((double)entity.posZ); ++j) {
+                if (!(EntityUtil.mc.world.getBlockState(new BlockPos(i, (int)n, j)).getBlock() instanceof BlockLiquid)) continue;
                 return true;
             }
         }
@@ -751,19 +751,19 @@ implements Util {
     }
 
     public static BlockPos getPlayerPosWithEntity() {
-        return new BlockPos(EntityUtil.mc.field_71439_g.func_184187_bx() != null ? EntityUtil.mc.field_71439_g.func_184187_bx().field_70165_t : EntityUtil.mc.field_71439_g.field_70165_t, EntityUtil.mc.field_71439_g.func_184187_bx() != null ? EntityUtil.mc.field_71439_g.func_184187_bx().field_70163_u : EntityUtil.mc.field_71439_g.field_70163_u, EntityUtil.mc.field_71439_g.func_184187_bx() != null ? EntityUtil.mc.field_71439_g.func_184187_bx().field_70161_v : EntityUtil.mc.field_71439_g.field_70161_v);
+        return new BlockPos(EntityUtil.mc.player.getRidingEntity() != null ? EntityUtil.mc.player.getRidingEntity().posX : EntityUtil.mc.player.posX, EntityUtil.mc.player.getRidingEntity() != null ? EntityUtil.mc.player.getRidingEntity().posY : EntityUtil.mc.player.posY, EntityUtil.mc.player.getRidingEntity() != null ? EntityUtil.mc.player.getRidingEntity().posZ : EntityUtil.mc.player.posZ);
     }
 
     public static boolean checkForLiquid(Entity entity, boolean b) {
         if (entity == null) {
             return false;
         }
-        double posY = entity.field_70163_u;
+        double posY = entity.posY;
         double n = b ? 0.03 : (entity instanceof EntityPlayer ? 0.2 : 0.5);
         double n2 = posY - n;
-        for (int i = MathHelper.func_76128_c((double)entity.field_70165_t); i < MathHelper.func_76143_f((double)entity.field_70165_t); ++i) {
-            for (int j = MathHelper.func_76128_c((double)entity.field_70161_v); j < MathHelper.func_76143_f((double)entity.field_70161_v); ++j) {
-                if (!(EntityUtil.mc.field_71441_e.func_180495_p(new BlockPos(i, MathHelper.func_76128_c((double)n2), j)).func_177230_c() instanceof BlockLiquid)) continue;
+        for (int i = MathHelper.floor((double)entity.posX); i < MathHelper.ceil((double)entity.posX); ++i) {
+            for (int j = MathHelper.floor((double)entity.posZ); j < MathHelper.ceil((double)entity.posZ); ++j) {
+                if (!(EntityUtil.mc.world.getBlockState(new BlockPos(i, MathHelper.floor((double)n2), j)).getBlock() instanceof BlockLiquid)) continue;
                 return true;
             }
         }
@@ -771,11 +771,11 @@ implements Util {
     }
 
     public static boolean isOnLiquid() {
-        double y = EntityUtil.mc.field_71439_g.field_70163_u - 0.03;
-        for (int x = MathHelper.func_76128_c((double)EntityUtil.mc.field_71439_g.field_70165_t); x < MathHelper.func_76143_f((double)EntityUtil.mc.field_71439_g.field_70165_t); ++x) {
-            for (int z = MathHelper.func_76128_c((double)EntityUtil.mc.field_71439_g.field_70161_v); z < MathHelper.func_76143_f((double)EntityUtil.mc.field_71439_g.field_70161_v); ++z) {
-                BlockPos pos = new BlockPos(x, MathHelper.func_76128_c((double)y), z);
-                if (!(EntityUtil.mc.field_71441_e.func_180495_p(pos).func_177230_c() instanceof BlockLiquid)) continue;
+        double y = EntityUtil.mc.player.posY - 0.03;
+        for (int x = MathHelper.floor((double)EntityUtil.mc.player.posX); x < MathHelper.ceil((double)EntityUtil.mc.player.posX); ++x) {
+            for (int z = MathHelper.floor((double)EntityUtil.mc.player.posZ); z < MathHelper.ceil((double)EntityUtil.mc.player.posZ); ++z) {
+                BlockPos pos = new BlockPos(x, MathHelper.floor((double)y), z);
+                if (!(EntityUtil.mc.world.getBlockState(pos).getBlock() instanceof BlockLiquid)) continue;
                 return true;
             }
         }
@@ -783,9 +783,9 @@ implements Util {
     }
 
     public static double[] forward(double speed) {
-        float forward = EntityUtil.mc.field_71439_g.field_71158_b.field_192832_b;
-        float side = EntityUtil.mc.field_71439_g.field_71158_b.field_78902_a;
-        float yaw = EntityUtil.mc.field_71439_g.field_70126_B + (EntityUtil.mc.field_71439_g.field_70177_z - EntityUtil.mc.field_71439_g.field_70126_B) * mc.func_184121_ak();
+        float forward = EntityUtil.mc.player.movementInput.moveForward;
+        float side = EntityUtil.mc.player.movementInput.moveStrafe;
+        float yaw = EntityUtil.mc.player.prevRotationYaw + (EntityUtil.mc.player.rotationYaw - EntityUtil.mc.player.prevRotationYaw) * mc.getRenderPartialTicks();
         if (forward != 0.0f) {
             if (side > 0.0f) {
                 yaw += (float)(forward > 0.0f ? -45 : 45);
@@ -814,8 +814,8 @@ implements Util {
         dfDistance.setRoundingMode(RoundingMode.CEILING);
         StringBuilder healthSB = new StringBuilder();
         StringBuilder distanceSB = new StringBuilder();
-        for (EntityPlayer player : EntityUtil.mc.field_71441_e.field_73010_i) {
-            if (player.func_82150_aj() && !Managers.getInstance().tRadarInv.getValue().booleanValue() || player.func_70005_c_().equals(EntityUtil.mc.field_71439_g.func_70005_c_())) continue;
+        for (EntityPlayer player : EntityUtil.mc.world.playerEntities) {
+            if (player.isInvisible() && !Managers.getInstance().tRadarInv.getValue().booleanValue() || player.getName().equals(EntityUtil.mc.player.getName())) continue;
             int hpRaw = (int)EntityUtil.getHealth((Entity)player);
             String hp = dfHealth.format(hpRaw);
             healthSB.append("\u00a7");
@@ -829,7 +829,7 @@ implements Util {
                 healthSB.append("c");
             }
             healthSB.append(hp);
-            int distanceInt = (int)EntityUtil.mc.field_71439_g.func_70032_d((Entity)player);
+            int distanceInt = (int)EntityUtil.mc.player.getDistance((Entity)player);
             String distance = dfDistance.format(distanceInt);
             distanceSB.append("\u00a7");
             if (distanceInt >= 25) {
@@ -842,7 +842,7 @@ implements Util {
                 distanceSB.append("c");
             }
             distanceSB.append(distance);
-            output.put(healthSB.toString() + " " + (Phobos.friendManager.isFriend(player) ? "\u00a7b" : "\u00a7r") + player.func_70005_c_() + " " + distanceSB.toString() + " " + "\u00a7f" + Phobos.totemPopManager.getTotemPopString(player) + Phobos.potionManager.getTextRadarPotion(player), (int)EntityUtil.mc.field_71439_g.func_70032_d((Entity)player));
+            output.put(healthSB.toString() + " " + (Phobos.friendManager.isFriend(player) ? "\u00a7b" : "\u00a7r") + player.getName() + " " + distanceSB.toString() + " " + "\u00a7f" + Phobos.totemPopManager.getTotemPopString(player) + Phobos.potionManager.getTextRadarPotion(player), (int)EntityUtil.mc.player.getDistance((Entity)player));
             healthSB.setLength(0);
             distanceSB.setLength(0);
         }
@@ -853,19 +853,19 @@ implements Util {
     }
 
     public static void swingArmNoPacket(EnumHand hand, EntityLivingBase entity) {
-        ItemStack stack = entity.func_184586_b(hand);
-        if (!stack.func_190926_b() && stack.func_77973_b().onEntitySwing(entity, stack)) {
+        ItemStack stack = entity.getHeldItem(hand);
+        if (!stack.isEmpty() && stack.getItem().onEntitySwing(entity, stack)) {
             return;
         }
-        if (!entity.field_82175_bq || entity.field_110158_av >= ((IEntityLivingBase)entity).getArmSwingAnimationEnd() / 2 || entity.field_110158_av < 0) {
-            entity.field_110158_av = -1;
-            entity.field_82175_bq = true;
-            entity.field_184622_au = hand;
+        if (!entity.isSwingInProgress || entity.swingProgressInt >= ((IEntityLivingBase)entity).getArmSwingAnimationEnd() / 2 || entity.swingProgressInt < 0) {
+            entity.swingProgressInt = -1;
+            entity.isSwingInProgress = true;
+            entity.swingingHand = hand;
         }
     }
 
     public static boolean isAboveBlock(Entity entity, BlockPos blockPos) {
-        return entity.field_70163_u >= (double)blockPos.func_177956_o();
+        return entity.posY >= (double)blockPos.getY();
     }
 }
 

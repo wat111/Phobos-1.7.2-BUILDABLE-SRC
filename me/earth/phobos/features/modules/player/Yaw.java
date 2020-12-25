@@ -67,18 +67,18 @@ extends Module {
             }
         }
         if (this.lockPitch.getValue().booleanValue()) {
-            if (Yaw.mc.field_71439_g.func_184218_aH()) {
-                Objects.requireNonNull(Yaw.mc.field_71439_g.func_184187_bx()).field_70125_A = this.pitch.getValue().intValue();
+            if (Yaw.mc.player.isRiding()) {
+                Objects.requireNonNull(Yaw.mc.player.getRidingEntity()).rotationPitch = this.pitch.getValue().intValue();
             }
-            Yaw.mc.field_71439_g.field_70125_A = this.pitch.getValue().intValue();
+            Yaw.mc.player.rotationPitch = this.pitch.getValue().intValue();
         }
     }
 
     private void setYaw(int yaw) {
-        if (Yaw.mc.field_71439_g.func_184218_aH()) {
-            Objects.requireNonNull(Yaw.mc.field_71439_g.func_184187_bx()).field_70177_z = yaw;
+        if (Yaw.mc.player.isRiding()) {
+            Objects.requireNonNull(Yaw.mc.player.getRidingEntity()).rotationYaw = yaw;
         }
-        Yaw.mc.field_71439_g.field_70177_z = yaw;
+        Yaw.mc.player.rotationYaw = yaw;
     }
 
     public static enum Direction {

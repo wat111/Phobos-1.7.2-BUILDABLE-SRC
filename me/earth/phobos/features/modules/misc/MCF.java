@@ -50,7 +50,7 @@ extends Module {
     @Override
     public void onUpdate() {
         if (Mouse.isButtonDown((int)2)) {
-            if (!this.clicked && this.middleClick.getValue().booleanValue() && MCF.mc.field_71462_r == null) {
+            if (!this.clicked && this.middleClick.getValue().booleanValue() && MCF.mc.currentScreen == null) {
                 this.onClick();
             }
             this.clicked = true;
@@ -61,28 +61,28 @@ extends Module {
 
     @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
     public void onKeyInput(InputEvent.KeyInputEvent event) {
-        if (this.keyboard.getValue().booleanValue() && Keyboard.getEventKeyState() && !(MCF.mc.field_71462_r instanceof PhobosGui) && this.key.getValue().getKey() == Keyboard.getEventKey()) {
+        if (this.keyboard.getValue().booleanValue() && Keyboard.getEventKeyState() && !(MCF.mc.currentScreen instanceof PhobosGui) && this.key.getValue().getKey() == Keyboard.getEventKey()) {
             this.onClick();
         }
     }
 
     private void onClick() {
         Entity entity;
-        RayTraceResult result = MCF.mc.field_71476_x;
-        if (result != null && result.field_72313_a == RayTraceResult.Type.ENTITY && (entity = result.field_72308_g) instanceof EntityPlayer) {
-            if (Phobos.friendManager.isFriend(entity.func_70005_c_())) {
-                Phobos.friendManager.removeFriend(entity.func_70005_c_());
-                Command.sendMessage("\u00a7c" + entity.func_70005_c_() + "\u00a7r" + " unfriended.");
+        RayTraceResult result = MCF.mc.objectMouseOver;
+        if (result != null && result.typeOfHit == RayTraceResult.Type.ENTITY && (entity = result.entityHit) instanceof EntityPlayer) {
+            if (Phobos.friendManager.isFriend(entity.getName())) {
+                Phobos.friendManager.removeFriend(entity.getName());
+                Command.sendMessage("\u00a7c" + entity.getName() + "\u00a7r" + " unfriended.");
                 if (this.server.getValue().booleanValue() && ServerModule.getInstance().isConnected()) {
-                    MCF.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketChatMessage("@Serverprefix" + ClickGui.getInstance().prefix.getValue()));
-                    MCF.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketChatMessage("@Server" + ClickGui.getInstance().prefix.getValue() + "friend del " + entity.func_70005_c_()));
+                    MCF.mc.player.connection.sendPacket((Packet)new CPacketChatMessage("@Serverprefix" + ClickGui.getInstance().prefix.getValue()));
+                    MCF.mc.player.connection.sendPacket((Packet)new CPacketChatMessage("@Server" + ClickGui.getInstance().prefix.getValue() + "friend del " + entity.getName()));
                 }
             } else {
-                Phobos.friendManager.addFriend(entity.func_70005_c_());
-                Command.sendMessage("\u00a7b" + entity.func_70005_c_() + "\u00a7r" + " friended.");
+                Phobos.friendManager.addFriend(entity.getName());
+                Command.sendMessage("\u00a7b" + entity.getName() + "\u00a7r" + " friended.");
                 if (this.server.getValue().booleanValue() && ServerModule.getInstance().isConnected()) {
-                    MCF.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketChatMessage("@Serverprefix" + ClickGui.getInstance().prefix.getValue()));
-                    MCF.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketChatMessage("@Server" + ClickGui.getInstance().prefix.getValue() + "friend add " + entity.func_70005_c_()));
+                    MCF.mc.player.connection.sendPacket((Packet)new CPacketChatMessage("@Serverprefix" + ClickGui.getInstance().prefix.getValue()));
+                    MCF.mc.player.connection.sendPacket((Packet)new CPacketChatMessage("@Server" + ClickGui.getInstance().prefix.getValue() + "friend add " + entity.getName()));
                 }
             }
         }

@@ -83,7 +83,7 @@ extends Module {
             this.cauraTarget = AutoCrystal.target;
         }
         if (this.test.getValue().booleanValue()) {
-            this.announceDeath((EntityPlayer)AutoGG.mc.field_71439_g);
+            this.announceDeath((EntityPlayer)AutoGG.mc.player);
             this.test.setValue(false);
         }
         if (!this.cooldown) {
@@ -122,8 +122,8 @@ extends Module {
     @SubscribeEvent
     public void onSendAttackPacket(PacketEvent.Send event) {
         CPacketUseEntity packet;
-        if (event.getPacket() instanceof CPacketUseEntity && (packet = (CPacketUseEntity)event.getPacket()).func_149565_c() == CPacketUseEntity.Action.ATTACK && packet.func_149564_a((World)AutoGG.mc.field_71441_e) instanceof EntityPlayer && !Phobos.friendManager.isFriend((EntityPlayer)packet.func_149564_a((World)AutoGG.mc.field_71441_e))) {
-            this.targets.put((EntityPlayer)packet.func_149564_a((World)AutoGG.mc.field_71441_e), 0);
+        if (event.getPacket() instanceof CPacketUseEntity && (packet = (CPacketUseEntity)event.getPacket()).getAction() == CPacketUseEntity.Action.ATTACK && packet.getEntityFromWorld((World)AutoGG.mc.world) instanceof EntityPlayer && !Phobos.friendManager.isFriend((EntityPlayer)packet.getEntityFromWorld((World)AutoGG.mc.world))) {
+            this.targets.put((EntityPlayer)packet.getEntityFromWorld((World)AutoGG.mc.world), 0);
         }
     }
 
@@ -144,7 +144,7 @@ extends Module {
     }
 
     public void announceDeath(EntityPlayer target) {
-        AutoGG.mc.field_71439_g.field_71174_a.func_147297_a((Packet)new CPacketChatMessage((this.greentext.getValue() != false ? ">" : "") + this.getRandomMessage().replaceAll("<player>", target.getDisplayNameString())));
+        AutoGG.mc.player.connection.sendPacket((Packet)new CPacketChatMessage((this.greentext.getValue() != false ? ">" : "") + this.getRandomMessage().replaceAll("<player>", target.getDisplayNameString())));
     }
 }
 

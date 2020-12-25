@@ -58,54 +58,54 @@ extends Module {
     @Override
     public void onUpdate() {
         if (IceSpeed.getINSTANCE().isOff() && this.ice.getValue().booleanValue()) {
-            Blocks.field_150432_aD.field_149765_K = 0.6f;
-            Blocks.field_150403_cj.field_149765_K = 0.6f;
-            Blocks.field_185778_de.field_149765_K = 0.6f;
+            Blocks.ICE.slipperiness = 0.6f;
+            Blocks.PACKED_ICE.slipperiness = 0.6f;
+            Blocks.FROSTED_ICE.slipperiness = 0.6f;
         }
     }
 
     @Override
     public void onDisable() {
         if (IceSpeed.getINSTANCE().isOff()) {
-            Blocks.field_150432_aD.field_149765_K = 0.98f;
-            Blocks.field_150403_cj.field_149765_K = 0.98f;
-            Blocks.field_185778_de.field_149765_K = 0.98f;
+            Blocks.ICE.slipperiness = 0.98f;
+            Blocks.PACKED_ICE.slipperiness = 0.98f;
+            Blocks.FROSTED_ICE.slipperiness = 0.98f;
         }
     }
 
     @SubscribeEvent
     public void onPacketReceived(PacketEvent.Receive event) {
-        if (event.getStage() == 0 && Velocity.mc.field_71439_g != null) {
+        if (event.getStage() == 0 && Velocity.mc.player != null) {
             Entity entity;
             SPacketEntityStatus packet;
             SPacketEntityVelocity velocity;
-            if (event.getPacket() instanceof SPacketEntityVelocity && (velocity = (SPacketEntityVelocity)event.getPacket()).func_149412_c() == Velocity.mc.field_71439_g.field_145783_c) {
+            if (event.getPacket() instanceof SPacketEntityVelocity && (velocity = (SPacketEntityVelocity)event.getPacket()).getEntityID() == Velocity.mc.player.entityId) {
                 if (this.horizontal.getValue().floatValue() == 0.0f && this.vertical.getValue().floatValue() == 0.0f) {
                     event.setCanceled(true);
                     return;
                 }
-                velocity.field_149415_b = (int)((float)velocity.field_149415_b * this.horizontal.getValue().floatValue());
-                velocity.field_149416_c = (int)((float)velocity.field_149416_c * this.vertical.getValue().floatValue());
-                velocity.field_149414_d = (int)((float)velocity.field_149414_d * this.horizontal.getValue().floatValue());
+                velocity.motionX = (int)((float)velocity.motionX * this.horizontal.getValue().floatValue());
+                velocity.motionY = (int)((float)velocity.motionY * this.vertical.getValue().floatValue());
+                velocity.motionZ = (int)((float)velocity.motionZ * this.horizontal.getValue().floatValue());
             }
-            if (event.getPacket() instanceof SPacketEntityStatus && this.bobbers.getValue().booleanValue() && (packet = (SPacketEntityStatus)event.getPacket()).func_149160_c() == 31 && (entity = packet.func_149161_a((World)Velocity.mc.field_71441_e)) instanceof EntityFishHook) {
+            if (event.getPacket() instanceof SPacketEntityStatus && this.bobbers.getValue().booleanValue() && (packet = (SPacketEntityStatus)event.getPacket()).getOpCode() == 31 && (entity = packet.getEntity((World)Velocity.mc.world)) instanceof EntityFishHook) {
                 EntityFishHook fishHook = (EntityFishHook)entity;
-                if (fishHook.field_146043_c == Velocity.mc.field_71439_g) {
+                if (fishHook.caughtEntity == Velocity.mc.player) {
                     event.setCanceled(true);
                 }
             }
             if (this.explosions.getValue().booleanValue() && event.getPacket() instanceof SPacketExplosion) {
                 velocity = (SPacketExplosion)event.getPacket();
-                velocity.field_149152_f *= this.horizontal.getValue().floatValue();
-                velocity.field_149153_g *= this.vertical.getValue().floatValue();
-                velocity.field_149159_h *= this.horizontal.getValue().floatValue();
+                velocity.motionX *= this.horizontal.getValue().floatValue();
+                velocity.motionY *= this.vertical.getValue().floatValue();
+                velocity.motionZ *= this.horizontal.getValue().floatValue();
             }
         }
     }
 
     @SubscribeEvent
     public void onPush(PushEvent event) {
-        if (event.getStage() == 0 && this.noPush.getValue().booleanValue() && event.entity.equals((Object)Velocity.mc.field_71439_g)) {
+        if (event.getStage() == 0 && this.noPush.getValue().booleanValue() && event.entity.equals((Object)Velocity.mc.player)) {
             if (this.horizontal.getValue().floatValue() == 0.0f && this.vertical.getValue().floatValue() == 0.0f) {
                 event.setCanceled(true);
                 return;
@@ -115,7 +115,7 @@ extends Module {
             event.z = -event.z * (double)this.horizontal.getValue().floatValue();
         } else if (event.getStage() == 1 && this.blocks.getValue().booleanValue()) {
             event.setCanceled(true);
-        } else if (event.getStage() == 2 && this.water.getValue().booleanValue() && Velocity.mc.field_71439_g != null && Velocity.mc.field_71439_g.equals((Object)event.entity)) {
+        } else if (event.getStage() == 2 && this.water.getValue().booleanValue() && Velocity.mc.player != null && Velocity.mc.player.equals((Object)event.entity)) {
             event.setCanceled(true);
         }
     }

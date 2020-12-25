@@ -29,16 +29,16 @@ extends Module {
     public void onUpdate() {
         InventoryBasic basic;
         Container container;
-        if (EchestBP.mc.field_71462_r instanceof GuiContainer && (container = ((GuiContainer)EchestBP.mc.field_71462_r).field_147002_h) instanceof ContainerChest && ((ContainerChest)container).func_85151_d() instanceof InventoryBasic && (basic = (InventoryBasic)((ContainerChest)container).func_85151_d()).func_70005_c_().equalsIgnoreCase("Ender Chest")) {
-            this.echestScreen = EchestBP.mc.field_71462_r;
-            EchestBP.mc.field_71462_r = null;
+        if (EchestBP.mc.currentScreen instanceof GuiContainer && (container = ((GuiContainer)EchestBP.mc.currentScreen).inventorySlots) instanceof ContainerChest && ((ContainerChest)container).getLowerChestInventory() instanceof InventoryBasic && (basic = (InventoryBasic)((ContainerChest)container).getLowerChestInventory()).getName().equalsIgnoreCase("Ender Chest")) {
+            this.echestScreen = EchestBP.mc.currentScreen;
+            EchestBP.mc.currentScreen = null;
         }
     }
 
     @Override
     public void onDisable() {
         if (!EchestBP.fullNullCheck() && this.echestScreen != null) {
-            mc.func_147108_a(this.echestScreen);
+            mc.displayGuiScreen(this.echestScreen);
         }
         this.echestScreen = null;
     }

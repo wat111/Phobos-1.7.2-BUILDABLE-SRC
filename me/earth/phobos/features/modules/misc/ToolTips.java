@@ -121,12 +121,12 @@ extends Module {
         if (ToolTips.fullNullCheck() || !this.shulkerSpy.getValue().booleanValue()) {
             return;
         }
-        if (this.peek.getValue().getKey() != -1 && ToolTips.mc.field_71462_r instanceof GuiContainer && Keyboard.isKeyDown((int)this.peek.getValue().getKey()) && (slot = ((GuiContainer)ToolTips.mc.field_71462_r).getSlotUnderMouse()) != null && (stack = slot.func_75211_c()) != null && stack.func_77973_b() instanceof ItemShulkerBox) {
+        if (this.peek.getValue().getKey() != -1 && ToolTips.mc.currentScreen instanceof GuiContainer && Keyboard.isKeyDown((int)this.peek.getValue().getKey()) && (slot = ((GuiContainer)ToolTips.mc.currentScreen).getSlotUnderMouse()) != null && (stack = slot.getStack()) != null && stack.getItem() instanceof ItemShulkerBox) {
             ToolTips.displayInv(stack, null);
         }
-        for (EntityPlayer player : ToolTips.mc.field_71441_e.field_73010_i) {
-            if (player == null || player.func_184614_ca() == null || !(player.func_184614_ca().func_77973_b() instanceof ItemShulkerBox) || EntityUtil.isFakePlayer(player) || !this.own.getValue().booleanValue() && ToolTips.mc.field_71439_g.equals((Object)player)) continue;
-            ItemStack stack2 = player.func_184614_ca();
+        for (EntityPlayer player : ToolTips.mc.world.playerEntities) {
+            if (player == null || player.getHeldItemMainhand() == null || !(player.getHeldItemMainhand().getItem() instanceof ItemShulkerBox) || EntityUtil.isFakePlayer(player) || !this.own.getValue().booleanValue() && ToolTips.mc.player.equals((Object)player)) continue;
+            ItemStack stack2 = player.getHeldItemMainhand();
             this.spiedPlayers.put(player, stack2);
         }
     }
@@ -139,10 +139,10 @@ extends Module {
         int x = -4 + this.xOffset.getValue();
         int y = 10 + this.yOffset.getValue();
         this.textRadarY = 0;
-        for (EntityPlayer player : ToolTips.mc.field_71441_e.field_73010_i) {
+        for (EntityPlayer player : ToolTips.mc.world.playerEntities) {
             Timer playerTimer;
             if (this.spiedPlayers.get((Object)player) == null) continue;
-            if (player.func_184614_ca() == null || !(player.func_184614_ca().func_77973_b() instanceof ItemShulkerBox)) {
+            if (player.getHeldItemMainhand() == null || !(player.getHeldItemMainhand().getItem() instanceof ItemShulkerBox)) {
                 playerTimer = this.playerTimers.get((Object)player);
                 if (playerTimer == null) {
                     Timer timer = new Timer();
@@ -151,12 +151,12 @@ extends Module {
                 } else if (playerTimer.passedS(this.cooldown.getValue().intValue())) {
                     continue;
                 }
-            } else if (player.func_184614_ca().func_77973_b() instanceof ItemShulkerBox && (playerTimer = this.playerTimers.get((Object)player)) != null) {
+            } else if (player.getHeldItemMainhand().getItem() instanceof ItemShulkerBox && (playerTimer = this.playerTimers.get((Object)player)) != null) {
                 playerTimer.reset();
                 this.playerTimers.put(player, playerTimer);
             }
             ItemStack stack = this.spiedPlayers.get((Object)player);
-            this.renderShulkerToolTip(stack, x, y, player.func_70005_c_());
+            this.renderShulkerToolTip(stack, x, y, player.getName());
             this.textRadarY = (y += this.yPerPlayer.getValue() + 60) - 10 - this.yOffset.getValue() + this.trOffset.getValue();
         }
     }
@@ -172,81 +172,81 @@ extends Module {
     @SubscribeEvent
     public void renderTooltip(RenderTooltipEvent.PostText event) {
         MapData mapData;
-        if (this.maps.getValue().booleanValue() && !event.getStack().func_190926_b() && event.getStack().func_77973_b() instanceof ItemMap && (mapData = Items.field_151098_aY.func_77873_a(event.getStack(), (World)ToolTips.mc.field_71441_e)) != null) {
-            GlStateManager.func_179094_E();
-            GlStateManager.func_179124_c((float)1.0f, (float)1.0f, (float)1.0f);
-            RenderHelper.func_74518_a();
-            mc.func_110434_K().func_110577_a(MAP);
-            Tessellator instance = Tessellator.func_178181_a();
-            BufferBuilder buffer = instance.func_178180_c();
+        if (this.maps.getValue().booleanValue() && !event.getStack().isEmpty() && event.getStack().getItem() instanceof ItemMap && (mapData = Items.FILLED_MAP.getMapData(event.getStack(), (World)ToolTips.mc.world)) != null) {
+            GlStateManager.pushMatrix();
+            GlStateManager.color((float)1.0f, (float)1.0f, (float)1.0f);
+            RenderHelper.disableStandardItemLighting();
+            mc.getTextureManager().bindTexture(MAP);
+            Tessellator instance = Tessellator.getInstance();
+            BufferBuilder buffer = instance.getBuffer();
             int n = 7;
             float n2 = 135.0f;
             float n3 = 0.5f;
-            GlStateManager.func_179109_b((float)event.getX(), (float)((float)event.getY() - n2 * n3 - 5.0f), (float)0.0f);
-            GlStateManager.func_179152_a((float)n3, (float)n3, (float)n3);
-            buffer.func_181668_a(7, DefaultVertexFormats.field_181707_g);
-            buffer.func_181662_b((double)(-n), (double)n2, 0.0).func_187315_a(0.0, 1.0).func_181675_d();
-            buffer.func_181662_b((double)n2, (double)n2, 0.0).func_187315_a(1.0, 1.0).func_181675_d();
-            buffer.func_181662_b((double)n2, (double)(-n), 0.0).func_187315_a(1.0, 0.0).func_181675_d();
-            buffer.func_181662_b((double)(-n), (double)(-n), 0.0).func_187315_a(0.0, 0.0).func_181675_d();
-            instance.func_78381_a();
-            ToolTips.mc.field_71460_t.func_147701_i().func_148250_a(mapData, false);
-            GlStateManager.func_179145_e();
-            GlStateManager.func_179121_F();
+            GlStateManager.translate((float)event.getX(), (float)((float)event.getY() - n2 * n3 - 5.0f), (float)0.0f);
+            GlStateManager.scale((float)n3, (float)n3, (float)n3);
+            buffer.begin(7, DefaultVertexFormats.POSITION_TEX);
+            buffer.pos((double)(-n), (double)n2, 0.0).tex(0.0, 1.0).endVertex();
+            buffer.pos((double)n2, (double)n2, 0.0).tex(1.0, 1.0).endVertex();
+            buffer.pos((double)n2, (double)(-n), 0.0).tex(1.0, 0.0).endVertex();
+            buffer.pos((double)(-n), (double)(-n), 0.0).tex(0.0, 0.0).endVertex();
+            instance.draw();
+            ToolTips.mc.entityRenderer.getMapItemRenderer().renderMap(mapData, false);
+            GlStateManager.enableLighting();
+            GlStateManager.popMatrix();
         }
     }
 
     public void renderShulkerToolTip(ItemStack stack, int x, int y, String name) {
         NBTTagCompound blockEntityTag;
-        NBTTagCompound tagCompound = stack.func_77978_p();
-        if (tagCompound != null && tagCompound.func_150297_b("BlockEntityTag", 10) && (blockEntityTag = tagCompound.func_74775_l("BlockEntityTag")).func_150297_b("Items", 9)) {
-            GlStateManager.func_179098_w();
-            GlStateManager.func_179140_f();
-            GlStateManager.func_179131_c((float)1.0f, (float)1.0f, (float)1.0f, (float)1.0f);
-            GlStateManager.func_179147_l();
-            GlStateManager.func_187428_a((GlStateManager.SourceFactor)GlStateManager.SourceFactor.SRC_ALPHA, (GlStateManager.DestFactor)GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, (GlStateManager.SourceFactor)GlStateManager.SourceFactor.ONE, (GlStateManager.DestFactor)GlStateManager.DestFactor.ZERO);
-            mc.func_110434_K().func_110577_a(SHULKER_GUI_TEXTURE);
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        if (tagCompound != null && tagCompound.hasKey("BlockEntityTag", 10) && (blockEntityTag = tagCompound.getCompoundTag("BlockEntityTag")).hasKey("Items", 9)) {
+            GlStateManager.enableTexture2D();
+            GlStateManager.disableLighting();
+            GlStateManager.color((float)1.0f, (float)1.0f, (float)1.0f, (float)1.0f);
+            GlStateManager.enableBlend();
+            GlStateManager.tryBlendFuncSeparate((GlStateManager.SourceFactor)GlStateManager.SourceFactor.SRC_ALPHA, (GlStateManager.DestFactor)GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, (GlStateManager.SourceFactor)GlStateManager.SourceFactor.ONE, (GlStateManager.DestFactor)GlStateManager.DestFactor.ZERO);
+            mc.getTextureManager().bindTexture(SHULKER_GUI_TEXTURE);
             RenderUtil.drawTexturedRect(x, y, 0, 0, 176, 16, 500);
             RenderUtil.drawTexturedRect(x, y + 16, 0, 16, 176, 54 + this.invH.getValue(), 500);
             RenderUtil.drawTexturedRect(x, y + 16 + 54, 0, 160, 176, 8, 500);
-            GlStateManager.func_179097_i();
+            GlStateManager.disableDepth();
             Color color = new Color(0, 0, 0, 255);
             if (this.textColor.getValue().booleanValue()) {
                 color = new Color(this.red.getValue(), this.green.getValue(), this.blue.getValue(), this.alpha.getValue());
             }
-            this.renderer.drawStringWithShadow(name == null ? stack.func_82833_r() : name, x + 8, y + 6, ColorUtil.toRGBA(color));
-            GlStateManager.func_179126_j();
-            RenderHelper.func_74520_c();
-            GlStateManager.func_179091_B();
-            GlStateManager.func_179142_g();
-            GlStateManager.func_179145_e();
-            NonNullList nonnulllist = NonNullList.func_191197_a((int)27, (Object)ItemStack.field_190927_a);
-            ItemStackHelper.func_191283_b((NBTTagCompound)blockEntityTag, (NonNullList)nonnulllist);
+            this.renderer.drawStringWithShadow(name == null ? stack.getDisplayName() : name, x + 8, y + 6, ColorUtil.toRGBA(color));
+            GlStateManager.enableDepth();
+            RenderHelper.enableGUIStandardItemLighting();
+            GlStateManager.enableRescaleNormal();
+            GlStateManager.enableColorMaterial();
+            GlStateManager.enableLighting();
+            NonNullList nonnulllist = NonNullList.withSize((int)27, (Object)ItemStack.EMPTY);
+            ItemStackHelper.loadAllItems((NBTTagCompound)blockEntityTag, (NonNullList)nonnulllist);
             for (int i = 0; i < nonnulllist.size(); ++i) {
                 int iX = x + i % 9 * 18 + 8;
                 int iY = y + i / 9 * 18 + 18;
                 ItemStack itemStack = (ItemStack)nonnulllist.get(i);
-                ToolTips.mc.func_175599_af().field_77023_b = 501.0f;
-                RenderUtil.itemRender.func_180450_b(itemStack, iX, iY);
-                RenderUtil.itemRender.func_180453_a(ToolTips.mc.field_71466_p, itemStack, iX, iY, null);
-                ToolTips.mc.func_175599_af().field_77023_b = 0.0f;
+                ToolTips.mc.getRenderItem().zLevel = 501.0f;
+                RenderUtil.itemRender.renderItemAndEffectIntoGUI(itemStack, iX, iY);
+                RenderUtil.itemRender.renderItemOverlayIntoGUI(ToolTips.mc.fontRenderer, itemStack, iX, iY, null);
+                ToolTips.mc.getRenderItem().zLevel = 0.0f;
             }
-            GlStateManager.func_179140_f();
-            GlStateManager.func_179084_k();
-            GlStateManager.func_179131_c((float)1.0f, (float)1.0f, (float)1.0f, (float)1.0f);
+            GlStateManager.disableLighting();
+            GlStateManager.disableBlend();
+            GlStateManager.color((float)1.0f, (float)1.0f, (float)1.0f, (float)1.0f);
         }
     }
 
     public static void displayInv(ItemStack stack, String name) {
         try {
-            Item item = stack.func_77973_b();
+            Item item = stack.getItem();
             TileEntityShulkerBox entityBox = new TileEntityShulkerBox();
             ItemShulkerBox shulker = (ItemShulkerBox)item;
-            entityBox.field_145854_h = shulker.func_179223_d();
-            entityBox.func_145834_a((World)ToolTips.mc.field_71441_e);
-            ItemStackHelper.func_191283_b((NBTTagCompound)stack.func_77978_p().func_74775_l("BlockEntityTag"), (NonNullList)entityBox.field_190596_f);
-            entityBox.func_145839_a(stack.func_77978_p().func_74775_l("BlockEntityTag"));
-            entityBox.func_190575_a(name == null ? stack.func_82833_r() : name);
+            entityBox.blockType = shulker.getBlock();
+            entityBox.setWorld((World)ToolTips.mc.world);
+            ItemStackHelper.loadAllItems((NBTTagCompound)stack.getTagCompound().getCompoundTag("BlockEntityTag"), (NonNullList)entityBox.items);
+            entityBox.readFromNBT(stack.getTagCompound().getCompoundTag("BlockEntityTag"));
+            entityBox.setCustomName(name == null ? stack.getDisplayName() : name);
             new Thread(() -> {
                 try {
                     Thread.sleep(200L);
@@ -254,7 +254,7 @@ extends Module {
                 catch (InterruptedException interruptedException) {
                     // empty catch block
                 }
-                ToolTips.mc.field_71439_g.func_71007_a((IInventory)entityBox);
+                ToolTips.mc.player.displayGUIChest((IInventory)entityBox);
             }).start();
         }
         catch (Exception exception) {

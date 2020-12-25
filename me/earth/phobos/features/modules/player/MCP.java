@@ -64,17 +64,17 @@ extends Module {
         boolean offhand;
         Entity entity;
         RayTraceResult result;
-        if (this.antiFriend.getValue().booleanValue() && (result = MCP.mc.field_71476_x) != null && result.field_72313_a == RayTraceResult.Type.ENTITY && (entity = result.field_72308_g) instanceof EntityPlayer) {
+        if (this.antiFriend.getValue().booleanValue() && (result = MCP.mc.objectMouseOver) != null && result.typeOfHit == RayTraceResult.Type.ENTITY && (entity = result.entityHit) instanceof EntityPlayer) {
             return;
         }
         int pearlSlot = InventoryUtil.findHotbarBlock(ItemEnderPearl.class);
-        boolean bl = offhand = MCP.mc.field_71439_g.func_184592_cb().func_77973_b() == Items.field_151079_bi;
+        boolean bl = offhand = MCP.mc.player.getHeldItemOffhand().getItem() == Items.ENDER_PEARL;
         if (pearlSlot != -1 || offhand) {
-            int oldslot = MCP.mc.field_71439_g.field_71071_by.field_70461_c;
+            int oldslot = MCP.mc.player.inventory.currentItem;
             if (!offhand) {
                 InventoryUtil.switchToHotbarSlot(pearlSlot, false);
             }
-            MCP.mc.field_71442_b.func_187101_a((EntityPlayer)MCP.mc.field_71439_g, (World)MCP.mc.field_71441_e, offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND);
+            MCP.mc.playerController.processRightClick((EntityPlayer)MCP.mc.player, (World)MCP.mc.world, offhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND);
             if (!offhand) {
                 InventoryUtil.switchToHotbarSlot(oldslot, false);
             }

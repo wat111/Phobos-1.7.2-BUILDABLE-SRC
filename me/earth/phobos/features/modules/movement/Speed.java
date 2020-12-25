@@ -58,7 +58,7 @@ extends Module {
 
     @Override
     public void onUpdate() {
-        if (this.shouldReturn() || Speed.mc.field_71439_g.func_70093_af() || Speed.mc.field_71439_g.func_70090_H() || Speed.mc.field_71439_g.func_180799_ab()) {
+        if (this.shouldReturn() || Speed.mc.player.isSneaking() || Speed.mc.player.isInWater() || Speed.mc.player.isInLava()) {
             return;
         }
         switch (this.mode.getValue()) {
@@ -80,20 +80,20 @@ extends Module {
     private void doBoost() {
         this.bounceHeight = 0.4;
         this.move = 0.26f;
-        if (Speed.mc.field_71439_g.field_70122_E) {
-            this.startY = Speed.mc.field_71439_g.field_70163_u;
+        if (Speed.mc.player.onGround) {
+            this.startY = Speed.mc.player.posY;
         }
-        if (EntityUtil.getEntitySpeed((Entity)Speed.mc.field_71439_g) <= 1.0) {
+        if (EntityUtil.getEntitySpeed((Entity)Speed.mc.player) <= 1.0) {
             this.lowChainVal = 1.0;
             this.highChainVal = 1.0;
         }
-        if (EntityUtil.isEntityMoving((Entity)Speed.mc.field_71439_g) && !Speed.mc.field_71439_g.field_70123_F && !BlockUtil.isBlockAboveEntitySolid((Entity)Speed.mc.field_71439_g) && BlockUtil.isBlockBelowEntitySolid((Entity)Speed.mc.field_71439_g)) {
+        if (EntityUtil.isEntityMoving((Entity)Speed.mc.player) && !Speed.mc.player.collidedHorizontally && !BlockUtil.isBlockAboveEntitySolid((Entity)Speed.mc.player) && BlockUtil.isBlockBelowEntitySolid((Entity)Speed.mc.player)) {
             this.oneTime = true;
-            this.antiShake = this.noShake.getValue() != false && Speed.mc.field_71439_g.func_184187_bx() == null;
+            this.antiShake = this.noShake.getValue() != false && Speed.mc.player.getRidingEntity() == null;
             Random random = new Random();
             boolean rnd = random.nextBoolean();
-            if (Speed.mc.field_71439_g.field_70163_u >= this.startY + this.bounceHeight) {
-                Speed.mc.field_71439_g.field_70181_x = -this.bounceHeight;
+            if (Speed.mc.player.posY >= this.startY + this.bounceHeight) {
+                Speed.mc.player.motionY = -this.bounceHeight;
                 this.lowChainVal += 1.0;
                 if (this.lowChainVal == 1.0) {
                     this.move = 0.075f;
@@ -120,8 +120,8 @@ extends Module {
                     Phobos.timerManager.setTimer(1.0f);
                 }
             }
-            if (Speed.mc.field_71439_g.field_70163_u == this.startY) {
-                Speed.mc.field_71439_g.field_70181_x = this.bounceHeight;
+            if (Speed.mc.player.posY == this.startY) {
+                Speed.mc.player.motionY = this.bounceHeight;
                 this.highChainVal += 1.0;
                 if (this.highChainVal == 1.0) {
                     this.move = 0.075f;
@@ -149,10 +149,10 @@ extends Module {
                     }
                 }
             }
-            EntityUtil.moveEntityStrafe(this.move, (Entity)Speed.mc.field_71439_g);
+            EntityUtil.moveEntityStrafe(this.move, (Entity)Speed.mc.player);
         } else {
             if (this.oneTime) {
-                Speed.mc.field_71439_g.field_70181_x = -0.1;
+                Speed.mc.player.motionY = -0.1;
                 this.oneTime = false;
             }
             this.highChainVal = 0.0;
@@ -165,20 +165,20 @@ extends Module {
     private void doAccel() {
         this.bounceHeight = 0.4;
         this.move = 0.26f;
-        if (Speed.mc.field_71439_g.field_70122_E) {
-            this.startY = Speed.mc.field_71439_g.field_70163_u;
+        if (Speed.mc.player.onGround) {
+            this.startY = Speed.mc.player.posY;
         }
-        if (EntityUtil.getEntitySpeed((Entity)Speed.mc.field_71439_g) <= 1.0) {
+        if (EntityUtil.getEntitySpeed((Entity)Speed.mc.player) <= 1.0) {
             this.lowChainVal = 1.0;
             this.highChainVal = 1.0;
         }
-        if (EntityUtil.isEntityMoving((Entity)Speed.mc.field_71439_g) && !Speed.mc.field_71439_g.field_70123_F && !BlockUtil.isBlockAboveEntitySolid((Entity)Speed.mc.field_71439_g) && BlockUtil.isBlockBelowEntitySolid((Entity)Speed.mc.field_71439_g)) {
+        if (EntityUtil.isEntityMoving((Entity)Speed.mc.player) && !Speed.mc.player.collidedHorizontally && !BlockUtil.isBlockAboveEntitySolid((Entity)Speed.mc.player) && BlockUtil.isBlockBelowEntitySolid((Entity)Speed.mc.player)) {
             this.oneTime = true;
-            this.antiShake = this.noShake.getValue() != false && Speed.mc.field_71439_g.func_184187_bx() == null;
+            this.antiShake = this.noShake.getValue() != false && Speed.mc.player.getRidingEntity() == null;
             Random random = new Random();
             boolean rnd = random.nextBoolean();
-            if (Speed.mc.field_71439_g.field_70163_u >= this.startY + this.bounceHeight) {
-                Speed.mc.field_71439_g.field_70181_x = -this.bounceHeight;
+            if (Speed.mc.player.posY >= this.startY + this.bounceHeight) {
+                Speed.mc.player.motionY = -this.bounceHeight;
                 this.lowChainVal += 1.0;
                 if (this.lowChainVal == 1.0) {
                     this.move = 0.075f;
@@ -235,8 +235,8 @@ extends Module {
                     Phobos.timerManager.setTimer(1.0f);
                 }
             }
-            if (Speed.mc.field_71439_g.field_70163_u == this.startY) {
-                Speed.mc.field_71439_g.field_70181_x = this.bounceHeight;
+            if (Speed.mc.player.posY == this.startY) {
+                Speed.mc.player.motionY = this.bounceHeight;
                 this.highChainVal += 1.0;
                 if (this.highChainVal == 1.0) {
                     this.move = 0.075f;
@@ -297,10 +297,10 @@ extends Module {
                     }
                 }
             }
-            EntityUtil.moveEntityStrafe(this.move, (Entity)Speed.mc.field_71439_g);
+            EntityUtil.moveEntityStrafe(this.move, (Entity)Speed.mc.player);
         } else {
             if (this.oneTime) {
-                Speed.mc.field_71439_g.field_70181_x = -0.1;
+                Speed.mc.player.motionY = -0.1;
                 this.oneTime = false;
             }
             this.antiShake = false;
@@ -313,20 +313,20 @@ extends Module {
     private void doOnground() {
         this.bounceHeight = 0.4;
         this.move = 0.26f;
-        if (Speed.mc.field_71439_g.field_70122_E) {
-            this.startY = Speed.mc.field_71439_g.field_70163_u;
+        if (Speed.mc.player.onGround) {
+            this.startY = Speed.mc.player.posY;
         }
-        if (EntityUtil.getEntitySpeed((Entity)Speed.mc.field_71439_g) <= 1.0) {
+        if (EntityUtil.getEntitySpeed((Entity)Speed.mc.player) <= 1.0) {
             this.lowChainVal = 1.0;
             this.highChainVal = 1.0;
         }
-        if (EntityUtil.isEntityMoving((Entity)Speed.mc.field_71439_g) && !Speed.mc.field_71439_g.field_70123_F && !BlockUtil.isBlockAboveEntitySolid((Entity)Speed.mc.field_71439_g) && BlockUtil.isBlockBelowEntitySolid((Entity)Speed.mc.field_71439_g)) {
+        if (EntityUtil.isEntityMoving((Entity)Speed.mc.player) && !Speed.mc.player.collidedHorizontally && !BlockUtil.isBlockAboveEntitySolid((Entity)Speed.mc.player) && BlockUtil.isBlockBelowEntitySolid((Entity)Speed.mc.player)) {
             this.oneTime = true;
-            this.antiShake = this.noShake.getValue() != false && Speed.mc.field_71439_g.func_184187_bx() == null;
+            this.antiShake = this.noShake.getValue() != false && Speed.mc.player.getRidingEntity() == null;
             Random random = new Random();
             boolean rnd = random.nextBoolean();
-            if (Speed.mc.field_71439_g.field_70163_u >= this.startY + this.bounceHeight) {
-                Speed.mc.field_71439_g.field_70181_x = -this.bounceHeight;
+            if (Speed.mc.player.posY >= this.startY + this.bounceHeight) {
+                Speed.mc.player.motionY = -this.bounceHeight;
                 this.lowChainVal += 1.0;
                 if (this.lowChainVal == 1.0) {
                     this.move = 0.075f;
@@ -383,8 +383,8 @@ extends Module {
                     Phobos.timerManager.setTimer(1.0f);
                 }
             }
-            if (Speed.mc.field_71439_g.field_70163_u == this.startY) {
-                Speed.mc.field_71439_g.field_70181_x = this.bounceHeight;
+            if (Speed.mc.player.posY == this.startY) {
+                Speed.mc.player.motionY = this.bounceHeight;
                 this.highChainVal += 1.0;
                 if (this.highChainVal == 1.0) {
                     this.move = 0.075f;
@@ -445,10 +445,10 @@ extends Module {
                     }
                 }
             }
-            EntityUtil.moveEntityStrafe(this.move, (Entity)Speed.mc.field_71439_g);
+            EntityUtil.moveEntityStrafe(this.move, (Entity)Speed.mc.player);
         } else {
             if (this.oneTime) {
-                Speed.mc.field_71439_g.field_70181_x = -0.1;
+                Speed.mc.player.motionY = -0.1;
                 this.oneTime = false;
             }
             this.antiShake = false;
@@ -461,7 +461,7 @@ extends Module {
     @Override
     public void onDisable() {
         if (this.mode.getValue() == Mode.ONGROUND || this.mode.getValue() == Mode.BOOST) {
-            Speed.mc.field_71439_g.field_70181_x = -0.1;
+            Speed.mc.player.motionY = -0.1;
         }
         Phobos.timerManager.setTimer(1.0f);
         this.highChainVal = 0.0;
@@ -472,7 +472,7 @@ extends Module {
     @SubscribeEvent
     public void onSettingChange(ClientEvent event) {
         if (event.getStage() == 2 && event.getSetting().equals(this.mode) && this.mode.getPlannedValue() == Mode.INSTANT) {
-            Speed.mc.field_71439_g.field_70181_x = -0.1;
+            Speed.mc.player.motionY = -0.1;
         }
     }
 
@@ -483,15 +483,15 @@ extends Module {
 
     @SubscribeEvent
     public void onMode(MoveEvent event) {
-        if (!(this.shouldReturn() || event.getStage() != 0 || this.mode.getValue() != Mode.INSTANT || Speed.nullCheck() || Speed.mc.field_71439_g.func_70093_af() || Speed.mc.field_71439_g.func_70090_H() || Speed.mc.field_71439_g.func_180799_ab() || Speed.mc.field_71439_g.field_71158_b.field_192832_b == 0.0f && Speed.mc.field_71439_g.field_71158_b.field_78902_a == 0.0f)) {
-            if (Speed.mc.field_71439_g.field_70122_E && this.strafeJump.getValue().booleanValue()) {
-                Speed.mc.field_71439_g.field_70181_x = 0.4;
+        if (!(this.shouldReturn() || event.getStage() != 0 || this.mode.getValue() != Mode.INSTANT || Speed.nullCheck() || Speed.mc.player.isSneaking() || Speed.mc.player.isInWater() || Speed.mc.player.isInLava() || Speed.mc.player.movementInput.moveForward == 0.0f && Speed.mc.player.movementInput.moveStrafe == 0.0f)) {
+            if (Speed.mc.player.onGround && this.strafeJump.getValue().booleanValue()) {
+                Speed.mc.player.motionY = 0.4;
                 event.setY(0.4);
             }
-            MovementInput movementInput = Speed.mc.field_71439_g.field_71158_b;
-            float moveForward = movementInput.field_192832_b;
-            float moveStrafe = movementInput.field_78902_a;
-            float rotationYaw = Speed.mc.field_71439_g.field_70177_z;
+            MovementInput movementInput = Speed.mc.player.movementInput;
+            float moveForward = movementInput.moveForward;
+            float moveStrafe = movementInput.moveStrafe;
+            float rotationYaw = Speed.mc.player.rotationYaw;
             if ((double)moveForward == 0.0 && (double)moveStrafe == 0.0) {
                 event.setX(0.0);
                 event.setZ(0.0);
@@ -513,25 +513,25 @@ extends Module {
     }
 
     private void speedOff() {
-        float yaw = (float)Math.toRadians(Speed.mc.field_71439_g.field_70177_z);
-        if (BlockUtil.isBlockAboveEntitySolid((Entity)Speed.mc.field_71439_g)) {
-            if (Speed.mc.field_71474_y.field_74351_w.func_151470_d() && !Speed.mc.field_71474_y.field_74311_E.func_151470_d() && Speed.mc.field_71439_g.field_70122_E) {
-                Speed.mc.field_71439_g.field_70159_w -= (double)MathUtil.sin(yaw) * 0.15;
-                Speed.mc.field_71439_g.field_70179_y += (double)MathUtil.cos(yaw) * 0.15;
+        float yaw = (float)Math.toRadians(Speed.mc.player.rotationYaw);
+        if (BlockUtil.isBlockAboveEntitySolid((Entity)Speed.mc.player)) {
+            if (Speed.mc.gameSettings.keyBindForward.isKeyDown() && !Speed.mc.gameSettings.keyBindSneak.isKeyDown() && Speed.mc.player.onGround) {
+                Speed.mc.player.motionX -= (double)MathUtil.sin(yaw) * 0.15;
+                Speed.mc.player.motionZ += (double)MathUtil.cos(yaw) * 0.15;
             }
-        } else if (Speed.mc.field_71439_g.field_70123_F) {
-            if (Speed.mc.field_71474_y.field_74351_w.func_151470_d() && !Speed.mc.field_71474_y.field_74311_E.func_151470_d() && Speed.mc.field_71439_g.field_70122_E) {
-                Speed.mc.field_71439_g.field_70159_w -= (double)MathUtil.sin(yaw) * 0.03;
-                Speed.mc.field_71439_g.field_70179_y += (double)MathUtil.cos(yaw) * 0.03;
+        } else if (Speed.mc.player.collidedHorizontally) {
+            if (Speed.mc.gameSettings.keyBindForward.isKeyDown() && !Speed.mc.gameSettings.keyBindSneak.isKeyDown() && Speed.mc.player.onGround) {
+                Speed.mc.player.motionX -= (double)MathUtil.sin(yaw) * 0.03;
+                Speed.mc.player.motionZ += (double)MathUtil.cos(yaw) * 0.03;
             }
-        } else if (!BlockUtil.isBlockBelowEntitySolid((Entity)Speed.mc.field_71439_g)) {
-            if (Speed.mc.field_71474_y.field_74351_w.func_151470_d() && !Speed.mc.field_71474_y.field_74311_E.func_151470_d() && Speed.mc.field_71439_g.field_70122_E) {
-                Speed.mc.field_71439_g.field_70159_w -= (double)MathUtil.sin(yaw) * 0.03;
-                Speed.mc.field_71439_g.field_70179_y += (double)MathUtil.cos(yaw) * 0.03;
+        } else if (!BlockUtil.isBlockBelowEntitySolid((Entity)Speed.mc.player)) {
+            if (Speed.mc.gameSettings.keyBindForward.isKeyDown() && !Speed.mc.gameSettings.keyBindSneak.isKeyDown() && Speed.mc.player.onGround) {
+                Speed.mc.player.motionX -= (double)MathUtil.sin(yaw) * 0.03;
+                Speed.mc.player.motionZ += (double)MathUtil.cos(yaw) * 0.03;
             }
         } else {
-            Speed.mc.field_71439_g.field_70159_w = 0.0;
-            Speed.mc.field_71439_g.field_70179_y = 0.0;
+            Speed.mc.player.motionX = 0.0;
+            Speed.mc.player.motionZ = 0.0;
         }
     }
 

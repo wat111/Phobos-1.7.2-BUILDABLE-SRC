@@ -37,7 +37,7 @@ extends EntityLivingBase {
     @Inject(method={"getCooldownPeriod"}, at={@At(value="HEAD")}, cancellable=true)
     private void getCooldownPeriodHook(CallbackInfoReturnable<Float> callbackInfoReturnable) {
         if (TpsSync.getInstance().isOn() && TpsSync.getInstance().attack.getValue().booleanValue()) {
-            callbackInfoReturnable.setReturnValue(Float.valueOf((float)(1.0 / ((EntityPlayer)EntityPlayer.class.cast((Object)this)).func_110148_a(SharedMonsterAttributes.field_188790_f).func_111126_e() * 20.0 * (double)Phobos.serverManager.getTpsFactor())));
+            callbackInfoReturnable.setReturnValue(Float.valueOf((float)(1.0 / ((EntityPlayer)EntityPlayer.class.cast((Object)this)).getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue() * 20.0 * (double)Phobos.serverManager.getTpsFactor())));
         }
     }
 
