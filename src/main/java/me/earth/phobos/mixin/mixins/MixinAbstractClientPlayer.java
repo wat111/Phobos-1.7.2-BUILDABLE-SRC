@@ -35,7 +35,7 @@ public abstract class MixinAbstractClientPlayer {
             if (info != null) {
                 uuid = this.getPlayerInfo().getGameProfile().getId();
             }
-            ResourceLocation cape = Capes.getCapeResource((AbstractClientPlayer)this);
+            ResourceLocation cape = Capes.getCapeResource((AbstractClientPlayer)(Object)this);
             if (uuid != null && Capes.hasCape(uuid)) {
                 callbackInfoReturnable.setReturnValue(cape);
             }

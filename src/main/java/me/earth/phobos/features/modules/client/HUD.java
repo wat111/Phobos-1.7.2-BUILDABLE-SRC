@@ -206,8 +206,8 @@ extends Module {
         String text;
         Object text2;
         String text3;
-        int i;
-        int j;
+        //int i;
+        //int j;
         if (HUD.fullNullCheck()) {
             return;
         }
@@ -246,12 +246,12 @@ extends Module {
         if (this.textRadar.getValue().booleanValue()) {
             this.drawTextRadar(ToolTips.getInstance().isOff() || ToolTips.getInstance().shulkerSpy.getValue() == false || ToolTips.getInstance().render.getValue() == false ? 0 : ToolTips.getInstance().getTextRadarY());
         }
-        int n = this.renderingUp.getValue() != false ? 0 : (j = HUD.mc.currentScreen instanceof GuiChat ? 14 : 0);
+        int j = this.renderingUp.getValue() != false ? 0 : (HUD.mc.currentScreen instanceof GuiChat ? 14 : 0);
         if (this.arrayList.getValue().booleanValue()) {
             Color moduleColor;
             Module module;
             if (this.renderingUp.getValue().booleanValue()) {
-                for (i = 0; i < (this.alphabeticalSorting.getValue() != false ? Phobos.moduleManager.alphabeticallySortedModules.size() : Phobos.moduleManager.sortedModules.size()); ++i) {
+                for (int i = 0; i < (this.alphabeticalSorting.getValue() != false ? Phobos.moduleManager.alphabeticallySortedModules.size() : Phobos.moduleManager.sortedModules.size()); ++i) {
                     module = this.alphabeticalSorting.getValue() != false ? Phobos.moduleManager.alphabeticallySortedModules.get(i) : Phobos.moduleManager.sortedModules.get(i);
                     text3 = module.getDisplayName() + "\u00a77" + (module.getDisplayInfo() != null ? " [\u00a7f" + module.getDisplayInfo() + "\u00a77" + "]" : "");
                     moduleColor = Phobos.moduleManager.moduleColorMap.get(module);
@@ -259,7 +259,7 @@ extends Module {
                     ++j;
                 }
             } else {
-                for (i = 0; i < (this.alphabeticalSorting.getValue() != false ? Phobos.moduleManager.alphabeticallySortedModules.size() : Phobos.moduleManager.sortedModules.size()); ++i) {
+                for (int i = 0; i < (this.alphabeticalSorting.getValue() != false ? Phobos.moduleManager.alphabeticallySortedModules.size() : Phobos.moduleManager.sortedModules.size()); ++i) {
                     module = this.alphabeticalSorting.getValue() != false ? Phobos.moduleManager.alphabeticallySortedModules.get(Phobos.moduleManager.alphabeticallySortedModules.size() - 1 - i) : Phobos.moduleManager.sortedModules.get(i);
                     text3 = module.getDisplayName() + "\u00a77" + (module.getDisplayInfo() != null ? " [\u00a7f" + module.getDisplayInfo() + "\u00a77" + "]" : "");
                     moduleColor = Phobos.moduleManager.moduleColorMap.get(module);
@@ -267,7 +267,7 @@ extends Module {
                 }
             }
         }
-        int n2 = this.renderingUp.getValue() == false ? 0 : (i = HUD.mc.currentScreen instanceof GuiChat ? 0 : 0);
+        int i = this.renderingUp.getValue() == false ? 0 : (HUD.mc.currentScreen instanceof GuiChat ? 0 : 0);
         if (this.renderingUp.getValue().booleanValue()) {
             int itemDamage;
             if (this.serverBrand.getValue().booleanValue()) {

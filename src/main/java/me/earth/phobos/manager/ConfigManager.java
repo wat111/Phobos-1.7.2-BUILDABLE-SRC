@@ -57,7 +57,7 @@ implements Util {
 
     public void loadConfig(String name) {
         this.loadingConfig = true;
-        List files = Arrays.stream((Object[])Objects.requireNonNull(new File("phobos").listFiles())).filter(File::isDirectory).collect(Collectors.toList());
+        final List<File> files = Arrays.stream(Objects.requireNonNull(new File("phobos").listFiles())).filter(File::isDirectory).collect(Collectors.toList());
         this.config = files.contains(new File("phobos/" + name + "/")) ? "phobos/" + name + "/" : "phobos/config/";
         Phobos.friendManager.onLoad();
         for (Feature feature : this.features) {
