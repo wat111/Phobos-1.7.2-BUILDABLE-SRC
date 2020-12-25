@@ -90,6 +90,8 @@ public class Phobos {
         LOGGER.info("faggot above - 3vt");
         LOGGER.info("megyn wins again");
         LOGGER.info("gtfo my logs - 3arth");
+        LOGGER.info("hqrion is chad");
+        LOGGER.info("ciruu is epic :o")
     }
 
     @Mod.EventHandler
