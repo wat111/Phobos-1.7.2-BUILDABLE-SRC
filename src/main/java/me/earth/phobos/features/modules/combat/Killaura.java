@@ -87,12 +87,11 @@ extends Module {
     }
 
     private void doKillaura() {
-        int wait;
         if (this.onlySharp.getValue().booleanValue() && !EntityUtil.holdingWeapon((EntityPlayer)Killaura.mc.player)) {
             target = null;
             return;
         }
-        int n = this.delay.getValue() == false || EntityUtil.holding32k((EntityPlayer)Killaura.mc.player) && this.teekaydelay.getValue() == false ? 0 : (wait = (int)((float)DamageUtil.getCooldownByWeapon((EntityPlayer)Killaura.mc.player) * (this.tps.getValue() != false ? Phobos.serverManager.getTpsFactor() : 1.0f)));
+        int wait = this.delay.getValue() == false || EntityUtil.holding32k((EntityPlayer)Killaura.mc.player) && this.teekaydelay.getValue() == false ? 0 : (wait = (int)((float)DamageUtil.getCooldownByWeapon((EntityPlayer)Killaura.mc.player) * (this.tps.getValue() != false ? Phobos.serverManager.getTpsFactor() : 1.0f)));
         if (!this.timer.passedMs(wait) || !this.eating.getValue().booleanValue() && Killaura.mc.player.isHandActive() && (!Killaura.mc.player.getHeldItemOffhand().getItem().equals((Object)Items.SHIELD) || Killaura.mc.player.getActiveHand() != EnumHand.OFF_HAND)) {
             return;
         }

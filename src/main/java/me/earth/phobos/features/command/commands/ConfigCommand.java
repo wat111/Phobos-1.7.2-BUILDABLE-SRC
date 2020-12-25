@@ -26,7 +26,7 @@ extends Command {
             if ("list".equals(commands[0])) {
                 String configs = "Configs: ";
                 File file = new File("phobos/");
-                List directories = Arrays.stream(file.listFiles()).filter(File::isDirectory).filter(f -> !f.getName().equals("util")).collect(Collectors.toList());
+                List<File> directories = Arrays.stream(file.listFiles()).filter(File::isDirectory).filter(f -> !f.getName().equals("util")).collect(Collectors.toList());
                 StringBuilder builder = new StringBuilder(configs);
                 for (File file1 : directories) {
                     builder.append(file1.getName() + ", ");

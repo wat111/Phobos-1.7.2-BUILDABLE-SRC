@@ -283,13 +283,13 @@ implements Util {
     public static Vec3d[] getUnsafeBlockArray(Entity entity, int height, boolean floor) {
         List<Vec3d> list = EntityUtil.getUnsafeBlocks(entity, height, floor);
         Vec3d[] array = new Vec3d[list.size()];
-        return list.toArray((T[])array);
+        return list.toArray(array);
     }
 
     public static Vec3d[] getUnsafeBlockArrayFromVec3d(Vec3d pos, int height, boolean floor) {
         List<Vec3d> list = EntityUtil.getUnsafeBlocksFromVec3d(pos, height, floor);
         Vec3d[] array = new Vec3d[list.size()];
-        return list.toArray((T[])array);
+        return list.toArray(array);
     }
 
     public static double getDst(Vec3d vec) {
@@ -441,13 +441,13 @@ implements Util {
     public static Vec3d[] getOffsets(int y, boolean floor) {
         List<Vec3d> offsets = EntityUtil.getOffsetList(y, floor);
         Vec3d[] array = new Vec3d[offsets.size()];
-        return offsets.toArray((T[])array);
+        return offsets.toArray(array);
     }
 
     public static Vec3d[] getTrapOffsets(boolean antiScaffold, boolean antiStep, boolean legs, boolean platform, boolean antiDrop) {
         List<Vec3d> offsets = EntityUtil.getTrapOffsetsList(antiScaffold, antiStep, legs, platform, antiDrop);
         Vec3d[] array = new Vec3d[offsets.size()];
-        return offsets.toArray((T[])array);
+        return offsets.toArray(array);
     }
 
     public static List<Vec3d> getTrapOffsetsList(boolean antiScaffold, boolean antiStep, boolean legs, boolean platform, boolean antiDrop) {
@@ -478,7 +478,7 @@ implements Util {
             offsets.add(new Vec3d(0.0, (double)i, 0.0));
         }
         Vec3d[] array = new Vec3d[offsets.size()];
-        return offsets.toArray((T[])array);
+        return offsets.toArray(array);
     }
 
     public static BlockPos getRoundedBlockPos(Entity entity) {

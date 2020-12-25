@@ -212,7 +212,7 @@ extends Feature {
         if (event.isCanceled()) {
             return;
         }
-        EventManager.mc.mcProfiler.startSection("phobos");
+        EventManager.mc.profiler.startSection("phobos");
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
@@ -234,7 +234,7 @@ extends Feature {
         GlStateManager.enableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.enableDepth();
-        EventManager.mc.mcProfiler.endSection();
+        EventManager.mc.profiler.endSection();
     }
 
     @SubscribeEvent

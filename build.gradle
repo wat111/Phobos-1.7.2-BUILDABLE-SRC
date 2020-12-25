@@ -57,6 +57,7 @@ dependencies {
     }
 
     compile 'club.minnced:java-discord-rpc:2.0.2'
+    compile 'com.googlecode.json-simple:json-simple:1.1.1'
 
 
     // you may put jars on which you depend on in ./libs

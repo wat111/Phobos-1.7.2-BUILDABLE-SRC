@@ -135,13 +135,13 @@ extends Module {
         ArrayList<Vec3d> list = new ArrayList<Vec3d>();
         Vec3d baseVec = this.target.getPositionVector();
         if (this.ylower.getValue().booleanValue()) {
-            list.add(baseVec.addVector(0.0, -1.0, 0.0));
+            list.add(baseVec.add(0.0, -1.0, 0.0));
         }
         if (this.lowerbody.getValue().booleanValue()) {
             list.add(baseVec);
         }
         if (this.upperBody.getValue().booleanValue()) {
-            list.add(baseVec.addVector(0.0, 1.0, 0.0));
+            list.add(baseVec.add(0.0, 1.0, 0.0));
         }
         return list;
     }

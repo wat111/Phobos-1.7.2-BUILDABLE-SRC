@@ -562,7 +562,7 @@ extends Module {
         }
         BlockPos neighbour = pos.offset(side);
         EnumFacing opposite = side.getOpposite();
-        Vec3d hitVec = new Vec3d((Vec3i)neighbour).addVector(0.5, 0.5, 0.5).add(new Vec3d(opposite.getDirectionVec()).scale(0.5));
+        Vec3d hitVec = new Vec3d((Vec3i)neighbour).add(0.5, 0.5, 0.5).add(new Vec3d(opposite.getDirectionVec()).scale(0.5));
         Block neighbourBlock = Auto32k.mc.world.getBlockState(neighbour).getBlock();
         this.authSneakPacket = true;
         Auto32k.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)Auto32k.mc.player, CPacketEntityAction.Action.START_SNEAKING));
@@ -588,7 +588,7 @@ extends Module {
 
     private BlockPos findBestPos(PlaceType type, EntityPlayer target) {
         BlockPos pos = null;
-        NonNullList positions = NonNullList.create();
+        NonNullList<BlockPos> positions = NonNullList.create();
         positions.addAll((Collection)BlockUtil.getSphere(EntityUtil.getPlayerPos((EntityPlayer)Auto32k.mc.player), this.range.getValue().floatValue(), this.range.getValue().intValue(), false, true, 0).stream().filter(this::canPlace).collect(Collectors.toList()));
         if (positions.isEmpty()) {
             return null;
@@ -620,8 +620,8 @@ extends Module {
             }
             case MIDDLE: {
                 ArrayList<BlockPos> toRemove = new ArrayList<BlockPos>();
-                NonNullList copy = NonNullList.create();
-                copy.addAll((Collection)positions);
+                NonNullList<BlockPos> copy = NonNullList.create();
+                copy.addAll(positions);
                 for (BlockPos position : copy) {
                     double difference = Auto32k.mc.player.getDistanceSq(position) - target.getDistanceSq(position);
                     if (!(difference > 1.0) && !(difference < -1.0)) continue;
@@ -791,7 +791,7 @@ extends Module {
         this.authSneakPacket = true;
         Auto32k.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)Auto32k.mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
         this.authSneakPacket = false;
-        Vec3d hitVec = new Vec3d((Vec3i)pos).addVector(0.5, -0.5, 0.5);
+        Vec3d hitVec = new Vec3d((Vec3i)pos).add(0.5, -0.5, 0.5);
         if (this.rotate.getValue().booleanValue()) {
             this.rotateToPos(null, hitVec);
         }
@@ -835,7 +835,7 @@ extends Module {
             }
             BlockPos neighbour = helpingPos.offset(facing);
             EnumFacing opposite = facing.getOpposite();
-            Vec3d hitVec = new Vec3d((Vec3i)neighbour).addVector(0.5, 0.5, 0.5).add(new Vec3d(opposite.getDirectionVec()).scale(0.5));
+            Vec3d hitVec = new Vec3d((Vec3i)neighbour).add(0.5, 0.5, 0.5).add(new Vec3d(opposite.getDirectionVec()).scale(0.5));
             Block neighbourBlock = Auto32k.mc.world.getBlockState(neighbour).getBlock();
             this.authSneakPacket = true;
             Auto32k.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)Auto32k.mc.player, CPacketEntityAction.Action.START_SNEAKING));
@@ -877,7 +877,7 @@ extends Module {
             break;
         }
         EnumFacing opposite = facing.getOpposite();
-        Vec3d hitVec = new Vec3d((Vec3i)helpingPos).addVector(0.5, 0.5, 0.5).add(new Vec3d(opposite.getDirectionVec()).scale(0.5));
+        Vec3d hitVec = new Vec3d((Vec3i)helpingPos).add(0.5, 0.5, 0.5).add(new Vec3d(opposite.getDirectionVec()).scale(0.5));
         Block neighbourBlock = Auto32k.mc.world.getBlockState(helpingPos).getBlock();
         this.authSneakPacket = true;
         Auto32k.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)Auto32k.mc.player, CPacketEntityAction.Action.START_SNEAKING));
@@ -893,7 +893,7 @@ extends Module {
             } else {
                 this.rotateToPos(null, hitVec);
             }
-            rotationVec = new Vec3d((Vec3i)helpingPos).addVector(0.5, 0.5, 0.5).add(new Vec3d(opposite.getDirectionVec()).scale(0.5));
+            rotationVec = new Vec3d((Vec3i)helpingPos).add(0.5, 0.5, 0.5).add(new Vec3d(opposite.getDirectionVec()).scale(0.5));
         } else if (dispenserPos.getY() <= new BlockPos(Auto32k.mc.player.getPositionVector()).up().getY()) {
             for (EnumFacing enumFacing : EnumFacing.values()) {
                 BlockPos position = this.hopperPos.up().offset(enumFacing);
@@ -911,7 +911,7 @@ extends Module {
             this.pitch = arrf[1];
             this.spoof = true;
         }
-        rotationVec = new Vec3d((Vec3i)helpingPos).addVector(0.5, 0.5, 0.5).add(new Vec3d(opposite.getDirectionVec()).scale(0.5));
+        rotationVec = new Vec3d((Vec3i)helpingPos).add(0.5, 0.5, 0.5).add(new Vec3d(opposite.getDirectionVec()).scale(0.5));
         float[] arrf = RotationUtil.simpleFacing(facings);
         float[] angle = RotationUtil.getLegitRotations(hitVec);
         if (this.superPacket.getValue().booleanValue()) {
@@ -981,7 +981,7 @@ extends Module {
         if (this.target == null) {
             type = this.placeType.getValue() == PlaceType.MOUSE ? PlaceType.MOUSE : PlaceType.CLOSE;
         }
-        NonNullList positions = NonNullList.create();
+        NonNullList<BlockPos> positions = NonNullList.create();
         positions.addAll(BlockUtil.getSphere(EntityUtil.getPlayerPos((EntityPlayer)Auto32k.mc.player), this.range.getValue().floatValue(), this.range.getValue().intValue(), false, true, 0));
         DispenserData data = new DispenserData();
         switch (type) {
@@ -1004,7 +1004,7 @@ extends Module {
             }
             case MIDDLE: {
                 ArrayList<BlockPos> toRemove = new ArrayList<BlockPos>();
-                NonNullList copy = NonNullList.create();
+                NonNullList<BlockPos> copy = NonNullList.create();
                 copy.addAll((Collection)positions);
                 for (BlockPos position : copy) {
                     double difference = Auto32k.mc.player.getDistanceSq(position) - this.target.getDistanceSq(position);

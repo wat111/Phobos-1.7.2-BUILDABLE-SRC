@@ -74,7 +74,7 @@ extends Command {
                 bookObj.setTagInfo("pages", (NBTBase)list);
                 bookObj.setTagCompound(tag);
                 for (i = 0; i < CrashCommand.this.packets; ++i) {
-                    Util.mc.playerController.connection.sendPacket((Packet)new CPacketClickWindow(0, 0, 0, ClickType.PICKUP, bookObj, 0));
+                    Util.mc.playerController.connection.sendPacket(new CPacketClickWindow(0, 0, 0, ClickType.PICKUP, bookObj, (short)0));
                 }
             }
         }.start();

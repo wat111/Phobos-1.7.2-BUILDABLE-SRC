@@ -286,7 +286,7 @@ extends Module {
     }
 
     private double getDistance(EntityPlayer player, double distance) {
-        List boundingBoxes = player.world.getCollisionBoxes((Entity)player, player.getEntityBoundingBox().offset(0.0, -distance, 0.0));
+        List<AxisAlignedBB> boundingBoxes = player.world.getCollisionBoxes((Entity)player, player.getEntityBoundingBox().offset(0.0, -distance, 0.0));
         if (boundingBoxes.isEmpty()) {
             return 0.0;
         }
