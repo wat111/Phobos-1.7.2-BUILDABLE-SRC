@@ -44,3 +44,10 @@ Then compile the client. - **There are also other options like squidLauncher and
 ## Too lazy to build the jar yourself? 
 
 [Click here to download the release.](https://github.com/Hqrion/Phobos-1.7.2-BUILDABLE-SRC/releases/download/1.7.2/Phobos-1.7.2-release.jar)
+
+## Credits
+
+Thank you [Phobos Developers](https://discord.gg/bR6qxjT) for Phobos 1.7.2. 
+
+
+Thank you [Ciruu](https://github.com/ciruu1) for helping to fix the client and checking it with me. 
