@@ -244,7 +244,7 @@ extends Module {
             ItemShulkerBox shulker = (ItemShulkerBox)item;
             entityBox.blockType = shulker.getBlock();
             entityBox.setWorld((World)ToolTips.mc.world);
-            ItemStackHelper.loadAllItems((NBTTagCompound)stack.getTagCompound().getCompoundTag("BlockEntityTag"), (NonNullList)entityBox.items);
+            ItemStackHelper.loadAllItems((NBTTagCompound)stack.getTagCompound().getCompoundTag("BlockEntityTag"), entityBox.items);
             entityBox.readFromNBT(stack.getTagCompound().getCompoundTag("BlockEntityTag"));
             entityBox.setCustomName(name == null ? stack.getDisplayName() : name);
             new Thread(() -> {

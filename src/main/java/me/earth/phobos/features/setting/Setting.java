@@ -182,7 +182,7 @@ public class Setting<T> {
     public void setEnumValue(String value) {
         for (Enum e : (Enum[])((Enum)this.value).getClass().getEnumConstants()) {
             if (!e.name().equalsIgnoreCase(value)) continue;
-            this.value = e;
+            this.value = (T) e;
         }
     }
 
@@ -195,7 +195,7 @@ public class Setting<T> {
     }
 
     public void increaseEnum() {
-        this.plannedValue = EnumConverter.increaseEnum((Enum)this.value);
+        this.plannedValue = (T) EnumConverter.increaseEnum((Enum)this.value);
         ClientEvent event = new ClientEvent(this);
         MinecraftForge.EVENT_BUS.post((Event)event);
         if (!event.isCanceled()) {
@@ -206,7 +206,7 @@ public class Setting<T> {
     }
 
     public void increaseEnumNoEvent() {
-        this.value = EnumConverter.increaseEnum((Enum)this.value);
+        this.value = (T) EnumConverter.increaseEnum((Enum)this.value);
     }
 
     public String getType() {

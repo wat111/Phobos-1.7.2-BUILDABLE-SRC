@@ -306,7 +306,7 @@ implements Util {
         if (stack1.getItem() instanceof ItemBlock && stack2.getItem() instanceof ItemBlock) {
             Block block1 = ((ItemBlock)stack1.getItem()).getBlock();
             Block block2 = ((ItemBlock)stack2.getItem()).getBlock();
-            if (!block1.blockMaterial.equals((Object)block2.blockMaterial)) {
+            if (!block1.material.equals(block2.material)) {
                 return false;
             }
         }

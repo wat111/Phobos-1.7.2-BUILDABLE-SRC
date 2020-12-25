@@ -207,7 +207,7 @@ extends Module {
     }
 
     private Vec3d outOfBoundsVec(Vec3d offset, Vec3d position) {
-        return position.addVector(0.0, 1337.0, 0.0);
+        return position.add(0.0, 1337.0, 0.0);
     }
 
     private void packetSender(CPacketPlayer packet) {

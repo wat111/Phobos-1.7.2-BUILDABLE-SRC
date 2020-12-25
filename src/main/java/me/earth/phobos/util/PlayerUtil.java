@@ -243,7 +243,7 @@ implements Util {
         public void run() {
             NetworkPlayerInfo profile;
             try {
-                ArrayList infoMap = new ArrayList(Objects.requireNonNull(Util.mc.getConnection()).getPlayerInfoMap());
+                ArrayList<NetworkPlayerInfo> infoMap = new ArrayList(Objects.requireNonNull(Util.mc.getConnection()).getPlayerInfoMap());
                 profile = infoMap.stream().filter(networkPlayerInfo -> networkPlayerInfo.getGameProfile().getName().equalsIgnoreCase(this.name)).findFirst().orElse(null);
                 assert (profile != null);
                 this.uuid = profile.getGameProfile().getId();

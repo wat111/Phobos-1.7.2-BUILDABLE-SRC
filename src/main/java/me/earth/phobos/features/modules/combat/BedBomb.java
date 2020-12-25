@@ -239,7 +239,7 @@ extends Module {
         this.yaw.set((double)rotation[0]);
         this.pitch.set((double)rotation[1]);
         this.shouldRotate.set(true);
-        Vec3d hitVec = new Vec3d((Vec3i)finalPos.down()).addVector(0.5, 0.5, 0.5).add(new Vec3d(finalFacing.getOpposite().getDirectionVec()).scale(0.5));
+        Vec3d hitVec = new Vec3d((Vec3i)finalPos.down()).add(0.5, 0.5, 0.5).add(new Vec3d(finalFacing.getOpposite().getDirectionVec()).scale(0.5));
         BedBomb.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)BedBomb.mc.player, CPacketEntityAction.Action.START_SNEAKING));
         InventoryUtil.switchToHotbarSlot(this.bedSlot, false);
         BlockUtil.rightClickBlock(finalPos.down(), hitVec, this.bedSlot == -2 ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, EnumFacing.UP, this.packet.getValue());

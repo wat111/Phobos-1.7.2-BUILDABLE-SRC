@@ -49,7 +49,7 @@ implements Runnable {
                 this.SAFE.set(true);
                 return;
             }
-            ArrayList crystals = new ArrayList(SafetyManager.mc.world.loadedEntityList);
+            ArrayList<Entity> crystals = new ArrayList<>(SafetyManager.mc.world.loadedEntityList);
             for (Entity crystal : crystals) {
                 if (!(crystal instanceof EntityEnderCrystal) || !((double)DamageUtil.calculateDamage(crystal, (Entity)SafetyManager.mc.player) > 4.0) || closest != null && !(closest.getDistanceSq(crystal) < 40.0)) continue;
                 safe = false;

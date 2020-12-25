@@ -110,9 +110,8 @@ extends Module {
 
     @SubscribeEvent(priority=EventPriority.HIGHEST)
     public void onSendPacket(PacketEvent.Send event) {
-        CPacketPlayerTryUseItemOnBlock packet;
         if (event.getStage() == 0 && event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock) {
-            packet = (CPacketPlayerTryUseItemOnBlock)event.getPacket();
+            CPacketPlayerTryUseItemOnBlock packet = (CPacketPlayerTryUseItemOnBlock)event.getPacket();
             if (GodModule.mc.player.getHeldItem(packet.hand).getItem() instanceof ItemEndCrystal) {
                 if (this.checkPos.getValue().booleanValue() && !BlockUtil.canPlaceCrystal(packet.position, this.entitycheck.getValue(), this.oneDot15.getValue()) || this.checkPlayers()) {
                     return;
@@ -124,7 +123,7 @@ extends Module {
             }
         }
         if (event.getStage() == 0 && this.rotating && this.rotate.getValue().booleanValue() && event.getPacket() instanceof CPacketPlayer) {
-            packet = (CPacketPlayer)event.getPacket();
+            CPacketPlayer packet = (CPacketPlayer)event.getPacket();
             packet.yaw = this.yaw;
             packet.pitch = this.pitch;
             ++this.rotationPacketsSpoofed;

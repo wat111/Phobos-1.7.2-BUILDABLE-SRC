@@ -1416,7 +1416,7 @@ implements Util {
     }
 
     public static void checkSetupFBO() {
-        Framebuffer fbo = RenderUtil.mc.framebufferMc;
+        Framebuffer fbo = RenderUtil.mc.framebuffer;
         if (fbo != null && fbo.depthBuffer > -1) {
             RenderUtil.setupFBO(fbo);
             fbo.depthBuffer = -1;

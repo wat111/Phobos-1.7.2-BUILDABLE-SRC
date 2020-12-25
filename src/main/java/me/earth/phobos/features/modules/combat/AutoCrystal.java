@@ -360,9 +360,8 @@ extends Module {
 
     @SubscribeEvent
     public void onPacketSend(PacketEvent.Send event) {
-        CPacketUseEntity packet;
         if (event.getStage() == 0 && this.rotate.getValue() != Rotate.OFF && this.rotating && this.eventMode.getValue() != 2 && event.getPacket() instanceof CPacketPlayer) {
-            packet = (CPacketPlayer)event.getPacket();
+            CPacketPlayer packet = event.getPacket();
             packet.yaw = this.yaw;
             packet.pitch = this.pitch;
             ++this.rotationPacketsSpoofed;
@@ -371,14 +370,17 @@ extends Module {
                 this.rotationPacketsSpoofed = 0;
             }
         }
-        if (event.getStage() == 0 && event.getPacket() instanceof CPacketUseEntity && (packet = (CPacketUseEntity)event.getPacket()).getAction() == CPacketUseEntity.Action.ATTACK && packet.getEntityFromWorld((World)AutoCrystal.mc.world) instanceof EntityEnderCrystal) {
-            if (this.attackOppositeHand.getValue().booleanValue()) {
-                boolean offhand = AutoCrystal.mc.player.getHeldItemOffhand().getItem() == Items.END_CRYSTAL;
-                EnumHand enumHand = packet.hand = offhand ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
-            }
-            if (this.removeAfterAttack.getValue().booleanValue()) {
-                packet.getEntityFromWorld((World)AutoCrystal.mc.world).setDead();
-                AutoCrystal.mc.world.removeEntityFromWorld(packet.entityId);
+        if (event.getStage() == 0 && event.getPacket() instanceof CPacketUseEntity) {
+            CPacketUseEntity packet = event.getPacket();
+            if((packet = (CPacketUseEntity)event.getPacket()).getAction() == CPacketUseEntity.Action.ATTACK && packet.getEntityFromWorld((World)AutoCrystal.mc.world) instanceof EntityEnderCrystal){
+                if (this.attackOppositeHand.getValue()) {
+                    boolean offhand = AutoCrystal.mc.player.getHeldItemOffhand().getItem() == Items.END_CRYSTAL;
+                    packet.hand = offhand ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
+                }
+                if (this.removeAfterAttack.getValue()) {
+                    packet.getEntityFromWorld((World)AutoCrystal.mc.world).setDead();
+                    AutoCrystal.mc.world.removeEntityFromWorld(packet.entityId);
+                }
             }
         }
     }

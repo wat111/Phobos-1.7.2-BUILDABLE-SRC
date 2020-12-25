@@ -1,22 +1,8 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.projectile.EntityFishHook
- *  net.minecraft.init.Blocks
- *  net.minecraft.network.play.server.SPacketEntityStatus
- *  net.minecraft.network.play.server.SPacketEntityVelocity
- *  net.minecraft.network.play.server.SPacketExplosion
- *  net.minecraft.world.World
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.movement;
 
 import me.earth.phobos.event.events.PacketEvent;
 import me.earth.phobos.event.events.PushEvent;
 import me.earth.phobos.features.modules.Module;
-import me.earth.phobos.features.modules.movement.IceSpeed;
 import me.earth.phobos.features.setting.Setting;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.EntityFishHook;
@@ -27,21 +13,28 @@ import net.minecraft.network.play.server.SPacketExplosion;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public class Velocity
-extends Module {
-    public Setting<Boolean> noPush = this.register(new Setting<Boolean>("NoPush", true));
-    public Setting<Float> horizontal = this.register(new Setting<Float>("Horizontal", Float.valueOf(0.0f), Float.valueOf(0.0f), Float.valueOf(100.0f)));
-    public Setting<Float> vertical = this.register(new Setting<Float>("Vertical", Float.valueOf(0.0f), Float.valueOf(0.0f), Float.valueOf(100.0f)));
-    public Setting<Boolean> explosions = this.register(new Setting<Boolean>("Explosions", true));
-    public Setting<Boolean> bobbers = this.register(new Setting<Boolean>("Bobbers", true));
-    public Setting<Boolean> water = this.register(new Setting<Boolean>("Water", false));
-    public Setting<Boolean> blocks = this.register(new Setting<Boolean>("Blocks", false));
-    public Setting<Boolean> ice = this.register(new Setting<Boolean>("Ice", false));
+public class Velocity extends Module {
+    public Setting<Boolean> noPush = register(new Setting("NoPush", Boolean.valueOf(true)));
+
+    public Setting<Float> horizontal = register(new Setting("Horizontal", Float.valueOf(0.0F), Float.valueOf(0.0F), Float.valueOf(100.0F)));
+
+    public Setting<Float> vertical = register(new Setting("Vertical", Float.valueOf(0.0F), Float.valueOf(0.0F), Float.valueOf(100.0F)));
+
+    public Setting<Boolean> explosions = register(new Setting("Explosions", Boolean.valueOf(true)));
+
+    public Setting<Boolean> bobbers = register(new Setting("Bobbers", Boolean.valueOf(true)));
+
+    public Setting<Boolean> water = register(new Setting("Water", Boolean.valueOf(false)));
+
+    public Setting<Boolean> blocks = register(new Setting("Blocks", Boolean.valueOf(false)));
+
+    public Setting<Boolean> ice = register(new Setting("Ice", Boolean.valueOf(false)));
+
     private static Velocity INSTANCE = new Velocity();
 
     public Velocity() {
         super("Velocity", "Allows you to control your velocity", Module.Category.MOVEMENT, true, false, false);
-        this.setInstance();
+        setInstance();
     }
 
     private void setInstance() {
@@ -49,75 +42,76 @@ extends Module {
     }
 
     public static Velocity getINSTANCE() {
-        if (INSTANCE == null) {
+        if (INSTANCE == null)
             INSTANCE = new Velocity();
-        }
         return INSTANCE;
     }
 
-    @Override
     public void onUpdate() {
-        if (IceSpeed.getINSTANCE().isOff() && this.ice.getValue().booleanValue()) {
-            Blocks.ICE.slipperiness = 0.6f;
-            Blocks.PACKED_ICE.slipperiness = 0.6f;
-            Blocks.FROSTED_ICE.slipperiness = 0.6f;
+        if (IceSpeed.getINSTANCE().isOff() && ((Boolean)this.ice.getValue()).booleanValue()) {
+            Blocks.ICE.slipperiness = 0.6F;
+            Blocks.PACKED_ICE.slipperiness = 0.6F;
+            Blocks.FROSTED_ICE.slipperiness = 0.6F;
         }
     }
 
-    @Override
     public void onDisable() {
         if (IceSpeed.getINSTANCE().isOff()) {
-            Blocks.ICE.slipperiness = 0.98f;
-            Blocks.PACKED_ICE.slipperiness = 0.98f;
-            Blocks.FROSTED_ICE.slipperiness = 0.98f;
+            Blocks.ICE.slipperiness = 0.98F;
+            Blocks.PACKED_ICE.slipperiness = 0.98F;
+            Blocks.FROSTED_ICE.slipperiness = 0.98F;
         }
     }
 
     @SubscribeEvent
     public void onPacketReceived(PacketEvent.Receive event) {
-        if (event.getStage() == 0 && Velocity.mc.player != null) {
-            Entity entity;
-            SPacketEntityStatus packet;
-            SPacketEntityVelocity velocity;
-            if (event.getPacket() instanceof SPacketEntityVelocity && (velocity = (SPacketEntityVelocity)event.getPacket()).getEntityID() == Velocity.mc.player.entityId) {
-                if (this.horizontal.getValue().floatValue() == 0.0f && this.vertical.getValue().floatValue() == 0.0f) {
-                    event.setCanceled(true);
-                    return;
-                }
-                velocity.motionX = (int)((float)velocity.motionX * this.horizontal.getValue().floatValue());
-                velocity.motionY = (int)((float)velocity.motionY * this.vertical.getValue().floatValue());
-                velocity.motionZ = (int)((float)velocity.motionZ * this.horizontal.getValue().floatValue());
-            }
-            if (event.getPacket() instanceof SPacketEntityStatus && this.bobbers.getValue().booleanValue() && (packet = (SPacketEntityStatus)event.getPacket()).getOpCode() == 31 && (entity = packet.getEntity((World)Velocity.mc.world)) instanceof EntityFishHook) {
-                EntityFishHook fishHook = (EntityFishHook)entity;
-                if (fishHook.caughtEntity == Velocity.mc.player) {
-                    event.setCanceled(true);
+        if (event.getStage() == 0 && mc.player != null) {
+            if (event.getPacket() instanceof SPacketEntityVelocity) {
+                SPacketEntityVelocity velocity = (SPacketEntityVelocity)event.getPacket();
+                if (velocity.getEntityID() == mc.player.entityId) {
+                    if (((Float)this.horizontal.getValue()).floatValue() == 0.0F && ((Float)this.vertical.getValue()).floatValue() == 0.0F) {
+                        event.setCanceled(true);
+                        return;
+                    }
+                    velocity.motionX = (int)(velocity.motionX * ((Float)this.horizontal.getValue()).floatValue());
+                    velocity.motionY = (int)(velocity.motionY * ((Float)this.vertical.getValue()).floatValue());
+                    velocity.motionZ = (int)(velocity.motionZ * ((Float)this.horizontal.getValue()).floatValue());
                 }
             }
-            if (this.explosions.getValue().booleanValue() && event.getPacket() instanceof SPacketExplosion) {
-                velocity = (SPacketExplosion)event.getPacket();
-                velocity.motionX *= this.horizontal.getValue().floatValue();
-                velocity.motionY *= this.vertical.getValue().floatValue();
-                velocity.motionZ *= this.horizontal.getValue().floatValue();
+            if (event.getPacket() instanceof SPacketEntityStatus && ((Boolean)this.bobbers.getValue()).booleanValue()) {
+                SPacketEntityStatus packet = (SPacketEntityStatus)event.getPacket();
+                if (packet.getOpCode() == 31) {
+                    Entity entity = packet.getEntity((World)mc.world);
+                    if (entity instanceof EntityFishHook) {
+                        EntityFishHook fishHook = (EntityFishHook)entity;
+                        if (fishHook.caughtEntity == mc.player)
+                            event.setCanceled(true);
+                    }
+                }
+            }
+            if (((Boolean)this.explosions.getValue()).booleanValue() && event.getPacket() instanceof SPacketExplosion) {
+                SPacketExplosion velocity = (SPacketExplosion)event.getPacket();
+                velocity.motionX *= ((Float)this.horizontal.getValue()).floatValue();
+                velocity.motionY *= ((Float)this.vertical.getValue()).floatValue();
+                velocity.motionZ *= ((Float)this.horizontal.getValue()).floatValue();
             }
         }
     }
 
     @SubscribeEvent
     public void onPush(PushEvent event) {
-        if (event.getStage() == 0 && this.noPush.getValue().booleanValue() && event.entity.equals((Object)Velocity.mc.player)) {
-            if (this.horizontal.getValue().floatValue() == 0.0f && this.vertical.getValue().floatValue() == 0.0f) {
+        if (event.getStage() == 0 && ((Boolean)this.noPush.getValue()).booleanValue() && event.entity.equals(mc.player)) {
+            if (((Float)this.horizontal.getValue()).floatValue() == 0.0F && ((Float)this.vertical.getValue()).floatValue() == 0.0F) {
                 event.setCanceled(true);
                 return;
             }
-            event.x = -event.x * (double)this.horizontal.getValue().floatValue();
-            event.y = -event.y * (double)this.vertical.getValue().floatValue();
-            event.z = -event.z * (double)this.horizontal.getValue().floatValue();
-        } else if (event.getStage() == 1 && this.blocks.getValue().booleanValue()) {
+            event.x = -event.x * ((Float)this.horizontal.getValue()).floatValue();
+            event.y = -event.y * ((Float)this.vertical.getValue()).floatValue();
+            event.z = -event.z * ((Float)this.horizontal.getValue()).floatValue();
+        } else if (event.getStage() == 1 && ((Boolean)this.blocks.getValue()).booleanValue()) {
             event.setCanceled(true);
-        } else if (event.getStage() == 2 && this.water.getValue().booleanValue() && Velocity.mc.player != null && Velocity.mc.player.equals((Object)event.entity)) {
+        } else if (event.getStage() == 2 && ((Boolean)this.water.getValue()).booleanValue() && mc.player != null && mc.player.equals(event.entity)) {
             event.setCanceled(true);
         }
     }
 }
-

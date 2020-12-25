@@ -90,7 +90,7 @@ extends Module {
             this.check = false;
         }
         if (this.visualRange.getValue().booleanValue()) {
-            ArrayList tickPlayerList = new ArrayList(Notifications.mc.world.playerEntities);
+            ArrayList<EntityPlayer> tickPlayerList = new ArrayList<>(Notifications.mc.world.playerEntities);
             if (tickPlayerList.size() > 0) {
                 for (EntityPlayer player : tickPlayerList) {
                     if (player.getName().equals(Notifications.mc.player.getName()) || this.knownPlayers.contains((Object)player)) continue;

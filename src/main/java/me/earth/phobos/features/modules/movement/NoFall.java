@@ -87,7 +87,7 @@ extends Module {
             } else if (!this.equipped && event.getPacket() instanceof CPacketPlayer && NoFall.mc.player.fallDistance >= 3.0f) {
                 RayTraceResult result = null;
                 if (!this.glide.getValue().booleanValue()) {
-                    result = NoFall.mc.world.rayTraceBlocks(NoFall.mc.player.getPositionVector(), NoFall.mc.player.getPositionVector().addVector(0.0, -3.0, 0.0), true, true, false);
+                    result = NoFall.mc.world.rayTraceBlocks(NoFall.mc.player.getPositionVector(), NoFall.mc.player.getPositionVector().add(0.0, -3.0, 0.0), true, true, false);
                 }
                 if (this.glide.getValue().booleanValue() || result != null && result.typeOfHit == RayTraceResult.Type.BLOCK) {
                     if (NoFall.mc.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem().equals((Object)Items.ELYTRA)) {
@@ -153,7 +153,7 @@ extends Module {
         if (NoFall.fullNullCheck()) {
             return;
         }
-        if (this.mode.getValue() == Mode.BUCKET && NoFall.mc.player.fallDistance >= (float)this.distance.getValue().intValue() && !EntityUtil.isAboveWater((Entity)NoFall.mc.player) && this.timer.passedMs(100L) && (result = NoFall.mc.world.rayTraceBlocks(posVec = NoFall.mc.player.getPositionVector(), posVec.addVector(0.0, (double)-5.33f, 0.0), true, true, false)) != null && result.typeOfHit == RayTraceResult.Type.BLOCK) {
+        if (this.mode.getValue() == Mode.BUCKET && NoFall.mc.player.fallDistance >= (float)this.distance.getValue().intValue() && !EntityUtil.isAboveWater((Entity)NoFall.mc.player) && this.timer.passedMs(100L) && (result = NoFall.mc.world.rayTraceBlocks(posVec = NoFall.mc.player.getPositionVector(), posVec.add(0.0, (double)-5.33f, 0.0), true, true, false)) != null && result.typeOfHit == RayTraceResult.Type.BLOCK) {
             EnumHand hand = EnumHand.MAIN_HAND;
             if (NoFall.mc.player.getHeldItemOffhand().getItem() == Items.WATER_BUCKET) {
                 hand = EnumHand.OFF_HAND;
@@ -183,7 +183,7 @@ extends Module {
 
             @Override
             public State onSend(PacketEvent.Send event) {
-                RayTraceResult result = Util.mc.world.rayTraceBlocks(Util.mc.player.getPositionVector(), Util.mc.player.getPositionVector().addVector(0.0, -3.0, 0.0), true, true, false);
+                RayTraceResult result = Util.mc.world.rayTraceBlocks(Util.mc.player.getPositionVector(), Util.mc.player.getPositionVector().add(0.0, -3.0, 0.0), true, true, false);
                 if (event.getPacket() instanceof CPacketPlayer && Util.mc.player.fallDistance >= 3.0f && result != null && result.typeOfHit == RayTraceResult.Type.BLOCK) {
                     int slot = InventoryUtil.getItemHotbar(Items.ELYTRA);
                     if (slot != -1) {
@@ -243,7 +243,7 @@ extends Module {
             @Override
             public State onUpdate() {
                 if (Util.mc.player.onGround || bypassTimer.passedMs(250L)) {
-                    Util.mc.player.connection.sendPacket((Packet)new CPacketClickWindow(0, 0, 0, ClickType.PICKUP, new ItemStack(Blocks.BEDROCK), 1337));
+                    Util.mc.player.connection.sendPacket(new CPacketClickWindow(0, 0, 0, ClickType.PICKUP, new ItemStack(Blocks.BEDROCK), (short)1337));
                     return FALL_CHECK;
                 }
                 return this;

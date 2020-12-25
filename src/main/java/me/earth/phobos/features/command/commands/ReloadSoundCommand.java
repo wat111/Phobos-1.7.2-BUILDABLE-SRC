@@ -22,7 +22,7 @@ extends Command {
     @Override
     public void execute(String[] commands) {
         try {
-            SoundManager sndManager = (SoundManager)ObfuscationReflectionHelper.getPrivateValue(SoundHandler.class, (Object)mc.getSoundHandler(), (String[])new String[]{"sndManager", "sndManager"});
+            SoundManager sndManager = ObfuscationReflectionHelper.getPrivateValue(SoundHandler.class, mc.getSoundHandler(), new String[]{"sndManager", "field_147694_f"});
             sndManager.reloadSoundSystem();
             ReloadSoundCommand.sendMessage("\u00a7aReloaded Sound System.");
         }

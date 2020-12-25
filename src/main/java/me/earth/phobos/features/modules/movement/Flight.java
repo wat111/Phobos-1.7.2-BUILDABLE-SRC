@@ -506,7 +506,7 @@ extends Module {
                     return;
                 }
                 AxisAlignedBB range = Flight.mc.player.getEntityBoundingBox().expand(0.0, -Flight.mc.player.posY, 0.0).contract(0.0, (double)(-Flight.mc.player.height), 0.0);
-                List collisionBoxes = Flight.mc.player.world.getCollisionBoxes((Entity)Flight.mc.player, range);
+                List<AxisAlignedBB> collisionBoxes = Flight.mc.player.world.getCollisionBoxes((Entity)Flight.mc.player, range);
                 AtomicReference<Double> newHeight = new AtomicReference<Double>(0.0);
                 collisionBoxes.forEach(box -> newHeight.set(Math.max((Double)newHeight.get(), box.maxY)));
                 packet.y = newHeight.get();
@@ -558,7 +558,7 @@ extends Module {
                 double oldY = Flight.mc.player.posY;
                 Flight.mc.player.setPosition(packet.x, packet.y, packet.z);
                 AxisAlignedBB range = Flight.mc.player.getEntityBoundingBox().expand(0.0, (double)(256.0f - Flight.mc.player.height) - Flight.mc.player.posY, 0.0).contract(0.0, (double)Flight.mc.player.height, 0.0);
-                List collisionBoxes = Flight.mc.player.world.getCollisionBoxes((Entity)Flight.mc.player, range);
+                List<AxisAlignedBB> collisionBoxes = Flight.mc.player.world.getCollisionBoxes(Flight.mc.player, range);
                 AtomicReference<Double> newY = new AtomicReference<Double>(256.0);
                 collisionBoxes.forEach(box -> newY.set(Math.min((Double)newY.get(), box.minY - (double)Flight.mc.player.height)));
                 packet.y = Math.min(oldY, newY.get());
