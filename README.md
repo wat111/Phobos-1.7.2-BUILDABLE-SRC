@@ -5,7 +5,7 @@ This source has been checked by two people, myself and a friend. My friend did n
 <div align="center">
   <br />
   <p>
-    <a href="https://discord.gg/bR6qxjT"><img src="https://images-ext-2.discordapp.net/external/8vkrj73wbL-US7CQ2UexT4ihFbcH6AGf-USl__danmM/%3Fsize%3D256/https/cdn.discordapp.com/avatars/540212584356249601/e7f1fd88c1f50069a4066a2b74665a3f.png" width="546" alt="2b2t" /></a>
+    <a href="https://discord.gg/bR6qxjT"><img src="https://images-ext-2.discordapp.net/external/8vkrj73wbL-US7CQ2UexT4ihFbcH6AGf-USl__danmM/%3Fsize%3D256/https/cdn.discordapp.com/avatars/540212584356249601/e7f1fd88c1f50069a4066a2b74665a3f.png" width="273" alt="2b2t" /></a>
   </p>
   <br />
 
