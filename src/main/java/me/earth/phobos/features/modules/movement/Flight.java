@@ -1,22 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.gui.GuiDownloadTerrain
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.player.PlayerCapabilities
- *  net.minecraft.init.MobEffects
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketConfirmTeleport
- *  net.minecraft.network.play.client.CPacketPlayer
- *  net.minecraft.network.play.client.CPacketPlayer$Position
- *  net.minecraft.network.play.server.SPacketPlayerPosLook
- *  net.minecraft.util.math.AxisAlignedBB
- *  net.minecraft.util.math.BlockPos
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- *  net.minecraftforge.fml.common.gameevent.TickEvent$ClientTickEvent
- *  net.minecraftforge.fml.common.gameevent.TickEvent$Phase
- */
 package me.earth.phobos.features.modules.movement;
 
 import java.util.ArrayList;

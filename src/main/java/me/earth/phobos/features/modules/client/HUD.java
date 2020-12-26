@@ -1,20 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.Minecraft
- *  net.minecraft.client.gui.GuiChat
- *  net.minecraft.client.gui.ScaledResolution
- *  net.minecraft.client.renderer.GlStateManager
- *  net.minecraft.init.Items
- *  net.minecraft.init.MobEffects
- *  net.minecraft.item.ItemStack
- *  net.minecraft.potion.Potion
- *  net.minecraft.potion.PotionEffect
- *  net.minecraft.util.ResourceLocation
- *  net.minecraft.util.SoundEvent
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.client;
 
 import java.awt.Color;

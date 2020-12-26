@@ -1,9 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  org.lwjgl.input.Mouse
- */
 package me.earth.phobos.features.gui.components.items.buttons;
 
 import me.earth.phobos.Phobos;

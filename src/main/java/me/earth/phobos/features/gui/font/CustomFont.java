@@ -1,11 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.renderer.GlStateManager
- *  net.minecraft.client.renderer.texture.DynamicTexture
- *  org.lwjgl.opengl.GL11
- */
 package me.earth.phobos.features.gui.font;
 
 import java.awt.Font;

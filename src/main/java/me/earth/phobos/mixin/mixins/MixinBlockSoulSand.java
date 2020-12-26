@@ -1,16 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.block.Block
- *  net.minecraft.block.BlockSoulSand
- *  net.minecraft.block.material.MapColor
- *  net.minecraft.block.material.Material
- *  net.minecraft.block.state.IBlockState
- *  net.minecraft.entity.Entity
- *  net.minecraft.util.math.BlockPos
- *  net.minecraft.world.World
- */
 package me.earth.phobos.mixin.mixins;
 
 import me.earth.phobos.features.modules.movement.NoSlowDown;

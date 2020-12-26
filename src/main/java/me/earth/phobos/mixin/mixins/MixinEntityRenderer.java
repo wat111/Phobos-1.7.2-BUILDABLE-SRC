@@ -1,23 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  com.google.common.base.Predicate
- *  javax.annotation.Nullable
- *  net.minecraft.block.state.IBlockState
- *  net.minecraft.client.Minecraft
- *  net.minecraft.client.entity.EntityPlayerSP
- *  net.minecraft.client.multiplayer.WorldClient
- *  net.minecraft.client.renderer.ActiveRenderInfo
- *  net.minecraft.client.renderer.EntityRenderer
- *  net.minecraft.entity.Entity
- *  net.minecraft.init.Blocks
- *  net.minecraft.init.Items
- *  net.minecraft.item.ItemPickaxe
- *  net.minecraft.item.ItemStack
- *  net.minecraft.util.math.AxisAlignedBB
- *  net.minecraft.world.World
- */
 package me.earth.phobos.mixin.mixins;
 
 import com.google.common.base.Predicate;

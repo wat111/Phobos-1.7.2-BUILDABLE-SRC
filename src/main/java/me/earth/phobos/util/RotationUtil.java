@@ -1,17 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketPlayer$Rotation
- *  net.minecraft.util.EnumFacing
- *  net.minecraft.util.math.BlockPos
- *  net.minecraft.util.math.MathHelper
- *  net.minecraft.util.math.Vec3d
- *  net.minecraft.util.math.Vec3i
- */
 package me.earth.phobos.util;
 
 import me.earth.phobos.features.modules.client.ClickGui;

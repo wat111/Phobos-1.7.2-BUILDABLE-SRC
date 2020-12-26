@@ -1,13 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.block.Block
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.init.Blocks
- *  net.minecraft.util.math.BlockPos
- *  net.minecraft.util.math.Vec3i
- */
 package me.earth.phobos.manager;
 
 import java.util.ArrayList;

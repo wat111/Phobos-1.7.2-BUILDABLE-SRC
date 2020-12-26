@@ -1,15 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.network.Packet
- *  net.minecraft.network.handshake.client.C00Handshake
- *  net.minecraft.network.play.client.CPacketChatMessage
- *  net.minecraft.network.play.client.CPacketKeepAlive
- *  net.minecraft.network.play.server.SPacketChat
- *  net.minecraft.network.play.server.SPacketKeepAlive
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.client;
 
 import java.util.ArrayList;

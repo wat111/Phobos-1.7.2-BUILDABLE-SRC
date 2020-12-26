@@ -1,14 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.audio.ISound
- *  net.minecraft.client.audio.PositionedSoundRecord
- *  net.minecraft.init.SoundEvents
- *  net.minecraft.util.ChatAllowedCharacters
- *  net.minecraft.util.SoundEvent
- *  org.lwjgl.input.Keyboard
- */
 package me.earth.phobos.features.gui.components.items.buttons;
 
 import java.awt.Toolkit;

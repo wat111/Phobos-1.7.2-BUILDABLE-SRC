@@ -1,17 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  com.google.common.collect.Sets
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.item.EntityEnderCrystal
- *  net.minecraft.init.SoundEvents
- *  net.minecraft.network.play.server.SPacketSoundEffect
- *  net.minecraft.util.SoundCategory
- *  net.minecraft.util.SoundEvent
- *  net.minecraft.util.math.BlockPos
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.misc;
 
 import com.google.common.collect.Sets;

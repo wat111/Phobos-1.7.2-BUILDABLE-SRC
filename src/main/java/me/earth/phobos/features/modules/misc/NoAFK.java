@@ -1,11 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketAnimation
- *  net.minecraft.util.EnumHand
- */
 package me.earth.phobos.features.modules.misc;
 
 import java.util.Random;

@@ -1,13 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketPlayer$Position
- *  net.minecraft.util.math.RayTraceResult
- *  net.minecraft.util.math.RayTraceResult$Type
- *  net.minecraft.util.math.Vec3d
- */
 package me.earth.phobos.features.modules.movement;
 
 import me.earth.phobos.Phobos;

@@ -1,29 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.block.Block
- *  net.minecraft.block.material.Material
- *  net.minecraft.block.state.IBlockState
- *  net.minecraft.client.Minecraft
- *  net.minecraft.client.entity.EntityPlayerSP
- *  net.minecraft.client.multiplayer.PlayerControllerMP
- *  net.minecraft.client.multiplayer.WorldClient
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.init.Blocks
- *  net.minecraft.item.ItemBlock
- *  net.minecraft.item.ItemStack
- *  net.minecraft.util.EnumActionResult
- *  net.minecraft.util.EnumFacing
- *  net.minecraft.util.EnumHand
- *  net.minecraft.util.math.AxisAlignedBB
- *  net.minecraft.util.math.BlockPos
- *  net.minecraft.util.math.Vec3d
- *  net.minecraft.world.IBlockAccess
- *  net.minecraft.world.World
- *  net.minecraftforge.common.MinecraftForge
- *  net.minecraftforge.fml.common.eventhandler.Event
- */
 package me.earth.phobos.mixin.mixins;
 
 import me.earth.phobos.Phobos;

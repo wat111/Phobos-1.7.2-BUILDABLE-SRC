@@ -1,15 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.init.Blocks
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.server.SPacketBlockChange
- *  net.minecraft.network.play.server.SPacketDisconnect
- *  net.minecraft.util.text.ITextComponent
- *  net.minecraft.util.text.TextComponentString
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.misc;
 
 import me.earth.phobos.Phobos;

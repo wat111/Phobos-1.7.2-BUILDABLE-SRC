@@ -1,9 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.potion.Potion
- */
 package me.earth.phobos.features.modules.movement;
 
 import java.util.Objects;

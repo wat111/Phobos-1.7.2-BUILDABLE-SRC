@@ -1,18 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  com.google.common.collect.Lists
- *  com.google.gson.JsonArray
- *  com.google.gson.JsonElement
- *  com.google.gson.JsonObject
- *  com.google.gson.JsonParser
- *  com.mojang.util.UUIDTypeAdapter
- *  net.minecraft.advancements.AdvancementManager
- *  net.minecraft.client.network.NetworkPlayerInfo
- *  net.minecraft.entity.player.EntityPlayer
- *  org.apache.commons.io.IOUtils
- */
 package me.earth.phobos.util;
 
 import com.google.common.collect.Lists;

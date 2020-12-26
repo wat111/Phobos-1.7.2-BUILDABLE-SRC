@@ -1,6 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- */
 package me.earth.phobos.util;
 
 import java.lang.reflect.AccessibleObject;

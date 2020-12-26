@@ -1,19 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.block.Block
- *  net.minecraft.block.BlockLiquid
- *  net.minecraft.block.state.IBlockState
- *  net.minecraft.init.Blocks
- *  net.minecraft.item.ItemPickaxe
- *  net.minecraft.item.ItemStack
- *  net.minecraft.util.EnumHand
- *  net.minecraft.util.math.BlockPos
- *  net.minecraft.util.math.Vec3d
- *  net.minecraft.world.World
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.misc;
 
 import java.util.ArrayList;

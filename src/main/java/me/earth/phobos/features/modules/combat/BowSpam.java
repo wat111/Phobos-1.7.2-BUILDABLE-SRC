@@ -1,24 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.init.Items
- *  net.minecraft.item.ItemBow
- *  net.minecraft.item.ItemEndCrystal
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketPlayer$Position
- *  net.minecraft.network.play.client.CPacketPlayer$PositionRotation
- *  net.minecraft.network.play.client.CPacketPlayerDigging
- *  net.minecraft.network.play.client.CPacketPlayerDigging$Action
- *  net.minecraft.network.play.client.CPacketPlayerTryUseItem
- *  net.minecraft.util.EnumHand
- *  net.minecraft.util.math.BlockPos
- *  net.minecraft.util.math.Vec3d
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- *  org.lwjgl.input.Mouse
- */
 package me.earth.phobos.features.modules.combat;
 
 import me.earth.phobos.Phobos;

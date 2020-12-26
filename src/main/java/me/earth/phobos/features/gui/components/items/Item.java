@@ -1,6 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- */
 package me.earth.phobos.features.gui.components.items;
 
 import me.earth.phobos.features.Feature;

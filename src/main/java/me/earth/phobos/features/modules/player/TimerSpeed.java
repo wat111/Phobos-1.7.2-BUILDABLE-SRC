@@ -1,6 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- */
 package me.earth.phobos.features.modules.player;
 
 import me.earth.phobos.Phobos;

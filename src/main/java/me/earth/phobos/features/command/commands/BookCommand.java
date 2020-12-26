@@ -1,17 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  io.netty.buffer.Unpooled
- *  net.minecraft.init.Items
- *  net.minecraft.item.ItemStack
- *  net.minecraft.nbt.NBTBase
- *  net.minecraft.nbt.NBTTagList
- *  net.minecraft.nbt.NBTTagString
- *  net.minecraft.network.Packet
- *  net.minecraft.network.PacketBuffer
- *  net.minecraft.network.play.client.CPacketCustomPayload
- */
 package me.earth.phobos.features.command.commands;
 
 import io.netty.buffer.Unpooled;

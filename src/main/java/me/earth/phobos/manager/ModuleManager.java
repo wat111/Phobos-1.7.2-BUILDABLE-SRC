@@ -1,11 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraftforge.common.MinecraftForge
- *  net.minecraftforge.fml.common.eventhandler.EventBus
- *  org.lwjgl.input.Keyboard
- */
 package me.earth.phobos.manager;
 
 import java.awt.Color;

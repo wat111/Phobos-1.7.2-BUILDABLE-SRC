@@ -1,11 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.EntityLivingBase
- *  net.minecraft.world.World
- */
 package me.earth.phobos.mixin.mixins;
 
 import me.earth.phobos.features.modules.movement.ElytraFlight;

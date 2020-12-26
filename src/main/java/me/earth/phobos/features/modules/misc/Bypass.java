@@ -1,27 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.gui.inventory.GuiInventory
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.init.Items
- *  net.minecraft.inventory.ClickType
- *  net.minecraft.item.ItemStack
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketAnimation
- *  net.minecraft.network.play.client.CPacketCloseWindow
- *  net.minecraft.network.play.client.CPacketEntityAction
- *  net.minecraft.network.play.client.CPacketEntityAction$Action
- *  net.minecraft.network.play.client.CPacketPlayer
- *  net.minecraft.network.play.server.SPacketCloseWindow
- *  net.minecraft.network.play.server.SPacketEntityMetadata
- *  net.minecraft.network.play.server.SPacketSetSlot
- *  net.minecraft.util.math.BlockPos
- *  net.minecraftforge.client.event.GuiOpenEvent
- *  net.minecraftforge.fml.common.eventhandler.EventPriority
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.misc;
 
 import me.earth.phobos.event.events.PacketEvent;

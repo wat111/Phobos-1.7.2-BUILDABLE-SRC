@@ -1,10 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.gui.GuiScreen
- *  org.lwjgl.input.Mouse
- */
 package me.earth.phobos.features.gui;
 
 import java.io.IOException;

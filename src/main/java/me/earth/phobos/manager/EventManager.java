@@ -1,32 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  com.google.common.base.Strings
- *  net.minecraft.client.gui.ScaledResolution
- *  net.minecraft.client.renderer.GlStateManager
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.network.play.client.CPacketHeldItemChange
- *  net.minecraft.network.play.server.SPacketEntityStatus
- *  net.minecraft.network.play.server.SPacketPlayerListItem
- *  net.minecraft.network.play.server.SPacketPlayerListItem$Action
- *  net.minecraft.network.play.server.SPacketTimeUpdate
- *  net.minecraft.world.World
- *  net.minecraftforge.client.event.ClientChatEvent
- *  net.minecraftforge.client.event.RenderGameOverlayEvent$ElementType
- *  net.minecraftforge.client.event.RenderGameOverlayEvent$Post
- *  net.minecraftforge.client.event.RenderGameOverlayEvent$Text
- *  net.minecraftforge.client.event.RenderWorldLastEvent
- *  net.minecraftforge.common.MinecraftForge
- *  net.minecraftforge.event.entity.living.LivingEvent$LivingUpdateEvent
- *  net.minecraftforge.fml.common.eventhandler.Event
- *  net.minecraftforge.fml.common.eventhandler.EventPriority
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- *  net.minecraftforge.fml.common.gameevent.TickEvent$ClientTickEvent
- *  net.minecraftforge.fml.common.gameevent.TickEvent$Phase
- *  net.minecraftforge.fml.common.network.FMLNetworkEvent$ClientConnectedToServerEvent
- *  net.minecraftforge.fml.common.network.FMLNetworkEvent$ClientDisconnectionFromServerEvent
- */
 package me.earth.phobos.manager;
 
 import com.google.common.base.Strings;

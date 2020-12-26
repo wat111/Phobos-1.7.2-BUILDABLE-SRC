@@ -1,17 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.renderer.GlStateManager
- *  net.minecraft.client.renderer.GlStateManager$DestFactor
- *  net.minecraft.client.renderer.GlStateManager$SourceFactor
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.projectile.EntityArrow
- *  net.minecraft.entity.projectile.EntityThrowable
- *  net.minecraft.util.math.Vec3d
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- *  org.lwjgl.opengl.GL11
- */
 package me.earth.phobos.features.modules.render;
 
 import java.util.ArrayList;

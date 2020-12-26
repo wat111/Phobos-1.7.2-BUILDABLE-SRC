@@ -1,18 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.Minecraft
- *  net.minecraft.client.model.ModelBase
- *  net.minecraft.client.model.ModelRenderer
- *  net.minecraft.client.renderer.GlStateManager
- *  net.minecraft.entity.Entity
- *  net.minecraft.util.ResourceLocation
- *  net.minecraft.util.math.MathHelper
- *  net.minecraftforge.client.event.RenderPlayerEvent$Post
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- *  org.lwjgl.opengl.GL11
- */
 package me.earth.phobos.features.modules.client;
 
 import java.util.HashMap;

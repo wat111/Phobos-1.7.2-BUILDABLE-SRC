@@ -1,13 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  io.netty.buffer.Unpooled
- *  net.minecraft.network.PacketBuffer
- *  net.minecraft.network.play.client.CPacketCustomPayload
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- *  net.minecraftforge.fml.common.network.internal.FMLProxyPacket
- */
 package me.earth.phobos.features.modules.misc;
 
 import io.netty.buffer.Unpooled;

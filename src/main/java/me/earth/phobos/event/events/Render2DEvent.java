@@ -1,9 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.gui.ScaledResolution
- */
 package me.earth.phobos.event.events;
 
 import me.earth.phobos.event.EventStage;

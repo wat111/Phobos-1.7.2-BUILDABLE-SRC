@@ -1,12 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.model.ModelBiped
- *  net.minecraft.client.renderer.entity.RenderLivingBase
- *  net.minecraft.client.renderer.entity.layers.LayerArmorBase
- *  net.minecraft.client.renderer.entity.layers.LayerBipedArmor
- */
 package me.earth.phobos.mixin.mixins;
 
 import net.minecraft.client.model.ModelBiped;

@@ -1,30 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.block.state.IBlockState
- *  net.minecraft.enchantment.Enchantment
- *  net.minecraft.enchantment.EnchantmentHelper
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.EntityLivingBase
- *  net.minecraft.entity.EnumCreatureAttribute
- *  net.minecraft.init.Blocks
- *  net.minecraft.init.Enchantments
- *  net.minecraft.item.ItemBlock
- *  net.minecraft.item.ItemStack
- *  net.minecraft.item.ItemSword
- *  net.minecraft.item.ItemTool
- *  net.minecraft.network.play.client.CPacketUseEntity
- *  net.minecraft.util.EnumFacing
- *  net.minecraft.util.EnumHand
- *  net.minecraft.util.math.BlockPos
- *  net.minecraft.util.math.Vec3d
- *  net.minecraft.world.World
- *  net.minecraftforge.event.entity.player.AttackEntityEvent
- *  net.minecraftforge.event.entity.player.PlayerInteractEvent$LeftClickBlock
- *  net.minecraftforge.event.world.BlockEvent$BreakEvent
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.player;
 
 import me.earth.phobos.Phobos;

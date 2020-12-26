@@ -1,11 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.item.Item
- *  net.minecraft.item.ItemStack
- *  net.minecraft.nbt.NBTTagCompound
- */
 package me.earth.phobos.mixin.mixins;
 
 import me.earth.phobos.features.modules.player.TrueDurability;

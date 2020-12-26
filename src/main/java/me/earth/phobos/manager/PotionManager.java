@@ -1,12 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.resources.I18n
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.potion.Potion
- *  net.minecraft.potion.PotionEffect
- */
 package me.earth.phobos.manager;
 
 import java.util.ArrayList;

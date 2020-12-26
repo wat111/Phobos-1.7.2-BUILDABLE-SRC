@@ -1,9 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  org.lwjgl.opengl.GL11
- */
 package me.earth.phobos.util;
 
 import java.awt.Color;

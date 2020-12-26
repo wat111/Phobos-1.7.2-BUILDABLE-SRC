@@ -1,14 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.network.play.client.CPacketChatMessage
- *  net.minecraft.network.play.server.SPacketChat
- *  net.minecraft.util.math.Vec3i
- *  net.minecraft.util.text.TextComponentString
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.misc;
 
 import java.text.SimpleDateFormat;

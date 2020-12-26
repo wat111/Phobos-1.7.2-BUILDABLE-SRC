@@ -1,15 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  com.mojang.authlib.GameProfile
- *  net.minecraft.client.entity.EntityOtherPlayerMP
- *  net.minecraft.entity.Entity
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketChatMessage
- *  net.minecraft.potion.PotionEffect
- *  net.minecraft.world.World
- */
 package me.earth.phobos.features.modules.player;
 
 import com.mojang.authlib.GameProfile;

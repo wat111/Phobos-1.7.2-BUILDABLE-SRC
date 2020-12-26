@@ -1,12 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.gui.inventory.GuiContainer
- *  net.minecraft.client.gui.inventory.GuiInventory
- *  net.minecraft.init.Items
- *  net.minecraft.item.ItemStack
- */
 package me.earth.phobos.features.modules.player;
 
 import java.util.Map;

@@ -1,12 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  com.google.common.base.Converter
- *  com.google.gson.JsonElement
- *  com.google.gson.JsonPrimitive
- *  org.lwjgl.input.Keyboard
- */
 package me.earth.phobos.features.setting;
 
 import com.google.common.base.Converter;

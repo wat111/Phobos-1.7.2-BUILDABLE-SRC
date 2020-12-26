@@ -1,10 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.Minecraft
- *  net.minecraft.potion.PotionEffect
- */
 package me.earth.phobos.features.modules.client;
 
 import java.awt.Color;

@@ -1,12 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.network.NetworkPlayerInfo
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketChatMessage
- *  net.minecraft.util.StringUtils
- */
 package me.earth.phobos.features.modules.misc;
 
 import java.util.ArrayList;

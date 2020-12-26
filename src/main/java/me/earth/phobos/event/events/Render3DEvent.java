@@ -1,6 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- */
 package me.earth.phobos.event.events;
 
 import me.earth.phobos.event.EventStage;

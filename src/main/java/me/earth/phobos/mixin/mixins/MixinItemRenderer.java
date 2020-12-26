@@ -1,14 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.Minecraft
- *  net.minecraft.client.entity.AbstractClientPlayer
- *  net.minecraft.client.renderer.GlStateManager
- *  net.minecraft.client.renderer.ItemRenderer
- *  net.minecraft.item.ItemStack
- *  net.minecraft.util.EnumHand
- */
 package me.earth.phobos.mixin.mixins;
 
 import me.earth.phobos.features.modules.render.NoRender;
