@@ -1,13 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.network.play.server.SPacketSpawnObject
- *  net.minecraft.util.text.ITextComponent
- *  net.minecraft.util.text.TextComponentString
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.client;
 
 import java.util.ArrayList;

@@ -1,16 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.entity.EntityLivingBase
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketPlayer
- *  net.minecraft.network.play.client.CPacketPlayer$Position
- *  net.minecraft.network.play.client.CPacketUseEntity
- *  net.minecraft.network.play.client.CPacketUseEntity$Action
- *  net.minecraft.world.World
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.combat;
 
 import java.util.Objects;

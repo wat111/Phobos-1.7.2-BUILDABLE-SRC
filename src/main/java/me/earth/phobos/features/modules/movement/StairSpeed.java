@@ -1,6 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- */
 package me.earth.phobos.features.modules.movement;
 
 import me.earth.phobos.features.modules.Module;

@@ -1,16 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.block.Block
- *  net.minecraft.block.BlockAir
- *  net.minecraft.block.material.Material
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketPlayer$Position
- *  net.minecraft.util.math.AxisAlignedBB
- *  net.minecraft.util.math.BlockPos
- *  net.minecraft.util.math.MathHelper
- */
 package me.earth.phobos.features.modules.movement;
 
 import me.earth.phobos.features.modules.Module;

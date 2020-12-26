@@ -1,19 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.Minecraft
- *  net.minecraft.client.entity.AbstractClientPlayer
- *  net.minecraft.client.entity.EntityPlayerSP
- *  net.minecraft.client.gui.GuiScreen
- *  net.minecraft.client.network.NetHandlerPlayClient
- *  net.minecraft.entity.MoverType
- *  net.minecraft.stats.RecipeBook
- *  net.minecraft.stats.StatisticsManager
- *  net.minecraft.world.World
- *  net.minecraftforge.common.MinecraftForge
- *  net.minecraftforge.fml.common.eventhandler.Event
- */
 package me.earth.phobos.mixin.mixins;
 
 import me.earth.phobos.Phobos;

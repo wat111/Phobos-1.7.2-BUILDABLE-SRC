@@ -1,36 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.block.BlockObsidian
- *  net.minecraft.block.BlockWeb
- *  net.minecraft.client.gui.inventory.GuiContainer
- *  net.minecraft.client.gui.inventory.GuiInventory
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.EntityLivingBase
- *  net.minecraft.entity.item.EntityEnderCrystal
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.init.Blocks
- *  net.minecraft.init.Items
- *  net.minecraft.inventory.ClickType
- *  net.minecraft.inventory.EntityEquipmentSlot
- *  net.minecraft.item.Item
- *  net.minecraft.item.ItemBlock
- *  net.minecraft.item.ItemStack
- *  net.minecraft.item.ItemSword
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketPlayerTryUseItem
- *  net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock
- *  net.minecraft.util.EnumHand
- *  net.minecraft.util.math.AxisAlignedBB
- *  net.minecraft.util.math.BlockPos
- *  net.minecraft.world.World
- *  net.minecraftforge.fml.common.eventhandler.EventPriority
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- *  net.minecraftforge.fml.common.gameevent.InputEvent$KeyInputEvent
- *  org.lwjgl.input.Keyboard
- *  org.lwjgl.input.Mouse
- */
 package me.earth.phobos.features.modules.combat;
 
 import java.util.Queue;

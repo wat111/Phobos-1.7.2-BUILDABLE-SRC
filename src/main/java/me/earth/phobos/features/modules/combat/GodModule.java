@@ -1,34 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.item.EntityEnderCrystal
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.init.Items
- *  net.minecraft.item.ItemBow
- *  net.minecraft.item.ItemEndCrystal
- *  net.minecraft.item.ItemExpBottle
- *  net.minecraft.item.ItemStack
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketAnimation
- *  net.minecraft.network.play.client.CPacketPlayer
- *  net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock
- *  net.minecraft.network.play.client.CPacketUseEntity
- *  net.minecraft.network.play.client.CPacketUseEntity$Action
- *  net.minecraft.network.play.server.SPacketSpawnExperienceOrb
- *  net.minecraft.network.play.server.SPacketSpawnGlobalEntity
- *  net.minecraft.network.play.server.SPacketSpawnMob
- *  net.minecraft.network.play.server.SPacketSpawnObject
- *  net.minecraft.network.play.server.SPacketSpawnPainting
- *  net.minecraft.network.play.server.SPacketSpawnPlayer
- *  net.minecraft.util.EnumHand
- *  net.minecraft.util.math.BlockPos
- *  net.minecraft.util.math.Vec3d
- *  net.minecraft.util.math.Vec3i
- *  net.minecraftforge.fml.common.eventhandler.EventPriority
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.combat;
 
 import me.earth.phobos.event.events.PacketEvent;

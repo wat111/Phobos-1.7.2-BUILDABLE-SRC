@@ -1,11 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.item.ItemShulkerBox
- *  net.minecraft.item.ItemStack
- */
 package me.earth.phobos.features.command.commands;
 
 import java.util.Map;

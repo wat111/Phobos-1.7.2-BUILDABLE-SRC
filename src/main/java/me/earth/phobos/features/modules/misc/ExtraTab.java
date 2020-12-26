@@ -1,11 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.network.NetworkPlayerInfo
- *  net.minecraft.scoreboard.ScorePlayerTeam
- *  net.minecraft.scoreboard.Team
- */
 package me.earth.phobos.features.modules.misc;
 
 import me.earth.phobos.Phobos;

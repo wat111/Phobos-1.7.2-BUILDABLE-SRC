@@ -1,32 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.enchantment.EnchantmentHelper
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.EntityLivingBase
- *  net.minecraft.entity.SharedMonsterAttributes
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.init.Items
- *  net.minecraft.init.MobEffects
- *  net.minecraft.item.Item
- *  net.minecraft.item.ItemArmor
- *  net.minecraft.item.ItemAxe
- *  net.minecraft.item.ItemPickaxe
- *  net.minecraft.item.ItemShield
- *  net.minecraft.item.ItemSpade
- *  net.minecraft.item.ItemStack
- *  net.minecraft.item.ItemSword
- *  net.minecraft.item.ItemTool
- *  net.minecraft.potion.PotionEffect
- *  net.minecraft.util.CombatRules
- *  net.minecraft.util.DamageSource
- *  net.minecraft.util.math.BlockPos
- *  net.minecraft.util.math.MathHelper
- *  net.minecraft.util.math.Vec3d
- *  net.minecraft.world.Explosion
- *  net.minecraft.world.World
- */
 package me.earth.phobos.util;
 
 import me.earth.phobos.util.Util;

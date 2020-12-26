@@ -1,25 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.block.state.IBlockState
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.item.EntityEnderCrystal
- *  net.minecraft.init.Blocks
- *  net.minecraft.init.Items
- *  net.minecraft.item.ItemPickaxe
- *  net.minecraft.item.ItemSword
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketAnimation
- *  net.minecraft.network.play.client.CPacketHeldItemChange
- *  net.minecraft.network.play.client.CPacketPlayerDigging
- *  net.minecraft.network.play.client.CPacketPlayerDigging$Action
- *  net.minecraft.util.EnumFacing
- *  net.minecraft.util.EnumHand
- *  net.minecraft.util.math.AxisAlignedBB
- *  net.minecraft.util.math.BlockPos
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.player;
 
 import java.awt.Color;

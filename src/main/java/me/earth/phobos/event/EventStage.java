@@ -1,9 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraftforge.fml.common.eventhandler.Event
- */
 package me.earth.phobos.event;
 
 import net.minecraftforge.fml.common.eventhandler.Event;

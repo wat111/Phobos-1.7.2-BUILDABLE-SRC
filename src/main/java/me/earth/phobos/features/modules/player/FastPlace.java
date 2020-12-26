@@ -1,21 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.block.BlockEnderChest
- *  net.minecraft.block.BlockObsidian
- *  net.minecraft.entity.Entity
- *  net.minecraft.init.Items
- *  net.minecraft.item.ItemEndCrystal
- *  net.minecraft.item.ItemExpBottle
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock
- *  net.minecraft.util.EnumFacing
- *  net.minecraft.util.EnumHand
- *  net.minecraft.util.math.BlockPos
- *  net.minecraft.util.math.RayTraceResult
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.player;
 
 import me.earth.phobos.Phobos;

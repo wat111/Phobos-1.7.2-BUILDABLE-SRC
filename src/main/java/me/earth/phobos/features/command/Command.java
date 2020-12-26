@@ -1,11 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.util.text.ITextComponent
- *  net.minecraft.util.text.TextComponentBase
- *  net.minecraft.util.text.TextComponentString
- */
 package me.earth.phobos.features.command;
 
 import java.util.regex.Matcher;

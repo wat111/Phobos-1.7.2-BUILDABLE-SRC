@@ -1,18 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  javax.annotation.Nullable
- *  net.minecraft.client.Minecraft
- *  net.minecraft.client.entity.EntityPlayerSP
- *  net.minecraft.client.gui.GuiMainMenu
- *  net.minecraft.client.gui.GuiScreen
- *  net.minecraft.client.multiplayer.PlayerControllerMP
- *  net.minecraft.client.multiplayer.WorldClient
- *  net.minecraft.crash.CrashReport
- *  org.lwjgl.input.Keyboard
- *  org.lwjgl.opengl.Display
- */
 package me.earth.phobos.mixin.mixins;
 
 import javax.annotation.Nullable;

@@ -1,19 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.renderer.GlStateManager
- *  net.minecraft.client.renderer.RenderGlobal
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.item.EntityEnderPearl
- *  net.minecraft.entity.item.EntityExpBottle
- *  net.minecraft.entity.item.EntityItem
- *  net.minecraft.entity.item.EntityXPOrb
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.util.math.AxisAlignedBB
- *  net.minecraft.util.math.Vec3d
- *  org.lwjgl.opengl.GL11
- */
 package me.earth.phobos.features.modules.render;
 
 import java.awt.Color;

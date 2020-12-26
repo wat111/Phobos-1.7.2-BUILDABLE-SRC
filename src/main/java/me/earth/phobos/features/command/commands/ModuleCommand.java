@@ -1,9 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  com.google.gson.JsonParser
- */
 package me.earth.phobos.features.command.commands;
 
 import com.google.gson.JsonParser;

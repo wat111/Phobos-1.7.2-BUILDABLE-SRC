@@ -1,25 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.block.Block
- *  net.minecraft.client.Minecraft
- *  net.minecraft.enchantment.Enchantment
- *  net.minecraft.enchantment.EnchantmentHelper
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.init.Enchantments
- *  net.minecraft.init.Items
- *  net.minecraft.inventory.ClickType
- *  net.minecraft.inventory.EntityEquipmentSlot
- *  net.minecraft.inventory.Slot
- *  net.minecraft.item.Item
- *  net.minecraft.item.ItemAir
- *  net.minecraft.item.ItemArmor
- *  net.minecraft.item.ItemBlock
- *  net.minecraft.item.ItemStack
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketHeldItemChange
- */
 package me.earth.phobos.util;
 
 import java.util.ArrayList;

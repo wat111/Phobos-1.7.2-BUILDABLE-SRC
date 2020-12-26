@@ -1,14 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  com.google.gson.JsonElement
- *  com.google.gson.JsonObject
- *  com.google.gson.JsonParser
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketChatMessage
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.misc;
 
 import com.google.gson.JsonElement;

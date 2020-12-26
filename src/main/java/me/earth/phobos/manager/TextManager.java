@@ -1,9 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.util.math.MathHelper
- */
 package me.earth.phobos.manager;
 
 import java.awt.Font;

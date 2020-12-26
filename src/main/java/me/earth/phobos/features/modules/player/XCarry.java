@@ -1,20 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.gui.GuiScreen
- *  net.minecraft.client.gui.inventory.GuiInventory
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.inventory.Slot
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketCloseWindow
- *  net.minecraftforge.client.event.GuiOpenEvent
- *  net.minecraftforge.fml.common.eventhandler.EventPriority
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- *  net.minecraftforge.fml.common.gameevent.InputEvent$KeyInputEvent
- *  org.lwjgl.input.Keyboard
- *  org.lwjgl.input.Mouse
- */
 package me.earth.phobos.features.modules.player;
 
 import java.io.IOException;

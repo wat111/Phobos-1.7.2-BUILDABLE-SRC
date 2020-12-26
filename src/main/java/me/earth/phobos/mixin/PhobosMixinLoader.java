@@ -1,9 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraftforge.fml.relauncher.IFMLLoadingPlugin
- */
 package me.earth.phobos.mixin;
 
 import java.util.Map;

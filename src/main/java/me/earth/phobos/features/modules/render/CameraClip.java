@@ -1,6 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- */
 package me.earth.phobos.features.modules.render;
 
 import me.earth.phobos.features.modules.Module;

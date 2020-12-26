@@ -1,16 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  com.google.common.collect.Maps
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.EntityLivingBase
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.util.math.MathHelper
- *  net.minecraft.util.math.Vec3d
- *  org.lwjgl.opengl.Display
- *  org.lwjgl.opengl.GL11
- */
 package me.earth.phobos.features.modules.render;
 
 import com.google.common.collect.Maps;

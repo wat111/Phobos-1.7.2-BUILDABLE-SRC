@@ -1,11 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.init.Blocks
- *  net.minecraft.util.math.BlockPos
- */
 package me.earth.phobos.features.modules.render;
 
 import java.awt.Color;

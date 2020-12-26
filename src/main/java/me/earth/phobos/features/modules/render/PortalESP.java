@@ -1,13 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.block.Block
- *  net.minecraft.block.BlockPortal
- *  net.minecraft.util.math.BlockPos
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- *  net.minecraftforge.fml.common.gameevent.TickEvent$ClientTickEvent
- */
 package me.earth.phobos.features.modules.render;
 
 import java.awt.Color;

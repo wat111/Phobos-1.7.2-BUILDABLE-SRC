@@ -1,15 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.gui.GuiDisconnected
- *  net.minecraft.client.gui.GuiScreen
- *  net.minecraft.client.multiplayer.GuiConnecting
- *  net.minecraft.client.multiplayer.ServerData
- *  net.minecraftforge.client.event.GuiOpenEvent
- *  net.minecraftforge.event.world.WorldEvent$Unload
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.misc;
 
 import me.earth.phobos.features.modules.Module;

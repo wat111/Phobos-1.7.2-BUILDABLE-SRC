@@ -1,19 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketChatMessage
- *  net.minecraft.util.math.RayTraceResult
- *  net.minecraft.util.math.RayTraceResult$Type
- *  net.minecraftforge.fml.common.eventhandler.EventPriority
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- *  net.minecraftforge.fml.common.gameevent.InputEvent$KeyInputEvent
- *  org.lwjgl.input.Keyboard
- *  org.lwjgl.input.Mouse
- */
 package me.earth.phobos.features.modules.misc;
 
 import me.earth.phobos.Phobos;

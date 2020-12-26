@@ -1,12 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.init.MobEffects
- *  net.minecraft.network.play.server.SPacketEntityEffect
- *  net.minecraft.potion.PotionEffect
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.render;
 
 import me.earth.phobos.event.events.PacketEvent;

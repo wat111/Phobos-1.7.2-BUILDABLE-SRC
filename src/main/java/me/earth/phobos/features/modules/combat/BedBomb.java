@@ -1,27 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  com.google.common.util.concurrent.AtomicDouble
- *  net.minecraft.block.state.IBlockState
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.init.Blocks
- *  net.minecraft.init.Items
- *  net.minecraft.item.ItemStack
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketEntityAction
- *  net.minecraft.network.play.client.CPacketEntityAction$Action
- *  net.minecraft.network.play.client.CPacketPlayer
- *  net.minecraft.tileentity.TileEntity
- *  net.minecraft.tileentity.TileEntityBed
- *  net.minecraft.util.EnumFacing
- *  net.minecraft.util.EnumHand
- *  net.minecraft.util.math.BlockPos
- *  net.minecraft.util.math.Vec3d
- *  net.minecraft.util.math.Vec3i
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.combat;
 
 import com.google.common.util.concurrent.AtomicDouble;

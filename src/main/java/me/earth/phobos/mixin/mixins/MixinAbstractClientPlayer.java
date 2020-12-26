@@ -1,12 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  javax.annotation.Nullable
- *  net.minecraft.client.entity.AbstractClientPlayer
- *  net.minecraft.client.network.NetworkPlayerInfo
- *  net.minecraft.util.ResourceLocation
- */
 package me.earth.phobos.mixin.mixins;
 
 import java.util.UUID;

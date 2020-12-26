@@ -1,14 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.network.NetHandlerPlayClient
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.network.play.server.SPacketEntityMetadata
- *  net.minecraftforge.common.MinecraftForge
- *  net.minecraftforge.fml.common.eventhandler.Event
- */
 package me.earth.phobos.mixin.mixins;
 
 import me.earth.phobos.Phobos;

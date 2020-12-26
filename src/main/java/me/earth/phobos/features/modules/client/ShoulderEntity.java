@@ -1,17 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.passive.EntityOcelot
- *  net.minecraft.nbt.NBTBase
- *  net.minecraft.nbt.NBTTagCompound
- *  net.minecraft.nbt.NBTTagInt
- *  net.minecraft.util.ResourceLocation
- *  net.minecraft.world.World
- *  net.minecraftforge.client.event.RenderPlayerEvent$Post
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.client;
 
 import me.earth.phobos.features.modules.Module;

@@ -1,11 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.renderer.culling.ICamera
- *  net.minecraft.client.renderer.entity.Render
- *  net.minecraft.entity.Entity
- */
 package me.earth.phobos.mixin.mixins;
 
 import net.minecraft.client.renderer.culling.ICamera;

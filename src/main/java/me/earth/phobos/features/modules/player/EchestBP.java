@@ -1,13 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.gui.GuiScreen
- *  net.minecraft.client.gui.inventory.GuiContainer
- *  net.minecraft.inventory.Container
- *  net.minecraft.inventory.ContainerChest
- *  net.minecraft.inventory.InventoryBasic
- */
 package me.earth.phobos.features.modules.player;
 
 import me.earth.phobos.features.modules.Module;

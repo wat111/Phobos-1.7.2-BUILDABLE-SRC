@@ -1,36 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.gui.inventory.GuiContainer
- *  net.minecraft.client.renderer.BufferBuilder
- *  net.minecraft.client.renderer.GlStateManager
- *  net.minecraft.client.renderer.GlStateManager$DestFactor
- *  net.minecraft.client.renderer.GlStateManager$SourceFactor
- *  net.minecraft.client.renderer.RenderHelper
- *  net.minecraft.client.renderer.Tessellator
- *  net.minecraft.client.renderer.vertex.DefaultVertexFormats
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.init.Items
- *  net.minecraft.inventory.IInventory
- *  net.minecraft.inventory.ItemStackHelper
- *  net.minecraft.inventory.Slot
- *  net.minecraft.item.Item
- *  net.minecraft.item.ItemMap
- *  net.minecraft.item.ItemShulkerBox
- *  net.minecraft.item.ItemStack
- *  net.minecraft.nbt.NBTTagCompound
- *  net.minecraft.tileentity.TileEntityShulkerBox
- *  net.minecraft.util.NonNullList
- *  net.minecraft.util.ResourceLocation
- *  net.minecraft.world.World
- *  net.minecraft.world.storage.MapData
- *  net.minecraftforge.client.event.RenderTooltipEvent$PostText
- *  net.minecraftforge.event.entity.player.ItemTooltipEvent
- *  net.minecraftforge.fml.common.eventhandler.EventPriority
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- *  org.lwjgl.input.Keyboard
- */
 package me.earth.phobos.features.modules.misc;
 
 import java.awt.Color;

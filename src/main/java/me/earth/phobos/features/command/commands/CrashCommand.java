@@ -1,18 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.Minecraft
- *  net.minecraft.init.Items
- *  net.minecraft.inventory.ClickType
- *  net.minecraft.item.ItemStack
- *  net.minecraft.nbt.NBTBase
- *  net.minecraft.nbt.NBTTagCompound
- *  net.minecraft.nbt.NBTTagList
- *  net.minecraft.nbt.NBTTagString
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketClickWindow
- */
 package me.earth.phobos.features.command.commands;
 
 import me.earth.phobos.features.command.Command;

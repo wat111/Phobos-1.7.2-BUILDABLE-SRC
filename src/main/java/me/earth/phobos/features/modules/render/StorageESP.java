@@ -1,20 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.item.EntityItemFrame
- *  net.minecraft.entity.item.EntityMinecartChest
- *  net.minecraft.item.ItemShulkerBox
- *  net.minecraft.tileentity.TileEntity
- *  net.minecraft.tileentity.TileEntityChest
- *  net.minecraft.tileentity.TileEntityDispenser
- *  net.minecraft.tileentity.TileEntityEnderChest
- *  net.minecraft.tileentity.TileEntityFurnace
- *  net.minecraft.tileentity.TileEntityHopper
- *  net.minecraft.tileentity.TileEntityShulkerBox
- *  net.minecraft.util.math.BlockPos
- */
 package me.earth.phobos.features.modules.render;
 
 import java.awt.Color;

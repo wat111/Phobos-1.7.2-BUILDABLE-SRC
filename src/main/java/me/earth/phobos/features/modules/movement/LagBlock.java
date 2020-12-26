@@ -1,17 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.block.BlockEnderChest
- *  net.minecraft.block.BlockObsidian
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketPlayer$Position
- *  net.minecraft.util.EnumHand
- *  net.minecraft.util.math.BlockPos
- *  net.minecraft.util.math.Vec3d
- *  net.minecraft.util.math.Vec3i
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.movement;
 
 import me.earth.phobos.event.events.UpdateWalkingPlayerEvent;

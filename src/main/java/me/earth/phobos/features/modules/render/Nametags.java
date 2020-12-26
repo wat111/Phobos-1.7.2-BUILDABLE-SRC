@@ -1,20 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.renderer.GlStateManager
- *  net.minecraft.client.renderer.RenderHelper
- *  net.minecraft.enchantment.Enchantment
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.init.Items
- *  net.minecraft.item.ItemArmor
- *  net.minecraft.item.ItemStack
- *  net.minecraft.item.ItemTool
- *  net.minecraft.nbt.NBTTagList
- *  net.minecraft.util.text.TextFormatting
- *  org.lwjgl.opengl.GL11
- */
 package me.earth.phobos.features.modules.render;
 
 import java.util.Objects;

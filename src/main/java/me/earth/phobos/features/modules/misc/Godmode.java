@@ -1,19 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.Minecraft
- *  net.minecraft.entity.Entity
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketEntityAction
- *  net.minecraft.network.play.client.CPacketEntityAction$Action
- *  net.minecraft.network.play.client.CPacketInput
- *  net.minecraft.network.play.client.CPacketPlayer$Position
- *  net.minecraft.network.play.client.CPacketPlayer$PositionRotation
- *  net.minecraft.network.play.client.CPacketPlayer$Rotation
- *  net.minecraft.network.play.client.CPacketVehicleMove
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.misc;
 
 import java.util.Objects;

@@ -1,13 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  com.mojang.authlib.GameProfile
- *  net.minecraft.entity.EntityLivingBase
- *  net.minecraft.entity.SharedMonsterAttributes
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.world.World
- */
 package me.earth.phobos.mixin.mixins;
 
 import com.mojang.authlib.GameProfile;

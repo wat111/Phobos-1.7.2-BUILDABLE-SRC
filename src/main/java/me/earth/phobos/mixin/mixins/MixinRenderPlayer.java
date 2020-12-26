@@ -1,13 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.Minecraft
- *  net.minecraft.client.entity.AbstractClientPlayer
- *  net.minecraft.client.renderer.OpenGlHelper
- *  net.minecraft.client.renderer.entity.RenderPlayer
- *  org.lwjgl.opengl.GL11
- */
 package me.earth.phobos.mixin.mixins;
 
 import java.awt.Color;

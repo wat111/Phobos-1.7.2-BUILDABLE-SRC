@@ -1,10 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.multiplayer.ServerData
- *  net.minecraft.client.network.ServerPinger
- */
 package me.earth.phobos.mixin.mixins;
 
 import java.net.UnknownHostException;

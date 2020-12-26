@@ -1,9 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.entity.player.EntityPlayer
- */
 package me.earth.phobos.features.modules.render;
 
 import me.earth.phobos.event.events.Render3DEvent;

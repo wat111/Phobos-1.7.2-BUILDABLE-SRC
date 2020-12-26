@@ -1,24 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.gui.GuiChat
- *  net.minecraft.client.gui.GuiIngameMenu
- *  net.minecraft.client.gui.GuiOptions
- *  net.minecraft.client.gui.GuiScreenOptionsSounds
- *  net.minecraft.client.gui.GuiVideoSettings
- *  net.minecraft.client.gui.inventory.GuiContainer
- *  net.minecraft.client.settings.KeyBinding
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketPlayer
- *  net.minecraft.network.play.client.CPacketPlayerDigging
- *  net.minecraft.network.play.client.CPacketPlayerDigging$Action
- *  net.minecraft.util.EnumFacing
- *  net.minecraft.util.math.BlockPos
- *  net.minecraftforge.client.event.InputUpdateEvent
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- *  org.lwjgl.input.Keyboard
- */
 package me.earth.phobos.features.modules.movement;
 
 import me.earth.phobos.Phobos;

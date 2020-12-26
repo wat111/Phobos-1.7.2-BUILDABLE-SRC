@@ -1,16 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraftforge.fml.common.Mod
- *  net.minecraftforge.fml.common.Mod$EventHandler
- *  net.minecraftforge.fml.common.Mod$Instance
- *  net.minecraftforge.fml.common.event.FMLInitializationEvent
- *  net.minecraftforge.fml.common.event.FMLPreInitializationEvent
- *  org.apache.logging.log4j.LogManager
- *  org.apache.logging.log4j.Logger
- *  org.lwjgl.opengl.Display
- */
 package me.earth.phobos;
 
 import me.earth.phobos.DiscordPresence;

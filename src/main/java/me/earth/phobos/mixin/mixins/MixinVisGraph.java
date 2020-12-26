@@ -1,10 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.renderer.chunk.VisGraph
- *  net.minecraft.util.math.BlockPos
- */
 package me.earth.phobos.mixin.mixins;
 
 import me.earth.phobos.features.modules.render.XRay;

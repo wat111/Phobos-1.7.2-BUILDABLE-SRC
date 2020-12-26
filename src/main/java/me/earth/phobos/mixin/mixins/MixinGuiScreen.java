@@ -1,12 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.gui.Gui
- *  net.minecraft.client.gui.GuiScreen
- *  net.minecraft.item.ItemShulkerBox
- *  net.minecraft.item.ItemStack
- */
 package me.earth.phobos.mixin.mixins;
 
 import me.earth.phobos.features.modules.misc.ToolTips;

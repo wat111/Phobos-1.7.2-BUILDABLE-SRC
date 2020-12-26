@@ -1,32 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.block.Block
- *  net.minecraft.client.entity.EntityPlayerSP
- *  net.minecraft.client.gui.ScaledResolution
- *  net.minecraft.client.gui.inventory.GuiInventory
- *  net.minecraft.client.renderer.DestroyBlockProgress
- *  net.minecraft.client.renderer.GlStateManager
- *  net.minecraft.client.renderer.OpenGlHelper
- *  net.minecraft.client.renderer.RenderHelper
- *  net.minecraft.client.renderer.entity.RenderManager
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.EntityLivingBase
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.init.Blocks
- *  net.minecraft.init.MobEffects
- *  net.minecraft.inventory.Slot
- *  net.minecraft.item.ItemStack
- *  net.minecraft.network.play.server.SPacketEntityMetadata
- *  net.minecraft.util.NonNullList
- *  net.minecraft.util.ResourceLocation
- *  net.minecraft.util.math.BlockPos
- *  net.minecraft.util.math.MathHelper
- *  net.minecraft.util.math.Vec3d
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- *  org.lwjgl.opengl.GL11
- */
 package me.earth.phobos.features.modules.client;
 
 import java.text.DecimalFormat;

@@ -1,20 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.entity.EntityOtherPlayerMP
- *  net.minecraft.entity.Entity
- *  net.minecraft.network.Packet
- *  net.minecraft.network.play.client.CPacketChatMessage
- *  net.minecraft.network.play.client.CPacketClientStatus
- *  net.minecraft.network.play.client.CPacketConfirmTeleport
- *  net.minecraft.network.play.client.CPacketKeepAlive
- *  net.minecraft.network.play.client.CPacketPlayer
- *  net.minecraft.network.play.client.CPacketTabComplete
- *  net.minecraft.util.math.BlockPos
- *  net.minecraft.world.World
- *  net.minecraftforge.fml.common.eventhandler.SubscribeEvent
- */
 package me.earth.phobos.features.modules.player;
 
 import java.util.Queue;

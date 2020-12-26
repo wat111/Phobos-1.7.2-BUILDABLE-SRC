@@ -1,17 +1,3 @@
-/*
- * Decompiled with CFR 0.150.
- * 
- * Could not load the following classes:
- *  net.minecraft.entity.Entity
- *  net.minecraft.entity.player.EntityPlayer
- *  net.minecraft.init.Items
- *  net.minecraft.item.ItemEnderPearl
- *  net.minecraft.util.EnumHand
- *  net.minecraft.util.math.RayTraceResult
- *  net.minecraft.util.math.RayTraceResult$Type
- *  net.minecraft.world.World
- *  org.lwjgl.input.Mouse
- */
 package me.earth.phobos.features.modules.player;
 
 import me.earth.phobos.features.modules.Module;
